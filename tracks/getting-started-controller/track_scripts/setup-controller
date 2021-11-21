@@ -11,6 +11,6 @@ echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
 cp -a /root/.ssh/* /home/rhel/.ssh/.
 chown -R rhel:rhel /home/rhel/.ssh
 
-https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/setup-scripts/getting-started-controller/getting-started-controller-setup.yml -o /tmp/setup-scripts/getting-started-controller/getting-started-controller-setup.yml
+curl https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/setup-scripts/getting-started-controller/getting-started-controller-setup.yml -o /tmp/setup-scripts/getting-started-controller/getting-started-controller-setup.yml
 
-/bin/ansible-playbook /tmp/setup-scripts/getting-started-controller/getting-started-controller-setup.yml --tags install-packages
+/bin/ansible-playbook /tmp/setup-scripts/getting-started-controller/getting-started-controller-setup.yml --tags setup-env
