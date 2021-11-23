@@ -5,7 +5,7 @@ title: Getting started with Automation controller
 teaser: In this track, we'll explore the automation controller interface and do some
   basic tasks.
 description: |-
-  <img src="https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/assets/logos/Logo-Red_Hat-Ansible_Automation_Platform-A-Standard-RGB.png" alt="drawing" style=";width:400px"/>
+  <img src="https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/logos/Logo-Red_Hat-Ansible_Automation_Platform-A-Standard-RGB.png" alt="drawing" style=";width:400px"/>
   <br>
 
   # Automation controller
@@ -23,7 +23,7 @@ description: |-
   * Will get to know the **automation controller** interface
   * Create a standard inventory and add hosts
   * Run automation using a job template on our inventory
-icon: https://https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/icons/automation_controller.png
+icon: https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/icons/automation_controller.png
 level: beginner
 tags:
 - RedHat
@@ -220,4 +220,4 @@ challenges:
     port: 443
   difficulty: basic
   timelimit: 900
-checksum: "13707473133560898577"
+checksum: "5977526747471987698"
