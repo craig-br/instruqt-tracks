@@ -179,6 +179,7 @@
         organization: "Default"
         scm_update_on_launch: false
         scm_update_cache_timeout: 60
+        default_environment: "Default execution environment"
         controller_config_file: "{{ playbook_dir }}/../controller.cfg"
         validate_certs: false
       tags:
