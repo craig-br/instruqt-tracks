@@ -5,7 +5,7 @@ title: Getting started with Automation controller
 teaser: In this track, we'll explore the automation controller interface and do some
   basic tasks.
 description: |-
-  <img src="https://github.com/ansible/instruqt/blob/devel/assets/logos/Logo-Red_Hat-Ansible_Automation_Platform-A-Standard-RGB.png?raw=true" alt="drawing" style=";width:400px"/>
+  <img src="https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/assets/logos/Logo-Red_Hat-Ansible_Automation_Platform-A-Standard-RGB.png" alt="drawing" style=";width:400px"/>
   <br>
 
   # Automation controller
@@ -23,7 +23,7 @@ description: |-
   * Will get to know the **automation controller** interface
   * Create a standard inventory and add hosts
   * Run automation using a job template on our inventory
-icon: https://github.com/ansible/instruqt/blob/devel/assets/icons/automation_controller.png?raw=true
+icon: https://https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/icons/automation_controller.png
 level: beginner
 tags:
 - RedHat
@@ -35,7 +35,7 @@ owner: redhat
 developers:
 - cbrandt@redhat.com
 private: true
-published: false
+published: true
 show_timer: true
 challenges:
 - slug: dashboard
@@ -174,7 +174,7 @@ challenges:
   notes:
   - type: text
     contents: "# Running automation with job templates\n<br>\n<p align=\"center\">\n
-      \ <img width=\"700px\" src=\"https://github.com/craig-br/instruqt-tracks/tree/devel/assets/controller/controller_jt.png?raw=true\">\n</p>\n<br>\n\n[**Job
+      \ <img width=\"700px\" src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/controller/controller_jt.png\">\n</p>\n<br>\n\n[**Job
       templates**](https://docs.ansible.com/automation-controller/latest/html/userguide/job_templates.html)
       are a definition and set of parameters for running an Ansible Playbook.\n\nIn
       controller, job templates are a visual representation of the `ansible-playbook`
@@ -188,7 +188,7 @@ challenges:
     Let's have a closer look at some of the options:\n  * Notice that we're using
     the `Lab-Inventory` we created earlier\n  * We're going to run the `playbooks/infrastructure/debug_info.yml`\n
     \ * We're using the SSH credential to authenticate to **host01** and **host02**
-    in our `Lab-Inventory`\n![jtexplore](https://github.com/craig-br/instruqt/blob/getting-started-controller-review/assets/controller/controller-inst-jt-explore.png?raw=true)\n***\n<br>\n\n*
+    in our `Lab-Inventory`\n![jtexplore](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/controller/controller-inst-jt-explore.png)\n***\n<br>\n\n*
     Click on **Cancel** and then **Launch**\n![inv_src](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/controller/controller-inst-jt-launch.png)\n***\n<br>\n\n*
     This **Job Template** gathers debug information from the `web` group that has
     `host01` and `host02`\n  * Have a look at the output and explore the filters\n![inv_src](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/controller/controller-inst-jt-output.png)\n***\n<br>\n\n**When
@@ -216,4 +216,4 @@ challenges:
     port: 443
   difficulty: basic
   timelimit: 900
-checksum: "10902675996634578962"
+checksum: "18428275892424395702"
