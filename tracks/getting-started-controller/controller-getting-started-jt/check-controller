@@ -1,17 +1,17 @@
 #!/bin/bash
 
-GROUP="web"
-JOB="Debug-Info"
+set -e
 
-eval "$(awx --conf.username admin --conf.password "ansible123!" -k login -f human)"
+JT_NAME="Debug-Info"
 
-#Check if job template ran
-#if ! `awx -k jobs list | jq -e '.results[] | select(.summary_fields.job_template.name | match('\"${JOB}$\"';"i"))'`; then
-#    echo "FAIL: ${JOB} job has not been run"
-#    exit 1
-#fi
+#Ansible settings
+export ANSIBLE_STDOUT_CALLBACK="community.general.yaml"
 
-if ! [[ `awx -k jobs list | jq -r '.results[] | select(.summary_fields.job_template.name | match('\"${JOB}$\"';"i")) | .summary_fields.job_template.name'` == "${JOB}" ]]; then
-  echo "FAIL: ${JOB} job has not been run"
-  exit 1
+# Playbook run command
+CMD="/bin/ansible-playbook /tmp/setup-scripts/getting-started-controller/getting-started-controller-setup.yml"
+
+# Check job template executed
+if ! $CMD --tags=awx-token,check-jt -e lab_jt_name=${JT_NAME} -vv; then
+    echo "FAIL: The ${JT_NAME} job template has not been executed yet. Please try again. Remember it's case-sensititve!"
+    exit 1
 fi

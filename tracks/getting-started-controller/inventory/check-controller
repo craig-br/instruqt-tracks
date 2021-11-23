@@ -1,41 +1,48 @@
 #!/bin/bash
+set -e
 
 INVENTORY="Lab-Inventory"
 HOSTS=(host01 host02)
 GROUP="web"
 
-eval "$(awx --conf.username admin --conf.password "ansible123!" -k login -f human)"
+#Ansible settings
+export ANSIBLE_STDOUT_CALLBACK="community.general.yaml"
 
-# Check inventory count
-if awx -k inventory list | jq -e -r '.count < 1'; then
-    echo "FAIL: No inventories have been created"
-    exit 1
+# Playbook run command
+CMD="/bin/ansible-playbook /tmp/setup-scripts/getting-started-controller/getting-started-controller-setup.yml"
+
+#Check $INVENTORY exists.
+if ! $CMD --tags=awx-token,check-inventory -e lab_inventory_name=${INVENTORY} -vv; then
+ echo "FAIL: ${INVENTORY} inventory not found. Remember it's case-sensititve! Please try again."
+exit 1
 fi
 
-# Inventory not found
-if ! awx -k inventory list | jq -e '.results[] | select(.name | match('\"^${INVENTORY}\"$';"i"))'; then
-    echo "FAIL: ${INVENTORY} inventory was not found"
-    exit 1
-fi
-
-#Hosts have not been created
+## Check if hosts exist
 for host in "${HOSTS[@]}"; do
-    if ! awx -k hosts list | jq -e '.results[] | select(.name | match('\"${host}\"';"i"))'; then
-        echo "FAIL: ${host} host has not been created"
-        exit 1
-    fi
+  if ! $CMD --tags=awx-token,check-hosts -e lab_host=${host} -vv; then
+    echo "FAIL: ${host} host not found. Remember it's case-sensititve! Please try again."
+    exit 1
+  fi
 done
 
-#Group does not exist
-if ! awx -k groups list | jq -e '.results[] | select(.name | match('\"${GROUP}\"';"i"))'; then
-    echo "FAIL: ${GROUP} group has not been created"
+# Check hosts are in $INVENTORY
+for host in "${HOSTS[@]}"; do
+  if ! $CMD --tags=awx-token,check-hosts-inv -e lab_host=${host} -e lab_inventory_name=${INVENTORY} -vv; then
+     echo "FAIL: ${host} missing from ${INVENTORY}.' Remember it's case-sensititve! Please try again."
+     exit 1
+  fi
+done
+
+# Check $GROUP exists
+if ! $CMD --tags=awx-token,check-group -e lab_inv_group_name=${GROUP} -e lab_inventory_name=${INVENTORY} -vv; then
+    echo "FAIL: ${GROUP} group is missing,, or you have a duplcate ${GROUP} group in another inventory."
+    echo "Remember it's case-sensititve! Please try again."
     exit 1
 fi
 
-#Hosts not in correct group
-for host in "${HOSTS[@]}"; do
-    if ! [[  `awx -k hosts list | jq -r '.results[] | select(.name | match('\"^${host}$\"';"i")) .summary_fields.groups.results[].name'` == "${GROUP}" ]]; then
-        echo "FAIL: Host ${host} is not in the ${GROUP} group"
-        exit 1
-   fi
-done
+# Check $GROUP is in $INVENTORY
+if ! $CMD --tags=awx-token,check-group-inv -e lab_inv_group_name=${GROUP} -e lab_inventory_name=${INVENTORY} -vv; then
+    echo "FAIL: ${GROUP} group is missing from ${INVENTORY} Please try again"
+    echo "Remember it's case-sensititve! Please try again."
+    exit 1
+fi
