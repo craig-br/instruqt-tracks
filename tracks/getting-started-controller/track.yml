@@ -105,9 +105,13 @@ challenges:
   assignment: |-
     ## Create the following in the controller dashboard:
 
-    *Login credentials:*
-    User: admin
+    *Login credentials:*<p>
+    User: admin <p>
     Password: ansible123!
+
+    > **Note:**<p>
+    >
+    > All the fields are **case-sensitive** and the check will fail! Please maske sure you use the same capitalization as used in the assignments.
 
     Besides the automation controller instance, your sandbox environment also contains two virtual machines: `host01` and `host02`.
 
@@ -216,4 +220,4 @@ challenges:
     port: 443
   difficulty: basic
   timelimit: 900
-checksum: "18428275892424395702"
+checksum: "13707473133560898577"
