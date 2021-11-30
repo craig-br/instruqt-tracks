@@ -174,7 +174,7 @@
     
     # - name: Add the lab project
     #   awx.awx.project:
-    #     name: "{{lab_project_name }}"
+    #     name: "{{ lab_project_name }}"
     #     scm_type: git
     #     scm_url: "https://github.com/ansible/product-demos"
     #     organization: "Default"

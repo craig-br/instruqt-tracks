@@ -169,7 +169,7 @@ challenges:
     path: /editor/
     port: 443
   difficulty: basic
-  timelimit: 900
+  timelimit: 600
 - slug: controller-getting-started-jt
   id: l7shwh9na7oh
   type: challenge
@@ -219,5 +219,5 @@ challenges:
     path: /editor/
     port: 443
   difficulty: basic
-  timelimit: 900
-checksum: "11922046755379822843"
+  timelimit: 600
+checksum: "7312233449348682419"
