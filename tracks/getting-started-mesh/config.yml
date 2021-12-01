@@ -1,0 +1,14 @@
+version: "2"
+virtualmachines:
+- name: controller21
+  image: red-hat-mbu/controller21
+  shell: /bin/su - rhel -s /bin/bash
+  environment:
+    TERM: XTERM
+  machine_type: n1-standard-1
+- name: mesh-exec1
+  image: red-hat-mbu/mesh-node
+  shell: /bin/su - rhel -s /bin/bash
+  environment:
+    TERM: XTERM
+  machine_type: n1-standard-2
