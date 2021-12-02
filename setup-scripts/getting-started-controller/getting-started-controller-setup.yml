@@ -11,7 +11,7 @@
     username: admin
     admin_password: ansible123!
     lab_credential_name: "Lab Machine Credential"
-    lab_project_name: "Lab playbooks"
+    lab_project_name: "Lab Project"
     lab_jt_name: "Debug-Info"
     lab_inventory_name: "Lab-Inventory"
     lab_organization: "Default"
@@ -172,22 +172,22 @@
         - setup-getting-started-controller-workflows
     # added to controller image build
     
-    # - name: Add the lab project
-    #   awx.awx.project:
-    #     name: "{{ lab_project_name }}"
-    #     scm_type: git
-    #     scm_url: "https://github.com/ansible/product-demos"
-    #     organization: "Default"
-    #     scm_update_on_launch: false
-    #     scm_update_cache_timeout: 60
-    #     default_environment: "Default execution environment"
-    #     controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-    #     validate_certs: false
-    #   tags:
-    #     - solve-jt
-    #     - setup-jt
-    #     - setup-dyn-inv
-    #     - setup-getting-started-controller-workflows
+    - name: Add the lab project
+      awx.awx.project:
+        name: "{{ lab_project_name }}"
+        scm_type: git
+        scm_url: "https://github.com/ansible/product-demos"
+        organization: "Default"
+        scm_update_on_launch: false
+        scm_update_cache_timeout: 60
+        default_environment: "Default execution environment"
+        controller_config_file: "{{ playbook_dir }}/../controller.cfg"
+        validate_certs: false
+      tags:
+        - solve-jt
+        - setup-jt
+        - setup-dyn-inv
+        - setup-getting-started-controller-workflows
 
     - name: Create the lab job template
       awx.awx.job_template:
