@@ -1,7 +1,7 @@
 version: "2"
 virtualmachines:
 - name: controller
-  image: red-hat-mbu/craig-test-controller1
+  image: red-hat-mbu/automation-controller
   shell: /bin/su - rhel -s /bin/bash
   environment:
     TERM: xterm
