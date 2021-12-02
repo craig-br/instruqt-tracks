@@ -25,92 +25,104 @@
     - getting-started-controller
 
   tasks:
-    - name: Ensure tower/controller is online and working
-      uri:
-        url: https://localhost/api/v2/ping/
-        method: GET
-        user: "{{ username }}"
-        password: "{{ admin_password }}"
-        validate_certs: false
-        force_basic_auth: true
-      register: controller_online
-      until: controller_online is success
+    - name: Create oauth token
+      awx.awx.token:
+        description: 'Instruqt lab'
+        scope: "write"
+        state: present
+        controller_username: "{{ username }}"
+        controller_password: "{{ admin_password }}"
+      register: auth_token
+      until: auth_token is not failed
       delay: 3
       retries: 5
-      tags:
-        - setup-env
-   # Create awx login token and custom fact
-    - name: get awx token and restart automation-controller if it fails
-      block:
-        - name: Gather facts
-          setup:
-          tags:
-            - awx-token
-        - name: login awx token
-          shell: >
-            awx --conf.username admin --conf.password "ansible123!" -k login | jq -r '.token'
-          register: awx_token
-          until: awx_token is success
-          retries: 6
-          delay: 3
-          failed_when: awx_token.rc > 0
+
+  #   - name: Ensure tower/controller is online and working
+  #     uri:
+  #       url: https://localhost/api/v2/ping/
+  #       method: GET
+  #       user: "{{ username }}"
+  #       password: "{{ admin_password }}"
+  #       validate_certs: false
+  #       force_basic_auth: true
+  #     register: controller_online
+  #     until: controller_online is success
+  #     delay: 3
+  #     retries: 5
+  #     tags:
+  #       - setup-env
+  #  # Create awx login token and custom fact
+  #   - name: get awx token and restart automation-controller if it fails
+  #     block:
+  #       - name: Gather facts
+  #         setup:
+  #         tags:
+  #           - awx-token
+  #       - name: login awx token
+  #         shell: >
+  #           awx --conf.username admin --conf.password "ansible123!" -k login | jq -r '.token'
+  #         register: awx_token
+  #         until: awx_token is success
+  #         retries: 6
+  #         delay: 3
+  #         failed_when: awx_token.rc > 0
         
-      rescue:
-        - name: In rescue block for awx token
-          debug:
-            msg: "failed to get awx token. Restarting automation controller service"
+  #     rescue:
+  #       - name: In rescue block for awx token
+  #         debug:
+  #           msg: "failed to get awx token. Restarting automation controller service"
 
-        - name: restart the controller service
-          ansible.builtin.service:
-            name: automation-controller
-            state: restarted
+  #       - name: restart the controller service
+  #         ansible.builtin.service:
+  #           name: automation-controller
+  #           state: restarted
 
-        - name: Ensure tower/controller is online and working
-          uri:
-            url: https://localhost/api/v2/ping/
-            method: GET
-            user: "{{ username }}"
-            password: "{{ admin_password }}"
-            validate_certs: false
-            force_basic_auth: true
-          register: controller_online
-          until: controller_online is success
-          delay: 3
-          retries: 5
+  #       - name: Ensure tower/controller is online and working
+  #         uri:
+  #           url: https://localhost/api/v2/ping/
+  #           method: GET
+  #           user: "{{ username }}"
+  #           password: "{{ admin_password }}"
+  #           validate_certs: false
+  #           force_basic_auth: true
+  #         register: controller_online
+  #         until: controller_online is success
+  #         delay: 3
+  #         retries: 5
 
-        - name: Retry getting awx token
-          shell: >
-            awx --conf.username admin --conf.password "ansible123!" -k login | jq -r '.token'
-          register: awx_token
-          until: awx_token is not failed
-          retries: 6
-          delay: 3
+  #       - name: Retry getting awx token
+  #         shell: >
+  #           awx --conf.username admin --conf.password "ansible123!" -k login | jq -r '.token'
+  #         register: awx_token
+  #         until: awx_token is not failed
+  #         retries: 6
+  #         delay: 3
 
-      always:
-        - name: Create fact.d dir
-          file:
-            path: "{{ custom_facts_dir }}"
-            state: directory
-            recurse: yes
+  #     always:
+  #       - name: Create fact.d dir
+  #         file:
+  #           path: "{{ custom_facts_dir }}"
+  #           state: directory
+  #           recurse: yes
         
-        - name: Create awx-token custom fact
-          copy:
-            content: |
-              [localfacts]
-              _awx_token = "{{ awx_token.stdout }}"
-            dest: "{{ custom_facts_dir }}/{{ custom_facts_file }}"
+  #       - name: Create awx-token custom fact
+  #         copy:
+  #           content: |
+  #             [localfacts]
+  #             _awx_token = "{{ awx_token.stdout }}"
+  #           dest: "{{ custom_facts_dir }}/{{ custom_facts_file }}"
 
-        - name: Refresh facts
-          setup:
-      when: ansible_local.custom_facts.localfacts._awx_token is undefined or  ansible_local.custom_facts.localfacts._awx_token | count == 0
-      tags:
-        - setup-env
+  #       - name: Refresh facts
+  #         setup:
+  #     when: ansible_local.custom_facts.localfacts._awx_token is undefined or  ansible_local.custom_facts.localfacts._awx_token | count == 0
+  #     tags:
+  #       - setup-env
   
-    - name: debug custom fact
-      debug:
-        var: ansible_local.custom_facts.localfacts._awx_token 
-      tags:
-        - awx-token
+  #   - name: debug custom fact
+  #     debug:
+  #       var: ansible_local.custom_facts.localfacts._awx_token 
+  #     tags:
+  #       - awx-token
 
   #   - name: Add the {{ lab_inventory_name }} Inventory
   #     awx.awx.inventory:
