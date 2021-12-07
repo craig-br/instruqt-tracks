@@ -22,8 +22,8 @@
     custom_facts_file: custom_facts.fact
   
   tags:
-    - getting-started-controller
-
+    - getting-started-mesh
+    
   tasks:
     - name: Create oauth token
       awx.awx.token:
