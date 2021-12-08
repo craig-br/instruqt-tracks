@@ -1,21 +1,34 @@
-slug: getting-started-mesh
-id: tx3tbmkqqsof
+slug: mesh-test
+id: akkabmifu15z
 type: track
-title: TEST Getting started with automation mesh
-teaser: In this track, we'll explore the automation mesh and explore a few basic tasks
+title: mesh-test
+teaser: In this track, you'll learn about automation mesh features, perform basic
+  configuration tasks and use it to run a job template
 description: |
-  <img src="https://github.com/ansible/instruqt/blob/devel/assets/logos/Logo-Red_Hat-Ansible_Automation_Platform-A-Standard-RGB.png?raw=true" alt="drawing" style=";width:400px"/>
+  <img src="https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/logos/Logo-Red_Hat-Ansible_Automation_Platform-A-Standard-RGB.png" alt="drawing" style=";width:400px"/>
   <br>
 
-  # Automation mesh TEST environment
+  # Red Hat Ansible automation mesh
+  ***
 
-  WIP in progress
-icon: https://github.com/ansible/instruqt/blob/devel/assets/icons/automation_controller.png?raw=true
+  <br>
+
+  The [**automation mesh**](https://www.ansible.com/blog/whats-new-in-ansible-automation-platform-2.1-automation-mesh) component of Ansible Automation Platform is a multi-directional, multi-hopped overlay network of nodes delivering automation across constrained networks, such as DMZs and VPCs, to local and remote endpoints across the globe.
+
+  Automation mesh introduces new features that remove dependencies on ancillary tools such as jump hosts and SSH proxies by localizing automation with a security-first approach.
+  <br>
+
+  This lab covers:
+
+  * Automation mesh node types and features
+  * How to use automation controller logically group execution capacity
+  * Using automation mesh in multi-site environments
+  * Building redundancy into your automation mesh design
+icon: https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/icons/automation_mesh.png
 level: beginner
 tags:
-- RedHat
-- Ansible
-- Ansible Automation Platform
+- ansible
+- ' ansible automation platform'
 - ' mesh'
 - ' automation mesh'
 owner: redhat
@@ -26,59 +39,178 @@ published: false
 maintenance: true
 show_timer: true
 challenges:
-- slug: dashboard
-  id: bp991krxyw9x
+- slug: overview
+  id: 2y22esvrwfyd
   type: challenge
-  title: Controller Dashboard
-  teaser: Take a first look at the automation controller dashboard
+  title: Automation mesh overview
+  teaser: In this challenge, we'll explore automation mesh concepts
   notes:
   - type: text
-    contents: "# Automation controller web interface\n<br>\n<p align=\"center\">\n
-      \ <img width=\"700px\" src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/controller/controller_dashboard.png\">\n</p>\n<br>\n\n**Automation
-      controller's** web interface Interface offers a friendly graphical framework
-      for your IT orchestration needs.\n\n<style type=\"text/css\" rel=\"stylesheet\">\nh1
-      {\n\ttext-align: center\n\t}\n</style>"
+    contents: "# Challenge summary\n<br>\n\n<p align=\"center\">\n  <img width=\"500px\"
+      src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_high_level.png\">\n</p>\n<br>\n\nIn
+      this challenge, we'll cover the different automation mesh node types and instance
+      groups created during the Ansible Automation Platform installation.\n\n<style
+      type=\"text/css\" rel=\"stylesheet\">\nh1 {\n\ttext-align: center\n\t}\n</style>"
   - type: text
-    contents: "# Distinct edit and view perspectives\n<br>\n<p align=\"center\">\n
-      \ <img width=\"700px\" src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/controller/controller_jt.png\">\n</p>\n<br>\n\n**Automation
-      controller's** interface provides distinct ‘view’ and ‘edit’ perspectives for
-      automation controller objects and components.\n\n<style type=\"text/css\" rel=\"stylesheet\">\nh1
-      {\n\ttext-align: center\n\t}\n</style>"
+    contents: "# Automation mesh\n<br>\n<p align=\"center\">\n  <img width=\"700px\"
+      src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_instances_view.png\">\n</p>\n<br>\n\n**Automation
+      mesh** is an overlay network intended to ease the distribution of work across
+      a large and dispersed collection of workers. Mesh nodes establish peer-to-peer
+      connections with each other across your existing networks.\n\nAutomation mesh
+      enables independent scaling of control and execution capacity for local and
+      remote automation workloads with little or no downtime.\n\n<style type=\"text/css\"
+      rel=\"stylesheet\">\nh1 {\n\ttext-align: center\n\t}\n</style>"
   - type: text
-    contents: "# Web interface filters\n<br>\n<p align=\"center\">\n    <img width=\"700px\"
-      src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/controller/controller_filters.png\">\n\n</p>\n<br>\n\n**Automation
-      controller** provides intuitive filters that automators can use to display concise
-      information relevant to the task at hand.\n\n<style type=\"text/css\" rel=\"stylesheet\">\nh1
-      {\n\ttext-align: center\n\t}\n</style>"
+    contents: "# Automation mesh worker node types\n<br>\n<p align=\"center\">\n  <img
+      width=\"700px\" src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_default_igs.png\">\n</p>\n<br>\n\n**Automation
+      mesh** enables independent scaling of *control plane* and *execution plane*
+      capacity and is configured during the Ansible Automation Platform installation.
+      It allows you to create worker node types and allocate the capacity to control
+      tasks (e.g. RBAC, auditing ), and execution tasks ( running your playbooks ).\n\n\n**Automation
+      mesh** worker nodes are logically grouped using [*automation controller instance
+      groups*](https://docs.ansible.com/automation-controller/latest/html/userguide/instance_groups.html).\n\n\n<style
+      type=\"text/css\" rel=\"stylesheet\">\nh1 {\n\ttext-align: center\n\t}\n</style>"
   assignment: |-
-    Welcome to the automation controller dashboard. The screen on the left shows the login screen. You can log in with the following credentials:
+    *Login credentials:*<p>
+    User: admin <p>
+    Password: ansible123!
 
-    * Username: `admin`
-    * Password: `ansible123!`
+    > **Note**
+    > All tasks are performed in the automation controller dashboard
+    >
 
     ## Your assignment
 
-    * Log into automation controller dashboard, using the credentials above.
-    * Take a look around, and get familiar with the environment.
 
-    When you are done, press the "Check" button below to go to the next challenge.
+    * On the side navigation under the **Administration** section, click on **Instance Groups**
+    * Click on the `default`instance group
+    * Click on the `Instances` tab on the top
+
+    ![default_ig](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_default_ig_instances.png)
+
+
+    * The **`default` instance group** is the default location for all mesh worker nodes and is always present in automation controller. It's used to execute *Job Templates* if no instance group is specified in their configuration.
+
+    * Click on the `mesh-exec1` instance and have a look at the `Node Type`. `mesh-exec1` is configured as an **execution node**.
+      * **Execution nodes** replace isolated nodes used in Ansible Tower and fulfills the same functions. This node is dedicated to run **Job Templates** and does not execute any controller runtime functions.
+
+    ![mesh-exec1](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_mesh-exec1.png)
+
+    * Click on **Instance Groups** under the **Administration** section to return to the main instance group window
+    * Click on the `controlplane` instance group.
+    * Click on the `Instances` tab on the top
+
+    ![controlplane](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_controlplane_ig_instances.png)
+
+    * The **`controlplane` instance group** is the preselected instance group for all mesh worker nodes that run control plane tasks.
+
+    * Click on the `automation-controller21` instance and have a look at the `Node Type`. `automation-controller21` is configured as a **hybrid** node.
+      * **Hybrid nodes** can run automation controller runtime functions, like project updates and management jobs, and run automation jobs.
+
+    * The `controlplane` instance group also contains another node type, called **Control nodes**. **Control nodes** are dedictaed to running control plance tasks and does not execute any automation jobs.
+
+    ![automation-controller21](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_automation-controller21.png)
+
+    * When you are done, press the `Check` button below to go to the next challenge.
   tabs:
-  - title: controller-ui
+  - title: Controller UI
     type: service
     hostname: automation-controller21
     port: 443
-  - title: controller-cli
-    type: terminal
+  difficulty: basic
+  timelimit: 900
+- slug: mesh-instance-groups
+  id: j5xbmsjakj6r
+  type: challenge
+  title: Automation mesh and instance groups
+  teaser: In this challenge, we'll create new instance groups and allocate mesh worker
+    nodes
+  notes:
+  - type: text
+    contents: "# Challenge summary\n<br>\n\n<p align=\"center\">\n  <img width=\"500px\"
+      src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_map_jhb.png\">\n</p>\n<br>\n\nACME
+      Corp is a global company based in Raleigh, United States, with remote locations
+      across the globe. One of these remote locations is Johannesburg, South Africa.\n\nIn
+      this challenge, we'll create **instance groups** for the Raleigh and Johannesburg
+      data centers and allocate automation mesh worker nodes to them.\n\n\n<style
+      type=\"text/css\" rel=\"stylesheet\">\nh1 {\n\ttext-align: center\n\t}\n</style>"
+  - type: text
+    contents: "# Automation mesh and instance groups\n<br>\n<p align=\"center\">\n
+      \ <img width=\"600px\" src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_jhb_ig.png\">\n</p>\n<br>\n\n[**Instance
+      groups**](https://docs.ansible.com/automation-controller/latest/html/administration/containers_instance_groups.html)logically
+      groups execution capacity and provides control on where a automation job runs.\n\nAutomation
+      mesh worker nodes are assigned to **instance groups** during installation or
+      via automation controller.\n\n<style type=\"text/css\" rel=\"stylesheet\">\nh1
+      {\n\ttext-align: center\n\t}\n</style>"
+  assignment: |
+    *Controller login credentials:*<p>
+    *User*: admin <p>
+    *Password*: ansible123!
+
+    > **Note**<p>
+    >
+    > All tasks are performed in the automation controller dashboard.<p>
+    > All the fields are **case-sensitive** and the check will fail! Please ensure you use the same capitalization as used in the assignments.
+
+    ## Your assignment
+
+    Automation controller is deployed in the Raleigh data center and we want to run our automation jobs locally using the **automation-controller21 hybrid node**.
+    <br>
+
+    **Create a new instance group for Raleigh data center**
+
+    * On the side navigation under the **Administration** section, click on **Instance Groups**
+    * Click on the **Add** and select **Add instance group**
+    * Create a new instance group and name it `Raleigh data center`.
+    * Click on **Save**
+
+    ![raleigh_ig](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_raleigh_ig_create.png)
+    <br>
+
+    **Associate the `automation-controller21` instance with the **Raleigh data center** instance group**
+    * Click on **Instances** on the top menu.
+    * Click on **Associate**
+    * Select the `automation-controller21` instance and click on **Save**
+
+    ![raileigh_associate](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_raleigh_associate_instance.png)
+    <br>
+
+    We also need to run automation jobs in Johannesburg, South Africa. To do this, we'll create a new instance group and associate the **mesh-exec1 execution node** which is deployed in the data center.
+    <br>
+
+    **Create a new instance group for Johannesburg data center**
+
+    * On the side navigation under the **Administration** section, click on **Instance Groups**
+    * Click on the **Add** and select **Add instance group**
+    * Create a new instance group and name it `Johannesburg data center`.
+    * Click on **Save**
+
+    ![raleigh_ig](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_jhb_ig_create.png)
+    <br>
+
+    **Associate the `mesh-exec1` instance with the **Johannesburg data center** instance group**
+    * Click on **Instances** on the top menu.
+    * Click on **Associate**
+    * Select the `mesh-exec1` instance and click on **Save**
+
+    ![jhb_associate](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_jhb_associate_instance.png)
+    <br>
+
+    * When you are done, press the `Check` button below to go to the next challenge.
+  tabs:
+  - title: Controller UI
+    type: service
     hostname: automation-controller21
-  - title: exec1-cli
-    type: terminal
-    hostname: mesh-exec1
+    port: 443
   - title: editor
     type: service
     hostname: automation-controller21
     path: /editor/
     port: 443
     new_window: true
+  - title: cli
+    type: terminal
+    hostname: automation-controller21
   difficulty: basic
   timelimit: 9000
-checksum: "13335997104706897014"
+checksum: "14826090825091807475"

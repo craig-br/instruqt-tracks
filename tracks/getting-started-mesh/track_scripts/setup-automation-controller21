@@ -13,9 +13,13 @@ chown -R rhel:rhel /home/rhel/.ssh
 #Switch to correct Python version
 /usr/sbin/alternatives --set python3 /usr/bin/python3.8
 
-# Get playbook from repo
-mkdir /tmp/setup-scripts/getting-started-mesh
-/usr/bin/curl https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml -o /tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml
+# Clear history
+/bin/su - rhel -c "cat /dev/null > ~/.bash_history; history -c"
+
+# Get instruqt lab content
+##mkdir /tmp/setup-scripts/getting-started-mesh
+#/usr/bin/curl https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml -o /tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml
+/usr/bin/svn export https://github.com/craig-br/instruqt-track-content/trunk/setup-scripts/getting-started-mesh /tmp/setup-scripts/getting-started-mesh --force
 
 # Use playbook to setup environment
 /bin/ansible-playbook /tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml --tags setup-env

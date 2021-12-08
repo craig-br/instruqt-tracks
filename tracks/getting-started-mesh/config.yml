@@ -1,13 +1,13 @@
 version: "2"
 virtualmachines:
-- name: automation-controller21
-  image: red-hat-mbu/automation-controller21-instruqt
-  shell: /bin/su - rhel -s /bin/bash
-  machine_type: n1-standard-4
 - name: mesh-exec1
   image: red-hat-mbu/mesh-exec1-instruqt
   shell: /bin/su - rhel -s /bin/bash
-  machine_type: n1-standard-4
+  machine_type: n1-standard-2
+- name: automation-controller21
+  image: red-hat-mbu/automation-controller21-instruqt
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: n1-standard-2
 - name: mesh-hop1
   image: red-hat-mbu/mesh-hop1-instruqt
   shell: /bin/su - rhel -s /bin/bash
