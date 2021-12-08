@@ -62,7 +62,23 @@ challenges:
     * Take a look around, and get familiar with the environment.
 
     When you are done, press the "Check" button below to go to the next challenge.
+  tabs:
+  - title: controller-ui
+    type: service
+    hostname: automation-controller21
+    port: 443
+  - title: controller-cli
+    type: terminal
+    hostname: automation-controller21
+  - title: exec1-cli
+    type: terminal
+    hostname: mesh-exec1
+  - title: editor
+    type: service
+    hostname: automation-controller21
+    path: /editor/
+    port: 443
+    new_window: true
   difficulty: basic
   timelimit: 9000
-checksum: "14580614310365584666"
-
+checksum: "13335997104706897014"
