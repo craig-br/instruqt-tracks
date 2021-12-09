@@ -1,0 +1,33 @@
+---
+# Lab extra vars
+username: admin
+admin_password: ansible123!
+lab_credential_name: "Lab Machine Credential"
+lab_jt_name: "Debug Info"
+lab_project_name: "Lab Project"
+lab_inventories:
+  - name: "Raleigh DC"
+    description: "Raleigh data center. United States"
+  - name: "Johannesburg DC"
+    description: "Johannesburg data center. South Africa"
+lab_hosts:
+  - lab_host_name: "1.johannesburg.example.com"
+    lab_host_inventory: "Johannesburg DC"
+    lab_host_vars:
+      ansible_host: mesh-exec1 
+      ansible_python_interpreter: /usr/bin/python3
+  - lab_host_name: "1.raleigh.example.com"
+    lab_host_inventory: "Raleigh DC"
+    lab_host_vars:
+      ansible_host: automation-controller21
+      ansible_python_interpreter: /usr/bin/python3
+lab_instance_groups:
+  - lab_instance_group_name: Raleigh data center
+    lab_instance_group_hosts:
+      - automation-controller21
+  - lab_instance_group_name: Johannesburg data center
+    lab_instance_group_hosts:
+      - mesh-exec1
+
+lab_organization: "Default"
+lab_inv_group_name: "web"
