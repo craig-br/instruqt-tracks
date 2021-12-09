@@ -107,7 +107,7 @@ challenges:
     * Click on the `automation-controller21` instance and have a look at the `Node Type`. `automation-controller21` is configured as a **hybrid** node.
       * **Hybrid nodes** can run automation controller runtime functions, like project updates and management jobs, and run automation jobs.
 
-    * The `controlplane` instance group also contains another node type, called **Control nodes**. **Control nodes** are dedictaed to running control plance tasks and does not execute any automation jobs.
+    * The `controlplane` instance group also contains another node type, called **Control nodes**. **Control nodes** are dedicated to running control plane tasks and does not execute any automation jobs.
 
     ![automation-controller21](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_automation-controller21.png)
 
@@ -124,7 +124,7 @@ challenges:
   type: challenge
   title: Automation mesh and instance groups
   teaser: In this challenge, we'll create new instance groups and allocate mesh worker
-    nodes
+    nodes for local and remote execution
   notes:
   - type: text
     contents: "# Challenge summary\n<br>\n\n<p align=\"center\">\n  <img width=\"500px\"
@@ -137,13 +137,20 @@ challenges:
   - type: text
     contents: "# Automation mesh and instance groups\n<br>\n<p align=\"center\">\n
       \ <img width=\"600px\" src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_jhb_ig.png\">\n</p>\n<br>\n\n[**Instance
-      groups**](https://docs.ansible.com/automation-controller/latest/html/administration/containers_instance_groups.html)logically
-      groups execution capacity and provides control on where a automation job runs.\n\nAutomation
-      mesh worker nodes are assigned to **instance groups** during installation or
-      via automation controller.\n\n<style type=\"text/css\" rel=\"stylesheet\">\nh1
-      {\n\ttext-align: center\n\t}\n</style>"
+      groups**](https://docs.ansible.com/automation-controller/latest/html/administration/containers_instance_groups.html)
+      logically arranges execution capacity and provides control on where an automation
+      job runs.\n\nAutomation mesh worker nodes are assigned to **instance groups**
+      during installation or via automation controller.\n\n<style type=\"text/css\"
+      rel=\"stylesheet\">\nh1 {\n\ttext-align: center\n\t}\n</style>"
+  - type: text
+    contents: "# Mesh node health checks\n<br>\n<p align=\"center\">\n  <img width=\"600px\"
+      src=\"https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_node_health_check.png\">\n</p>\n<br>\n\nAutomation
+      mesh performs capacity health checks on worker nodes based on CPU, memory and
+      other metrics.\n\nMesh uses these metrics to dynamically calculate the optimal
+      route and node to execute automation jobs, based on your configuration.\n\n<style
+      type=\"text/css\" rel=\"stylesheet\">\nh1 {\n\ttext-align: center\n\t}\n</style>"
   assignment: |
-    *Controller login credentials:*<p>
+    **Controller login credentials:**<p>
     *User*: admin <p>
     *Password*: ansible123!
 
@@ -172,7 +179,7 @@ challenges:
     * Click on **Associate**
     * Select the `automation-controller21` instance and click on **Save**
 
-    ![raileigh_associate](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_raleigh_associate_instance.png)
+    ![raleigh_associate](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_raleigh_associate_instance.png)
     <br>
 
     We also need to run automation jobs in Johannesburg, South Africa. To do this, we'll create a new instance group and associate the **mesh-exec1 execution node** which is deployed in the data center.
@@ -196,6 +203,19 @@ challenges:
     ![jhb_associate](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh/mesh_jhb_associate_instance.png)
     <br>
 
+    Automation mesh performs health checks on worker nodes to determine the optimal route and automation job allocation. Let's run a health check on `mesh-exec1` in Johannesburg.
+
+    **Worker node health checks**
+
+    * On the side navigation under the **Administration** section, click on **Instance Groups**
+    * Click on the `Johannesburg data center` instance group
+    * Click on **Instances** on the top menu.
+    * Select `mesh-exec1` by clicking on the checkbox next it
+    * Click on **Save**
+
+    ![mesh-exec1_health](https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/mesh mesh_health_check_mesh-exec1.png)
+    <br>
+
     * When you are done, press the `Check` button below to go to the next challenge.
   tabs:
   - title: Controller UI
@@ -213,4 +233,4 @@ challenges:
     hostname: automation-controller21
   difficulty: basic
   timelimit: 9000
-checksum: "14826090825091807475"
+checksum: "15255553661990657023"
