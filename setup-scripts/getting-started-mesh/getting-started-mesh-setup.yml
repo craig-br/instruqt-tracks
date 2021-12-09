@@ -1,10 +1,16 @@
 ---
 ##
 # https://play.instruqt.com/redhat/tracks/getting-started-mesh/
+#
+# Tags:
+# setup-env - Setup controller env for lab
+# auth-token - create conrtoller auth-token
+# <chellenge-slug>-check - check challenge 
+# <chellenge-slug>-solve - solve challenge 
 ##
 - name: Instruqt config getting started with controller
   hosts: localhost
-  gather_facts: false
+  gather_facts: true
   become: true
 
   vars:
@@ -31,6 +37,14 @@
         lab_host_vars:
           ansible_host: automation-controller21
           ansible_python_interpreter: /usr/bin/python3
+    lab_instance_groups:
+      - lab_instance_group_name: Raleigh data center
+        lab_instance_group_hosts:
+          - automation-controller21
+      - lab_instance_group_name: Johannesburg data center
+        lab_instance_group_hosts:
+          - mesh-exec1
+
     lab_organization: "Default"
     lab_inv_group_name: "web"
     custom_facts_dir: "/etc/ansible/facts.d"
@@ -55,28 +69,29 @@
       tags:
         - setup-env
 
-   # Create auth login token and custom fact
+   # Create auth login token
     - name: get auth token and restart automation-controller if it fails
       block:
-      - name: Create oauth token
-        awx.awx.token:
-          description: 'Instruqt lab'
-          scope: "write"
-          state: present
-          # controller_username: "{{ username }}"
-          # controller_password: "{{ admin_password }}"
-          controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-          # validate_certs: false
-        register: _auth_token
-        until: _auth_token is not failed
-        delay: 3
-        retries: 5
-        tags:
-          - setup-env
+        - name: Refresh facts
+          setup:
+
+        - name: Create oauth token
+          awx.awx.token:
+            description: 'Instruqt lab'
+            scope: "write"
+            state: present
+            # controller_username: "{{ username }}"
+            # controller_password: "{{ admin_password }}"
+            controller_config_file: "{{ playbook_dir }}/../controller.cfg"
+            # validate_certs: false
+          register: _auth_token
+          until: _auth_token is not failed
+          delay: 3
+          retries: 5
       rescue:
-        - name: In rescue block for awx token
+        - name: In rescue block for auth token
           debug:
-            msg: "failed to get awx token. Restarting automation controller service"
+            msg: "failed to get auth token. Restarting automation controller service"
 
         - name: restart the controller service
           ansible.builtin.service:
@@ -107,14 +122,31 @@
           until: _auth_token is not failed
           delay: 3
           retries: 5
+      always:
+        - name: Create fact.d dir
+          file:
+            path: "{{ custom_facts_dir }}"
+            state: directory
+            recurse: yes
+
+        - name: Create _auth_token custom fact
+          copy:
+            content: |
+              [localfacts]
+              _auth_token = "{{ _auth_token.ansible_facts.controller_token.token }}"
+            dest: "{{ custom_facts_dir }}/{{ custom_facts_file }}"
+
+        - name: create auth token fact
+          ansible.builtin.set_fact:
+            auth_token: "{{ _auth_token.ansible_facts.controller_token }}"
+
+        - name: Refresh facts
+          setup:
+      when: ansible_local.custom_facts.localfacts._auth_token is undefined
       tags:
-        - setup-env
-    
-    - name: create auth token fact
-      ansible.builtin.set_fact:
-        auth_token: "{{ _auth_token.ansible_facts.controller_token }}"
-      tags:
-        - setup-env
+        - auth-token
+  
+
 
     - name: Add lab inventories
       awx.awx.inventory:
@@ -204,6 +236,36 @@
       tags:
         - setup-env
         - lab-jt
+
+  # mesh-instance-groups
+    - name: Solve mesh-instance-groups
+      awx.awx.instance_group:
+        state: present
+        name: "{{ item.lab_instance_group_name }}"
+        instances: "{{ item.lab_instance_group_hosts }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      loop: "{{ lab_instance_groups }}"
+      tags:
+        - mesh-instance-groups-solve
+
+    - name: Check mesh-instance-groups
+      shell: >
+        awx --conf.token {{ ansible_local.custom_facts.localfacts._auth_token }} -k instance_group get '{{ lab_instance_group_name }}' -f yaml
+      register: _instance_groups_check
+      # loop: "{{ lab_instance_groups }}"
+      # failed_when: 
+      tags:
+        - mesh-instance-groups-check
+
+    - name: debug igs
+      debug:
+        var: _instance_groups_check
+      tags:
+        - mesh-instance-groups-check
+    # - name: Assert mesh-instance-groups
+    #   assert:
+    #     that: _instance_instance-groups-check
 
   #     tags:  
     # - name: add lab inventory sources
