@@ -101,7 +101,7 @@
             description: 'Instruqt lab'
             scope: "write"
             state: present
-          controller_config_file: "{{ playbook_dir }}/../controller.cfg"  
+            controller_config_file: "{{ playbook_dir }}/../controller.cfg"  
           validate_certs: false
           register: _auth_token
           until: _auth_token is not failed
