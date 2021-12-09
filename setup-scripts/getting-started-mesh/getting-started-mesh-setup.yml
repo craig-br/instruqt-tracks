@@ -101,10 +101,8 @@
             description: 'Instruqt lab'
             scope: "write"
             state: present
-            # controller_username: "{{ username }}"
-            # controller_password: "{{ admin_password }}"
-            controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-            # validate_certs: false
+          controller_oauthtoken: "{{ auth_token }}"
+          validate_certs: false
           register: _auth_token
           until: _auth_token is not failed
           delay: 3
@@ -124,7 +122,6 @@
         description: "{{ item.description }}"
         organization: "{{ lab_organization }}"
         state: present
-        # controller_config_file: "{{ playbook_dir }}/../controller.cfg"
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
       loop: "{{ lab_inventories }}"
@@ -184,7 +181,7 @@
         project: "{{ lab_project_name }}"
         credential: "{{ lab_credential_name }}"
         inventory: "Raleigh DC"
-        playbook: "setup-scripts/getting-started-mesh/playbooks/debug_info.yml"
+        playbook: "getting-started-mesh/playbooks/debug_info.yml"
         ask_inventory_on_launch: true
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
@@ -192,7 +189,7 @@
         - setup-env
         - lab-jt
 
-    - name: Create the Receptor traceroute job template
+    - name: Create the Mesh traceroute job template
       awx.awx.job_template:
         name: "Mesh traceroute"
         state: present
@@ -200,7 +197,7 @@
         project: "{{ lab_project_name }}"
         credential: "{{ lab_credential_name }}"
         inventory: "Raleigh DC"
-        playbook: "setup-scripts/getting-started-mesh/playbooks/mesh_traceroute.yml"
+        playbook: "getting-started-mesh/playbooks/mesh_traceroute.yml"
         extra_vars:
           receptor_target: "mesh-exec1"
         controller_oauthtoken: "{{ auth_token }}"
