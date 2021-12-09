@@ -185,10 +185,7 @@
         controller_config_file: "{{ playbook_dir }}/../controller.cfg"
         validate_certs: false
       tags:
-        - solve-jt
-        - setup-jt
-        - setup-dyn-inv
-        - setup-getting-started-controller-workflows
+        - setup-env
 
     - name: Create the lab job template
       awx.awx.job_template:
