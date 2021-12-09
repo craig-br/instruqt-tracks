@@ -122,8 +122,7 @@
         description: "{{ item.description }}"
         organization: "{{ lab_organization }}"
         state: present
-        controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_config_file: "{{ playbook_dir }}/../controller.cfg"
       loop: "{{ lab_inventories }}"
       tags:
         - setup-env
@@ -189,9 +188,9 @@
         - setup-env
         - lab-jt
 
-    - name: Create the Mesh traceroute job template
+    - name: Create the mesh traceroute job template
       awx.awx.job_template:
-        name: "Mesh traceroute"
+        name: "mesh traceroute"
         state: present
         become_enabled: true
         project: "{{ lab_project_name }}"
