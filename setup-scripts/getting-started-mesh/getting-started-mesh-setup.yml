@@ -98,22 +98,24 @@
 
         - name: Create _auth_token custom fact
           copy:
-            content: |
-              [localfacts]
-              _auth_token = "{{ _auth_token.ansible_facts.controller_token.token }}"
+            content: "{{ _auth_token.ansible_facts }}"
             dest: "{{ custom_facts_dir }}/{{ custom_facts_file }}"
 
-        - name: create auth token fact
-          ansible.builtin.set_fact:
-            auth_token: "{{ _auth_token.ansible_facts.controller_token }}"
+        # - name: create auth token fact
+        #   ansible.builtin.set_fact:
+        #     auth_token: "{{ _auth_token.ansible_facts.controller_token }}"
 
         - name: Refresh facts
           setup:
-      when: ansible_local.custom_facts.localfacts._auth_token is undefined
+      when: ansible_local.custom_facts.controller_token is undefined
       tags:
         - auth-token
   
-
+    - name: create auth token fact
+      ansible.builtin.set_fact:
+        auth_token: "{{ ansible_local.custom_facts.controller_token }}"
+      tags:
+        - auth-token
 
     - name: Add lab inventories
       awx.awx.inventory:
@@ -218,7 +220,7 @@
 
     - name: Check mesh-instance-groups
       shell: >
-        awx --conf.token {{ ansible_local.custom_facts.localfacts._auth_token }} -k instance_group get '{{ lab_instance_group_name }}'
+        awx --conf.token {{ auth_token }} -k instance_group get '{{ lab_instance_group_name }}'
       register: _instance_groups_check
       tags:
         - mesh-instance-groups-check
