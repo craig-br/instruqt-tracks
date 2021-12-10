@@ -220,7 +220,7 @@
 
     - name: Check mesh-instance-groups
       shell: >
-        awx --conf.token {{ auth_token }} -k instance_group get '{{ lab_instance_group_name }}'
+        awx --conf.token {{ auth_token.token }} -k instance_group get '{{ lab_instance_group_name }}'
       register: _instance_groups_check
       tags:
         - mesh-instance-groups-check
