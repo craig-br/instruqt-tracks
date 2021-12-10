@@ -204,7 +204,7 @@
         - setup-env
         - lab-jt
 
-  # mesh-instance-groups
+  # Check instance groups exist and correct instances assigned
     - name: Solve mesh-instance-groups
       awx.awx.instance_group:
         state: present
@@ -218,21 +218,17 @@
 
     - name: Check mesh-instance-groups
       shell: >
-        awx --conf.token {{ ansible_local.custom_facts.localfacts._auth_token }} -k instance_group get '{{ lab_instance_group_name }}' -f yaml
+        awx --conf.token {{ ansible_local.custom_facts.localfacts._auth_token }} -k instance_group get '{{ lab_instance_group_name }}'
       register: _instance_groups_check
-      # loop: "{{ lab_instance_groups }}"
-      # failed_when: 
       tags:
         - mesh-instance-groups-check
+        - mesh-instance-groups-instances-check
 
-    - name: debug igs
-      debug:
-        var: _instance_groups_check
+    - name: Assert instance is in the correct instance group
+      assert:
+        that: lab_instance_group_instance_name in _instance_groups_check.stdout
       tags:
-        - mesh-instance-groups-check
-    # - name: Assert mesh-instance-groups
-    #   assert:
-    #     that: _instance_instance-groups-check
+        - mesh-instance-groups-instances-check
 
   #     tags:  
     # - name: add lab inventory sources
