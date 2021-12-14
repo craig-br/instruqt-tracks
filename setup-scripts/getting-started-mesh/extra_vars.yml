@@ -20,8 +20,12 @@ lab_project_name: "Lab project"
 lab_inventories:
   - name: "Raleigh DC"
     description: "Raleigh data center. United States"
+    inv_instance_groups: 
+      "Raleigh data center"
   - name: "Johannesburg DC"
     description: "Johannesburg data center. South Africa"
+    inv_instance_groups: 
+      "Johannesburg data center"
 lab_hosts:
   - lab_host_name: "1.johannesburg.example.com"
     lab_host_inventory: "Johannesburg DC"

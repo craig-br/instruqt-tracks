@@ -192,7 +192,7 @@
         - setup-env
         - lab-jt
 
-  # Check instance groups exist and correct instances assigned
+  # Solve / check mesh-instance-groups
     - name: Solve mesh-instance-groups
       awx.awx.instance_group:
         state: present
@@ -218,7 +218,20 @@
       tags:
         - mesh-instance-groups-instances-check
 
-  #     tags:  
+  # Solve / check multi-site
+    - name: Solve multi-site
+      awx.awx.inventory:
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        organization: "{{ lab_organization }}"
+        state: present
+        instance_groups: "{{ item.inv_instance_groups }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      loop: "{{ lab_inventories }}"
+      tags:
+        - multi-site-solve
+
     # - name: add lab inventory sources
     #   awx.awx_inventory_source:
     #     name: "{{ item.name }} inventory source"
