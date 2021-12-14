@@ -172,36 +172,22 @@
         validate_certs: false
       tags:
         - setup-env
+        - lab-project
 
-    - name: Create the Debug Info job template
+    - name: Create the Debug info job template
       awx.awx.job_template:
-        name: "Debug Info"
+        name: "{{ item.jt_name }}"
         state: present
-        become_enabled: true
+        become_enabled: "{{ item.jt_become }}"
         project: "{{ lab_project_name }}"
         credential: "{{ lab_credential_name }}"
-        inventory: "Raleigh DC"
-        playbook: "getting-started-mesh/playbooks/debug_info.yml"
-        ask_inventory_on_launch: true
+        inventory: "{{  item.jt_inventory }}"
+        playbook: "{{ item.jt_playbook }}"
+        ask_inventory_on_launch: "{{  item.jt_prompt_inventory }}"
+        extra_vars: "{{ item.jt_extra_vars | default(omit) }}"
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
-      tags:
-        - setup-env
-        - lab-jt
-
-    - name: Create the mesh traceroute job template
-      awx.awx.job_template:
-        name: "mesh traceroute"
-        state: present
-        become_enabled: true
-        project: "{{ lab_project_name }}"
-        credential: "{{ lab_credential_name }}"
-        inventory: "Raleigh DC"
-        playbook: "getting-started-mesh/playbooks/mesh_traceroute.yml"
-        extra_vars:
-          receptor_target: "mesh-exec1"
-        controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+      loop: "{{ lab_job_templates }}"
       tags:
         - setup-env
         - lab-jt
