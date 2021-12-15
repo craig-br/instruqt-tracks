@@ -47,10 +47,7 @@
             description: 'Instruqt lab'
             scope: "write"
             state: present
-            # controller_username: "{{ username }}"
-            # controller_password: "{{ admin_password }}"
             controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-            # validate_certs: false
           register: _auth_token
           until: _auth_token is not failed
           delay: 3
@@ -181,6 +178,8 @@
         credential: "{{ lab_credential_name }}"
         inventory: "{{  item.jt_inventory }}"
         playbook: "{{ item.jt_playbook }}"
+        survey_enabled: "{{ item.survey_enabled }}"
+        survey_spec: "{{ item.survey_spec | default(omit) }}"
         ask_inventory_on_launch: "{{  item.jt_prompt_inventory }}"
         extra_vars: "{{ item.jt_extra_vars | default(omit) }}"
         controller_oauthtoken: "{{ auth_token }}"
@@ -235,9 +234,9 @@
       awx.awx.job_launch:
         name: "{{ item.jt_name }}"
         organization: "{{ lab_organization }}"
-        # state: present
         inventory: "{{ lab_us_inventory_name }}"
-        # instance_groups: "{{ item.inv_instance_groups }}"
+        survey_enabled: "{{ item.survey_enabled }}"
+        survey_spec: "{{ item.survey_spec | default('[]') }}"
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
         wait: true
@@ -250,9 +249,9 @@
       awx.awx.job_launch:
         name: "{{ item.jt_name }}"
         organization: "{{ lab_organization }}"
-        # state: present
+        survey_enabled: "{{ item.survey_enabled }}"
+        survey_spec: "{{ item.survey_spec | default('[]') }}"
         inventory: "{{ lab_jhb_inventory_name }}"
-        # instance_groups: "{{ item.inv_instance_groups }}"
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
         wait: true
@@ -270,18 +269,31 @@
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
       check_mode: true
-      register: _multi_site_check_inv_ig
-      failed_when: _multi_site_check_inv_ig["changed"] | bool
+      register: _multi_site_check_inv
+      failed_when: _multi_site_check_inv["changed"] | bool
       tags:
         - multi-site-check-inv-ig
         - multi-site-check
 
-    # - name: debug check vars
-    #   debug:
-    #     var: lab_inv_igs | list | join('')
-    #   tags:
-    #     - multi-site-check-inv-ig
-    #     - multi-site-check
+    - name: List running jobs for the testing.yml playbook
+      awx.awx.job_list:
+        status: successful
+        query: {"name": "{{ lab_jt_name }}"}
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      register: _multi_site_check_inv
+      tags:
+        - multi-site-check-inv-jt
+        - multi-site-check
+
+    - name: assert lab inventory in job list
+      assert:
+        that:
+          - lab_inv_name in _multi_site_check_inv.results | community.general.json_query('[].summary_fields.inventory.name')
+        fail_msg: "FAIL: {{ lab_inv_name }} not found in {{ lab_jt_name }}"
+      tags:
+        - multi-site-check-inv-jt
+        - multi-site-check
 
     # - name: add lab inventory sources
     #   awx.awx_inventory_source:

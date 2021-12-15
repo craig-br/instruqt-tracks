@@ -11,6 +11,7 @@ lab_job_templates:
     jt_prompt_inventory: true
     jt_inventory: "Raleigh DC"
     jt_become: false
+    survey_enabled: false
   - jt_name: "Mesh route info"
     jt_playbook: "getting-started-mesh/playbooks/mesh_traceroute.yml"
     jt_prompt_inventory: true
@@ -18,6 +19,7 @@ lab_job_templates:
       receptor_target: "mesh-exec1"
     jt_inventory: "Raleigh DC"
     jt_become: true
+    survey_enabled: false
 lab_project_name: "Lab project"
 lab_inventories:
   - name: "Raleigh DC"
