@@ -235,8 +235,6 @@
         name: "{{ item.jt_name }}"
         organization: "{{ lab_organization }}"
         inventory: "{{ lab_us_inventory_name }}"
-        survey_enabled: "{{ item.survey_enabled }}"
-        survey_spec: "{{ item.survey_spec | default('[]') }}"
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
         wait: true
@@ -249,8 +247,6 @@
       awx.awx.job_launch:
         name: "{{ item.jt_name }}"
         organization: "{{ lab_organization }}"
-        survey_enabled: "{{ item.survey_enabled }}"
-        survey_spec: "{{ item.survey_spec | default('[]') }}"
         inventory: "{{ lab_jhb_inventory_name }}"
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
