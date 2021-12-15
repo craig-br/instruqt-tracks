@@ -3,6 +3,8 @@
 username: admin
 admin_password: ansible123!
 lab_credential_name: "Lab Machine Credential"
+lab_us_inventory_name: "Raleigh DC"
+lab_jhb_inventory_name: "Johannesburg DC"
 lab_job_templates:
   - jt_name: "Debug info"
     jt_playbook: "getting-started-mesh/playbooks/debug_info.yml"
@@ -11,7 +13,7 @@ lab_job_templates:
     jt_become: false
   - jt_name: "Mesh route info"
     jt_playbook: "getting-started-mesh/playbooks/mesh_traceroute.yml"
-    jt_prompt_inventory: false
+    jt_prompt_inventory: true
     jt_extra_vars:
       receptor_target: "mesh-exec1"
     jt_inventory: "Raleigh DC"
@@ -21,11 +23,11 @@ lab_inventories:
   - name: "Raleigh DC"
     description: "Raleigh data center. United States"
     inv_instance_groups: 
-      "Raleigh data center"
+      - "Raleigh data center"
   - name: "Johannesburg DC"
     description: "Johannesburg data center. South Africa"
     inv_instance_groups: 
-      "Johannesburg data center"
+      - "Johannesburg data center"
 lab_hosts:
   - lab_host_name: "1.johannesburg.example.com"
     lab_host_inventory: "Johannesburg DC"

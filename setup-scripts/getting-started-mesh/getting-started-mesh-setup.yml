@@ -101,12 +101,9 @@
             content: "{{ _auth_token.ansible_facts }}"
             dest: "{{ custom_facts_dir }}/{{ custom_facts_file }}"
 
-        # - name: create auth token fact
-        #   ansible.builtin.set_fact:
-        #     auth_token: "{{ _auth_token.ansible_facts.controller_token }}"
-
         - name: Refresh facts
           setup:
+      check_mode: false
       when: ansible_local.custom_facts.controller_token is undefined
       tags:
         - auth-token
@@ -114,6 +111,7 @@
     - name: create auth token fact
       ansible.builtin.set_fact:
         auth_token: "{{ ansible_local.custom_facts.controller_token }}"
+      check_mode: false
       tags:
         - auth-token
 
@@ -174,7 +172,7 @@
         - setup-env
         - lab-project
 
-    - name: Create the Debug info job template
+    - name: Create job templates
       awx.awx.job_template:
         name: "{{ item.jt_name }}"
         state: present
@@ -219,7 +217,7 @@
         - mesh-instance-groups-instances-check
 
   # Solve / check multi-site
-    - name: Solve multi-site
+    - name: Solve multi-site instance groups and inventories
       awx.awx.inventory:
         name: "{{ item.name }}"
         description: "{{ item.description }}"
@@ -231,6 +229,59 @@
       loop: "{{ lab_inventories }}"
       tags:
         - multi-site-solve
+        - multi-site-solve-inv-ig
+
+    - name: Solve multi-site run job templates Raleigh inventory
+      awx.awx.job_launch:
+        name: "{{ item.jt_name }}"
+        organization: "{{ lab_organization }}"
+        # state: present
+        inventory: "{{ lab_us_inventory_name }}"
+        # instance_groups: "{{ item.inv_instance_groups }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+        wait: true
+      loop: "{{ lab_job_templates }}"
+      tags:
+        - multi-site-solve-jt
+        - multi-site-solve
+
+    - name: Solve multi-site run job templates JHB inventory
+      awx.awx.job_launch:
+        name: "{{ item.jt_name }}"
+        organization: "{{ lab_organization }}"
+        # state: present
+        inventory: "{{ lab_jhb_inventory_name }}"
+        # instance_groups: "{{ item.inv_instance_groups }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+        wait: true
+      loop: "{{ lab_job_templates }}"
+      tags:
+        - multi-site-solve-jt
+        - multi-site-solve
+
+    - name: Check multi-site inventory instance group assignment
+      awx.awx.inventory:
+        name: "{{ lab_inv_name }}"
+        organization: "{{ lab_organization }}"
+        state: present
+        instance_groups: "{{ lab_inv_igs }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      check_mode: true
+      register: _multi_site_check_inv_ig
+      failed_when: _multi_site_check_inv_ig["changed"] | bool
+      tags:
+        - multi-site-check-inv-ig
+        - multi-site-check
+
+    # - name: debug check vars
+    #   debug:
+    #     var: lab_inv_igs | list | join('')
+    #   tags:
+    #     - multi-site-check-inv-ig
+    #     - multi-site-check
 
     # - name: add lab inventory sources
     #   awx.awx_inventory_source:
