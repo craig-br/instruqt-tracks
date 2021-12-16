@@ -271,7 +271,7 @@
         - multi-site-check-inv-ig
         - multi-site-check
 
-    - name: List running jobs for the testing.yml playbook
+    - name: List job template run list
       awx.awx.job_list:
         status: successful
         query: {"name": "{{ lab_jt_name }}"}
