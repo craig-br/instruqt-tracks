@@ -291,203 +291,64 @@
         - multi-site-check-inv-jt
         - multi-site-check
 
-    # - name: add lab inventory sources
-    #   awx.awx_inventory_source:
-    #     name: "{{ item.name }} inventory source"
-    #     inventory: "{{ item.name }}"
-    #     organization: "{{ lab_organization }}"
-    #     overwrite: truw
-    #     overwrite_vars: true
-    #     source: scm
-    #     source_path: https://
+  # Setup / solve / check high-availability
+    - name: high-availability-setup remove mesh-exec1 stanza from receptor.conf
+      template:
+        src: "{{ playbook_dir }}/receptor.conf.j2"
+        dest: "/etc/receptor/receptor.conf"
+        validate: "/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock --tls-client tls_client --config %s reload"
+        backup: true
+      register: _receptor_conf
+      tags:
+        - high-availability-setup
+        - high-availability-setup-conf-file
 
-  #   - name: Add the {{ lab_inventory_name }} Inventory
-  #     awx.awx.inventory:
-  #       name: "{{ lab_inventory_name }}"
-  #       description: "Lab Inventory"
-  #       organization: "{{ lab_organization }}"
-  #       state: present
-  #       controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-  #     tags:
-  #       - solve-jt
-  #       - solve-inventory
-  #       - setup-jt
-  #       - setup-dyn-inv
-  #       - setup-getting-started-controller-workflows
-
-  #   - name: Create hosts
-  #     awx.awx.host:
-  #       name: "{{ item }}"
-  #       inventory: "{{ lab_inventory_name }}"
-  #       state: present
-  #       controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-  #       validate_certs: false
-  #     loop: "{{ lab_hosts }}"
-  #     tags:
-  #       - solve-jt
-  #       - solve-inventory
-  #       - setup-jt
-  #       - setup-dyn-inv
-  #       - setup-getting-started-controller-workflows
-
-  #   - name: Add hosts to {{ lab_inv_group_name }}
-  #     awx.awx.group:
-  #       name: "{{ lab_inv_group_name }}"
-  #       inventory: "{{ lab_inventory_name }}"
-  #       hosts: "{{ lab_hosts }}"
-  #       controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-  #       validate_certs: false
-  #     tags:
-  #       - solve-jt
-  #       - solve-inventory
-  #       - setup-jt
-  #       - setup-dyn-inv
-  #       - setup-getting-started-controller-workflows
-
-  #   - name: Add the lab ssh credential
-  #     awx.awx.credential:
-  #       name: "{{ lab_credential_name }}"
-  #       organization: "Default"
-  #       credential_type: Machine
-  #       inputs:
-  #         ssh_key_data: "{{ lookup('file', '/home/rhel/.ssh/id_rsa') }}"
-  #       controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-  #       validate_certs: false
-  #     tags:
-  #       - solve-jt
-  #       - setup-jt
-  #       - setup-dyn-inv
-  #       - setup-getting-started-controller-workflows
-  #   # added to controller image build
+    - name: high-availability-setup debug conf var
+      debug:
+        var: _receptor_conf
+      tags:
+        - high-availability-setup
+        - high-availability-setup-conf-file
     
-  #   # - name: Add the lab project
-  #   #   awx.awx.project:
-  #   #     name: "{{ lab_project_name }}"
-  #   #     scm_type: git
-  #   #     scm_url: "https://github.com/ansible/product-demos"
-  #   #     organization: "Default"
-  #   #     scm_update_on_launch: false
-  #   #     scm_update_cache_timeout: 60
-  #   #     default_environment: "Default execution environment"
-  #   #     controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-  #   #     validate_certs: false
-  #   #   tags:
-  #   #     - solve-jt
-  #   #     - setup-jt
-  #   #     - setup-dyn-inv
-  #   #     - setup-getting-started-controller-workflows
+    - name: high-availability-setup reload receptor service
+      command: >
+        /bin/receptorctl --socket /var/run/awx-receptor/receptor.sock reload
+      register: _receptor_reload
+      tags:
+        - high-availability-setup
+        - high-availability-setup-relaod
+  
+    - name: high-availability-setup set mesh-exec1 instance id fact
+      set_fact:
+        _exec1: "{{ _exec1 | default({}) | combine( {'name': item.hostname, 'id': item.id} ) }}"
+      loop: "{{ query('awx.awx.controller_api', 'instances', verify_ssl=False, oauth_token=auth_token, query_params={ 'hostname': 'mesh-exec1' }) | list }}"
+      tags:
+        - high-availability-setup
+        - high-availability-setup-health-check
 
-  #   - name: Create the lab job template
-  #     awx.awx.job_template:
-  #       name: "{{ lab_jt_name }}"
-  #       state: present
-  #       become_enabled: true
-  #       project: "{{ lab_project_name }}"
-  #       credential: "{{ lab_credential_name }}"
-  #       inventory: "{{ lab_inventory_name }}"
-  #       playbook: "playbooks/infrastructure/debug_info.yml"
-  #       controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-  #       validate_certs: false
-  #     tags:
-  #       - solve-jt
-  #       - setup-jt
-  #       - setup-dyn-inv
-  #       - setup-getting-started-controller-workflows
+    # - name: debug all organizations in a loop  # use query to return a list
+    #   debug:
+    #     var: _exec1
+    #   tags:
+    #     - high-availability-setup
+    #     - high-availability-setup-health-check
 
-  #   - name: run {{ lab_jt_name }} template
-  #     awx.awx.job_launch:
-  #       job_template: "{{ lab_jt_name }}"
-  #       controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-  #       validate_certs: false
-  #     tags:
-  #       - solve-jt
-  #       - setup-dyn-inv
-  #       - setup-getting-started-controller-workflows
+    - name: high-availability-setup refresh node health
+      uri:
+        url: "https://localhost/api/v2/instances/{{_exec1.id }}/health_check/"
+        method: POST
+        user: "{{ username }}"
+        password: "{{ admin_password }}"
+        validate_certs: false
+        force_basic_auth: true
+      register: _health_check
+      tags:
+        - high-availability-setup
+        - high-availability-setup-health-check
 
-  # ## Checks for challenges
-
-  #   ## Inventory challenge checks
-  #   # Check if inventory exists  
-  #   - name: check inventory
-  #     shell: >
-  #       awx --conf.token {{ ansible_local.custom_facts.localfacts._awx_token }} -k inventory get "{{ lab_inventory_name }}" -f json
-  #     register: inventory
-  #     tags:
-  #       - check-inventory
-  #       - check-hosts-inv
-  #       - check-group-inv
-
-  #   #Check if hosts exist
-  #   - name: Check Hosts exists
-  #     shell: >
-  #       awx --conf.token {{ ansible_local.custom_facts.localfacts._awx_token }} -k host get "{{ lab_host }}" -f json
-  #     register: lab_host_details
-  #     tags:
-  #       - check-hosts
-  #       - check-hosts-inv
-
-  #   - name: set hosts facts
-  #     set_fact:
-  #       _lab_host: "{{ lab_host_details.stdout }}"
-  #     tags:
-  #       - check-hosts-inv
-
-  #   - name: set inventory fact
-  #     set_fact:
-  #       _inventory: "{{ inventory.stdout }}"
-  #     tags:
-  #       - check-hosts-inv
-  #       - check-group-inv
-
-  #   - name: check inv id is on _lab_host output
-  #     assert:
-  #       that:
-  #       - _lab_host.inventory | int == _inventory.id | int
-  #       msg: "FAIL: {{ lab_host }} not found in {{ lab_inventory_name }}"
-  #     tags:
-  #       - check-hosts-inv
-    
-  #   #Check group exists
-  #   - name: check {{ lab_inv_group_name }}
-  #     shell: >
-  #       awx --conf.token {{ ansible_local.custom_facts.localfacts._awx_token }} -k group get "{{ lab_inv_group_name }}" -f json
-  #     register: lab_group
-  #     tags:
-  #       - check-group
-  #       - check-group-inv
-
-  #   - name: set group fact
-  #     set_fact:
-  #       _lab_group: "{{ lab_group.stdout }}"
-  #     tags:
-  #       - check-group-inv
-
-  #   - name: check inv name is on _lab_group output
-  #     assert:
-  #       that:
-  #         - _lab_group.summary_fields.inventory.name | string == _inventory.name | string
-  #       msg: "FAIL: {{ lab_inv_group_name }} not found in {{ lab_inventory_name }}"
-  #     tags:
-  #       - check-group-inv
-    
-  #   # Check job template executed
-  #   - name: check {{ lab_jt_name }} executed
-  #     shell: >
-  #       awx --conf.token {{ ansible_local.custom_facts.localfacts._awx_token }} -k jobs list --name "{{ lab_jt_name }}" -f yaml
-  #     register: lab_jt_job
-  #     tags:
-  #       - check-jt
-
-  #   - name: set jt fact
-  #     set_fact:
-  #       _lab_jt_job: "{{ lab_jt_job.stdout }}"
-  #     tags:
-  #       - check-jt
-
-  #   - name: Check if job template executed
-  #     assert:
-  #       that:
-  #         - lab_jt_job.stdout.find('{{ lab_jt_name }}') != -1
-  #       fail_msg: "FAIL: {{ lab_jt_name }} has not not been executed yet."
-  #     tags:
-  #       - check-jt
+    # - name: debug _health_check
+    #   debug:
+    #     var: _health_check.json
+    #   tags:
+    #     - high-availability-setup
+    #     - high-availability-setup-health-check
