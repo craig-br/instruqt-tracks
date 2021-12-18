@@ -118,7 +118,8 @@
         description: "{{ item.description }}"
         organization: "{{ lab_organization }}"
         state: present
-        controller_config_file: "{{ playbook_dir }}/../controller.cfg"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
       loop: "{{ lab_inventories }}"
       tags:
         - setup-env
@@ -302,13 +303,6 @@
       tags:
         - high-availability-setup
         - high-availability-setup-conf-file
-
-    - name: high-availability-setup debug conf var
-      debug:
-        var: _receptor_conf
-      tags:
-        - high-availability-setup
-        - high-availability-setup-conf-file
     
     - name: high-availability-setup reload receptor service
       command: >
@@ -325,13 +319,7 @@
       tags:
         - high-availability-setup
         - high-availability-setup-health-check
-
-    # - name: debug all organizations in a loop  # use query to return a list
-    #   debug:
-    #     var: _exec1
-    #   tags:
-    #     - high-availability-setup
-    #     - high-availability-setup-health-check
+        - high-availability-check-health-check
 
     - name: high-availability-setup refresh node health
       uri:
@@ -345,10 +333,79 @@
       tags:
         - high-availability-setup
         - high-availability-setup-health-check
+        - high-availability-check-health-check
 
-    # - name: debug _health_check
-    #   debug:
-    #     var: _health_check.json
-    #   tags:
-    #     - high-availability-setup
-    #     - high-availability-setup-health-check
+    - name: high-availability-setup create dublin inventory
+      awx.awx.inventory:
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        organization: "{{ lab_organization }}"
+        state: present
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      loop: "{{ lab_dbn_inventories }}"
+      tags:
+        - high-availability-setup
+        - high-availability-setup-inv
+
+    - name: high-availability-setup create dublin hosts
+      awx.awx.host:
+        name: "{{ item.lab_host_name }}"
+        inventory: "{{ item.lab_host_inventory }}"
+        state: present
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+        variables:  "{{ item.lab_host_vars }}"
+      loop: "{{ lab_dbn_hosts }}"
+      tags:
+        - high-availability-setup
+        - high-availability-setup-hosts
+
+    - name: Create job templates
+      awx.awx.job_template:
+        name: "{{ item.jt_name }}"
+        state: present
+        become_enabled: "{{ item.jt_become }}"
+        project: "{{ lab_project_name }}"
+        credential: "{{ lab_credential_name }}"
+        inventory: "{{  item.jt_inventory }}"
+        playbook: "{{ item.jt_playbook }}"
+        survey_enabled: "{{ item.survey_enabled }}"
+        survey_spec: "{{ item.survey_spec | default(omit) }}"
+        ask_inventory_on_launch: "{{  item.jt_prompt_inventory }}"
+        extra_vars: "{{ item.jt_extra_vars | default(omit) }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      loop: "{{ lab_dbn_job_templates }}"
+      tags:
+        - high-availability-setup
+        - high-availability-setup-jt
+
+    - name: high-availability-setup list job template run list
+      awx.awx.job_list:
+        status: successful
+        query: {"name": "{{ lab_jt_name }}"}
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      register: _high_availability_check_jt
+      tags:
+        - high-availability-check
+        - high-availability-check-jt
+
+    - name: high-availability-setup assert lab inventory in job list
+      assert:
+        that:
+          - lab_inv_name in _high_availability_check_jt.results | community.general.json_query('[].summary_fields.inventory.name')
+        fail_msg: "FAIL: {{ lab_inv_name }} not used to run {{ lab_jt_name }}"
+      tags:
+        - high-availability-check
+        - high-availability-check-jt
+
+    - name: high-availability-setup assert instance is healthy
+      assert:
+        that:
+          -  _health_check.json.errors.find('Receptor error') == -1
+        fail_msg: "FAIL: {{ lab_dbn_check_instance_name }} is in an unhealthy state."
+      tags:
+        - high-availability-check
+        - high-availability-check-health-check
