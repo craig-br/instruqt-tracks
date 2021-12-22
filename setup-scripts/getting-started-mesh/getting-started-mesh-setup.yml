@@ -104,13 +104,19 @@
       when: ansible_local.custom_facts.controller_token is undefined
       tags:
         - auth-token
-  
+
+    - name: refresh facts
+      setup:
+      tags:
+        - always
+
     - name: create auth token fact
       ansible.builtin.set_fact:
         auth_token: "{{ ansible_local.custom_facts.controller_token }}"
+        cacheable: true
       check_mode: false
       tags:
-        - auth-token
+        - always
 
     - name: Add lab inventories
       awx.awx.inventory:
@@ -404,7 +410,7 @@
       awx.awx.job_list:
         status: successful
         query: {"name": "{{ lab_jt_name }}"}
-        controller_oauthtoken: "{{ auth_token }}"
+        controller_oauthtoken: "{{ ansible_local.custom_facts.controller_token }}"
         validate_certs: false
       register: _high_availability_check_jt
       tags:

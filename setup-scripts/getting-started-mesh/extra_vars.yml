@@ -19,7 +19,7 @@ lab_job_templates:
     jt_playbook: "getting-started-mesh/playbooks/mesh_traceroute.yml"
     jt_prompt_inventory: true
     jt_extra_vars:
-      receptor_target: "mesh-exec1"
+      mesh_target: "mesh-exec1"
     jt_inventory: "Raleigh DC"
     jt_become: true
     survey_enabled: false
@@ -75,3 +75,13 @@ lab_dbn_job_templates:
     jt_become: true
     survey_enabled: false
 lab_dbn_check_instance_name: mesh-exec1
+lab_dbn_check_job_templates:
+  - jt_name: "Mesh route info"
+    jt_inventories:
+      - "Raleigh DC"
+  - jt_name: "Setup Dublin hop node"
+    jt_inventories:
+      - "Dublin DC"
+  - jt_name: "Debug info"
+    jt_inventories:
+      - "Johannesburg DC"
