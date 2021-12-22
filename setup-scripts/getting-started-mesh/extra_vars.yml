@@ -70,9 +70,9 @@ lab_dbn_hosts:
 lab_dbn_job_templates:
   - jt_name: "Setup Dublin hop node"
     jt_playbook: "getting-started-mesh/playbooks/dublin_hop_node.yml"
-    jt_prompt_inventory: false
     jt_inventory: "Dublin DC"
     jt_become: true
+    jt_prompt_inventory: true
     survey_enabled: false
 lab_dbn_check_instance_name: mesh-exec1
 
@@ -81,5 +81,6 @@ lab_dbn_check_job_templates:
   - jt_name: "Mesh route info"
     jt_inventory: "Raleigh DC"
   - jt_name: "Setup Dublin hop node"
+    jt_inventory: "Dublin DC"
   - jt_name: "Debug info"
     jt_inventory: "Johannesburg DC"
