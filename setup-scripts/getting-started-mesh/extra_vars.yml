@@ -75,13 +75,11 @@ lab_dbn_job_templates:
     jt_become: true
     survey_enabled: false
 lab_dbn_check_instance_name: mesh-exec1
+
+# high-availability job templates to run with correct inventory
 lab_dbn_check_job_templates:
   - jt_name: "Mesh route info"
-    jt_inventories:
-      - "Raleigh DC"
+    jt_inventory: "Raleigh DC"
   - jt_name: "Setup Dublin hop node"
-    jt_inventories:
-      - "Dublin DC"
   - jt_name: "Debug info"
-    jt_inventories:
-      - "Johannesburg DC"
+    jt_inventory: "Johannesburg DC"

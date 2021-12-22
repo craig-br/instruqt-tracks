@@ -97,9 +97,6 @@
           copy:
             content: "{{ _auth_token.ansible_facts }}"
             dest: "{{ custom_facts_dir }}/{{ custom_facts_file }}"
-
-        - name: Refresh facts
-          setup:
       check_mode: false
       when: ansible_local.custom_facts.controller_token is undefined
       tags:
@@ -304,9 +301,10 @@
         name: "{{ item.jt_name }}"
         organization: "{{ lab_organization }}"
         controller_oauthtoken: "{{ auth_token }}"
+        inventory: "{{ item.jt_inventory }}"
         validate_certs: false
         wait: true
-      loop: "{{ lab_dbn_job_templates }}"
+      loop: "{{ lab_dbn_check_job_templates }}"
       tags:
         - high-availability-solve
         - high-availability-solve-jt
@@ -421,7 +419,7 @@
       assert:
         that:
           - lab_inv_name in _high_availability_check_jt.results | community.general.json_query('[].summary_fields.inventory.name')
-        fail_msg: "FAIL: {{ lab_inv_name }} not used to run {{ lab_jt_name }}"
+        fail_msg: "FAIL: {{ lab_inv_name }} not used to run {{ lab_jt_name }} job template."
       tags:
         - high-availability-check
         - high-availability-check-jt
