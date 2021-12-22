@@ -331,7 +331,7 @@
     - name: high-availability set mesh-exec1 instance id fact
       set_fact:
         _exec1: "{{ _exec1 | default({}) | combine( {'name': item.hostname, 'id': item.id} ) }}"
-      loop: "{{ query('awx.awx.controller_api', 'instances', verify_ssl=False, oauth_token=auth_token, query_params={ 'hostname': 'mesh-exec1' }) | list }}"
+      loop: "{{ query('awx.awx.controller_api', 'instances', verify_ssl=False, oauth_token=auth_token, query_params={ 'hostname': lab_dbn_check_instance_name }) | list }}"
       tags:
         - high-availability-setup
         - high-availability-setup-health-check
@@ -357,6 +357,30 @@
         - high-availability-check 
         - high-availability-check-health-check
 
+    - name: high-availability clear job history
+      uri:
+        url: "https://localhost/api/v2/system_job_templates/1/launch/"
+        method: POST
+        body_format: json
+        body:
+          extra_vars:
+            days: 0
+        user: "{{ username }}"
+        password: "{{ admin_password }}"
+        validate_certs: false
+        force_basic_auth: true
+      register: _job_history
+      failed_when: false
+      tags:
+        - high-availability-setup
+        - high-availability-setup-job-history
+
+    - name: debug history
+      debug:
+        var: _job_history
+      tags:
+        - high-availability-setup
+        - high-availability-setup-job-history
 
     - name: high-availability create dublin inventory
       awx.awx.inventory:
@@ -384,7 +408,7 @@
         - high-availability-setup
         - high-availability-setup-hosts
 
-    - name: high-availability create job templates
+    - name: high-availability setup create job templates
       awx.awx.job_template:
         name: "{{ item.jt_name }}"
         state: present
@@ -403,6 +427,18 @@
       tags:
         - high-availability-setup
         - high-availability-setup-jt
+    
+    # - name: high-availability remove job history
+    #   awx.awx.job_launch:
+    #     name: "Cleanup Job Details"
+    #     organization: "{{ lab_organization }}"
+    #     controller_oauthtoken: "{{ auth_token }}"
+    #     validate_certs: false
+    #     wait: true
+    #   # loop: "{{ lab_dbn_check_job_templates }}"
+    #   tags:
+    #     - high-availability-setup
+    #     - high-availability-setup-clean-jobs
 
     - name: high-availability list job template run list
       awx.awx.job_list:
