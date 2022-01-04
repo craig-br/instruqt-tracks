@@ -4,9 +4,10 @@
 #
 # Tags:
 # setup-env - Setup controller env for lab
-# auth-token - create conrtoller auth-token
-# <chellenge-slug>-check - check challenge 
-# <chellenge-slug>-solve - solve challenge 
+# auth-token - create controller auth-token
+# <challenge-slug>-check - check challenge 
+# <challenge-slug>-solve - solve challenge 
+# <challenge-slug>-setup - setup challenge
 ##
 - name: Instruqt config getting started with controller
   hosts: localhost
@@ -339,8 +340,6 @@
         - high-availability-setup-health-check
         - high-availability-check 
         - high-availability-check-health-check
-        # - high-availability-solve
-        # - high-availability-solve-health-check
         - playground-setup
         - playground-setup-health-check
 
@@ -355,9 +354,7 @@
       register: _health_check
       tags:
         - high-availability-setup
-        # - high-availability-solve
         - high-availability-setup-health-check
-        # - high-availability-solve-health-check
         - high-availability-check 
         - high-availability-check-health-check
         - playground-setup
