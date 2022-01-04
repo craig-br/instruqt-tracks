@@ -427,18 +427,6 @@
       tags:
         - high-availability-setup
         - high-availability-setup-jt
-    
-    # - name: high-availability remove job history
-    #   awx.awx.job_launch:
-    #     name: "Cleanup Job Details"
-    #     organization: "{{ lab_organization }}"
-    #     controller_oauthtoken: "{{ auth_token }}"
-    #     validate_certs: false
-    #     wait: true
-    #   # loop: "{{ lab_dbn_check_job_templates }}"
-    #   tags:
-    #     - high-availability-setup
-    #     - high-availability-setup-clean-jobs
 
     - name: high-availability list job template run list
       awx.awx.job_list:
@@ -468,4 +456,3 @@
       tags:
         - high-availability-check
         - high-availability-check-health-check
-    
