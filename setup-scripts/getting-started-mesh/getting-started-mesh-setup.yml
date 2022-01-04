@@ -466,3 +466,4 @@
       loop: "{{ lab_instance_groups }}"
       tags:
         - playground-setup-igs
+        - playground-setup
