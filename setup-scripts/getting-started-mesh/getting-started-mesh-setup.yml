@@ -339,8 +339,8 @@
         - high-availability-setup-health-check
         - high-availability-check 
         - high-availability-check-health-check
-        - high-availability-solve 
-        - high-availability-solve-health-check
+        # - high-availability-solve
+        # - high-availability-solve-health-check
         - playground-setup
         - playground-setup-health-check
 
@@ -355,9 +355,9 @@
       register: _health_check
       tags:
         - high-availability-setup
-        - high-availability-solve
+        # - high-availability-solve
         - high-availability-setup-health-check
-        - high-availability-solve-health-check
+        # - high-availability-solve-health-check
         - high-availability-check 
         - high-availability-check-health-check
         - playground-setup
