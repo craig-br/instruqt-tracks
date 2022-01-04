@@ -327,6 +327,8 @@
       tags:
         - high-availability-setup
         - high-availability-setup-relaod
+        - playground-setup
+        - playground-setup-reload
   
     - name: high-availability set mesh-exec1 instance id fact
       set_fact:
@@ -338,7 +340,9 @@
         - high-availability-check 
         - high-availability-check-health-check
         - high-availability-solve 
-        - high-availability-solve-health-check       
+        - high-availability-solve-health-check
+        - playground-setup
+        - playground-setup-health-check
 
     - name: high-availability refresh node health
       uri:
@@ -356,6 +360,8 @@
         - high-availability-solve-health-check
         - high-availability-check 
         - high-availability-check-health-check
+        - playground-setup
+        - playground-setup-health-check
 
     - name: high-availability clear job history
       uri:
@@ -371,13 +377,6 @@
         force_basic_auth: true
       register: _job_history
       failed_when: false
-      tags:
-        - high-availability-setup
-        - high-availability-setup-job-history
-
-    - name: debug history
-      debug:
-        var: _job_history
       tags:
         - high-availability-setup
         - high-availability-setup-job-history
@@ -456,3 +455,14 @@
       tags:
         - high-availability-check
         - high-availability-check-health-check
+
+  # Setup / solve / check playground  
+    - name: Setup playground remove instance groups
+      awx.awx.instance_group:
+        state: absent
+        name: "{{ item.lab_instance_group_name }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      loop: "{{ lab_instance_groups }}"
+      tags:
+        - playground-setup-igs
