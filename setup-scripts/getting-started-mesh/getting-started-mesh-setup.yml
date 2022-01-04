@@ -456,7 +456,7 @@
         - high-availability-check
         - high-availability-check-health-check
 
-  # Setup / solve / check playground  
+  # Setup / solve / check playground
     - name: Setup playground remove instance groups
       awx.awx.instance_group:
         state: absent
