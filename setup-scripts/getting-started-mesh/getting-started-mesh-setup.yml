@@ -127,13 +127,6 @@
       loop: "{{ lab_inventories }}"
       tags:
         - setup-env
-
-    - name: host debug
-      debug:
-        var: item
-      loop: "{{ lab_hosts  }}"
-      tags:
-        - setup-env
   
     - name: Create hosts
       awx.awx.host:
