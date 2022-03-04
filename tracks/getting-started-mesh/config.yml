@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 virtualmachines:
 - name: mesh-exec1
   image: red-hat-mbu/mesh-exec1-instruqt

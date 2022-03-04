@@ -1,0 +1,29 @@
+#!/bin/python3
+
+import subprocess
+import os
+import yaml
+from shlex import quote, join
+os.environ["ANSIBLE_STDOUT_CALLBACK"] = "community.general.yaml"
+
+# Load extra_vars.yml
+extra_vars_file = open("/tmp/setup-scripts/getting-started-mesh/extra_vars.yml")
+parsed_extra_vars_file = yaml.load(extra_vars_file, yaml.loader.FullLoader)
+
+# Generate controller oauth token
+auth_token = subprocess.run(["ansible-playbook", "/tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml", "-e", "@/tmp/setup-scripts/getting-started-mesh/extra_vars.yml", "--tags", "auth-token"])
+# Check job templates executed with correct inventory
+
+for key,val in parsed_extra_vars_file.items():
+    if key == "lab_dbn_check_job_templates":
+        for job_template in parsed_extra_vars_file[key]:
+            lab_inv_jt_output = subprocess.run(["ansible-playbook", "/tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml", "-e", "lab_inv_name="+quote(job_template["jt_inventory"]), "-e", "lab_jt_name="+quote(job_template["jt_name"]), "-e", "@/tmp/setup-scripts/getting-started-mesh/extra_vars.yml", "--tags", "high-availability-check-jt"])
+            if lab_inv_jt_output.returncode > 0:
+                print ( "FAIL: Please make sure you've run the " + job_template["jt_name"] + " job template using the " + job_template["jt_inventory"] + " inventory." )
+                exit(1)
+    # Check if instance state is healthy
+    if key == "lab_dbn_check_instance_name":
+        lab_instance_health_output = subprocess.run(["ansible-playbook", "/tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml", "-e", "lab_dbn_check_instance_name="+quote(val), "-e", "@/tmp/setup-scripts/getting-started-mesh/extra_vars.yml", "--tags", "auth-token,high-availability-check-health-check"])
+        if lab_instance_health_output.returncode > 0:
+            print ( "FAIL: " + val + " is in an unhealthy state. Please make sure you execute the 'Setup Dublin hop node' job template." )
+            exit(1)

@@ -6,20 +6,20 @@ do
     sleep 1
 done
 
+CONTENT_DIR="setup-scripts/getting-started-mesh/"
+
 # Setup rhel user
 cp -a /root/.ssh/* /home/rhel/.ssh/.
 chown -R rhel:rhel /home/rhel/.ssh
 
 #Switch to correct Python version
-/usr/sbin/alternatives --set python3 /usr/bin/python3.8
+#/usr/sbin/alternatives --set python3 /usr/bin/python3.8
 
 # Clear history
 /bin/su - rhel -c "cat /dev/null > ~/.bash_history; history -c"
 
 # Get instruqt lab content
-##mkdir /tmp/setup-scripts/getting-started-mesh
-#/usr/bin/curl https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml -o /tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml
 /usr/bin/svn export https://github.com/craig-br/instruqt-tracks/trunk/setup-scripts/getting-started-mesh /tmp/setup-scripts/getting-started-mesh
 
 # Use playbook to setup environment
-/bin/ansible-playbook /tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml --tags setup-env
+/bin/ansible-playbook /tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml --tags setup-env,auth-token -e @/tmp/setup-scripts/getting-started-mesh/extra_vars.yml

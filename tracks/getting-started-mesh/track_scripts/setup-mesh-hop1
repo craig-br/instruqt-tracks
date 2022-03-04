@@ -15,3 +15,6 @@ chown -R rhel:rhel /home/rhel/.ssh
 
 # Clear history
 /bin/su - rhel -c "cat /dev/null > ~/.bash_history; history -c"
+
+#Disable receptor service
+/bin/systemctl stop receptor

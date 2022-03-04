@@ -1,0 +1,11 @@
+#!/bin/python3
+
+import subprocess
+import os
+os.environ["ANSIBLE_STDOUT_CALLBACK"] = "community.general.yaml"
+
+# Generate controller oauth token
+auth_token = subprocess.run(["ansible-playbook", "/tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml", "-e", "@/tmp/setup-scripts/getting-started-mesh/extra_vars.yml", "--tags", "auth-token"])
+
+# Setup high-availability
+mesh_playground_setup = subprocess.run(["ansible-playbook", "/tmp/setup-scripts/getting-started-mesh/getting-started-mesh-setup.yml", "-e", "@/tmp/setup-scripts/getting-started-mesh/extra_vars.yml", "--tags", "playground-setup"])
