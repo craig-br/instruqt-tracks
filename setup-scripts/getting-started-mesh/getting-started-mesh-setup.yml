@@ -461,7 +461,7 @@
     - name: high-availability assert instance is healthy
       ansible.builtin.assert:
         that:
-          - health_check.json.errors.find('Receptor error') == -1
+          - _health_check.json.errors.find('Receptor error') == -1
         fail_msg: "FAIL: {{ lab_dbn_check_instance_name }} is in an unhealthy state."
       tags:
         - high-availability-check
