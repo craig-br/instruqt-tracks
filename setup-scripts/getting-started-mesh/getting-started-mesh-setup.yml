@@ -318,7 +318,7 @@
 
     - name: high-availability reload receptor service
       ansible.builtin.command: >
-        /bin/receptorctl --socket /var/run/awx-receptor/receptor.sock reload
+        /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock reload
       register: _receptor_reload
       changed_when: _receptor_reload.rc != 0
       tags:
