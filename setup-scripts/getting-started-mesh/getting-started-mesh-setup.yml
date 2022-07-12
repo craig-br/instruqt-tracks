@@ -5,8 +5,8 @@
 # Tags:
 # setup-env - Setup controller env for lab
 # auth-token - create controller auth-token
-# <challenge-slug>-check - check challenge 
-# <challenge-slug>-solve - solve challenge 
+# <challenge-slug>-check - check challenge
+# <challenge-slug>-solve - solve challenge
 # <challenge-slug>-setup - setup challenge
 ##
 - name: Instruqt config getting started with controller
@@ -17,13 +17,13 @@
   vars:
     custom_facts_dir: "/etc/ansible/facts.d"
     custom_facts_file: custom_facts.fact
-  
+
   tags:
     - getting-started-mesh
-    
+
   tasks:
     - name: Ensure tower/controller is online and working
-      uri:
+      ansible.builtin.uri:
         url: https://localhost/api/v2/ping/
         method: GET
         user: "{{ username }}"
@@ -41,7 +41,7 @@
     - name: get auth token and restart automation-controller if it fails
       block:
         - name: Refresh facts
-          setup:
+          ansible.builtin.setup:
 
         - name: Create oauth token
           awx.awx.token:
@@ -55,7 +55,7 @@
           retries: 5
       rescue:
         - name: In rescue block for auth token
-          debug:
+          ansible.builtin.debug:
             msg: "failed to get auth token. Restarting automation controller service"
 
         - name: restart the controller service
@@ -64,7 +64,7 @@
             state: restarted
 
         - name: Ensure tower/controller is online and working
-          uri:
+          ansible.builtin.uri:
             url: https://localhost/api/v2/ping/
             method: GET
             user: "{{ username }}"
@@ -81,7 +81,7 @@
             description: 'Instruqt lab'
             scope: "write"
             state: present
-            controller_config_file: "{{ playbook_dir }}/../controller.cfg"  
+            controller_config_file: "{{ playbook_dir }}/../controller.cfg"
             validate_certs: false
           register: _auth_token
           until: _auth_token is not failed
@@ -89,13 +89,13 @@
           retries: 5
       always:
         - name: Create fact.d dir
-          file:
+          ansible.builtin.file:
             path: "{{ custom_facts_dir }}"
             state: directory
-            recurse: yes
+            recurse: true
 
         - name: Create _auth_token custom fact
-          copy:
+          ansible.builtin.copy:
             content: "{{ _auth_token.ansible_facts }}"
             dest: "{{ custom_facts_dir }}/{{ custom_facts_file }}"
       check_mode: false
@@ -104,7 +104,7 @@
         - auth-token
 
     - name: refresh facts
-      setup:
+      ansible.builtin.setup:
       tags:
         - always
 
@@ -127,7 +127,7 @@
       loop: "{{ lab_inventories }}"
       tags:
         - setup-env
-  
+
     - name: Create hosts
       awx.awx.host:
         name: "{{ item.lab_host_name }}"
@@ -135,7 +135,7 @@
         state: present
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
-        variables:  "{{ item.lab_host_vars }}"
+        variables: "{{ item.lab_host_vars }}"
       loop: "{{ lab_hosts }}"
       tags:
         - setup-env
@@ -200,15 +200,16 @@
         - mesh-instance-groups-solve
 
     - name: Check mesh-instance-groups
-      shell: >
+      ansible.builtin.shell: >
         awx --conf.token {{ auth_token.token }} -k instance_group get '{{ lab_instance_group_name }}'
       register: _instance_groups_check
+      changed_when: _instance_groups_check.rc != 0
       tags:
         - mesh-instance-groups-check
         - mesh-instance-groups-instances-check
 
     - name: Assert instance is in the correct instance group
-      assert:
+      ansible.builtin.assert:
         that: lab_instance_group_instance_name in _instance_groups_check.stdout
       tags:
         - mesh-instance-groups-instances-check
@@ -281,7 +282,7 @@
         - multi-site-check
 
     - name: assert lab inventory in job list
-      assert:
+      ansible.builtin.assert:
         that:
           - lab_inv_name in _multi_site_check_inv.results | community.general.json_query('[].summary_fields.inventory.name')
         fail_msg: "FAIL: {{ lab_inv_name }} not found in {{ lab_jt_name }}"
@@ -290,7 +291,7 @@
         - multi-site-check
 
   # Setup / solve / check high-availability
-    - name: high-availability solve mesh route and dublin setup templates 
+    - name: high-availability solve mesh route and dublin setup templates
       awx.awx.job_launch:
         name: "{{ item.jt_name }}"
         organization: "{{ lab_organization }}"
@@ -305,7 +306,7 @@
         - high-availability-solve-jt
 
     - name: high-availability remove mesh-exec1 stanza from receptor.conf
-      template:
+      ansible.builtin.template:
         src: "{{ playbook_dir }}/receptor.conf.j2"
         dest: "/etc/receptor/receptor.conf"
         validate: "/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock --tls-client tls_client --config %s reload"
@@ -314,11 +315,12 @@
       tags:
         - high-availability-setup
         - high-availability-setup-conf-file
-    
+
     - name: high-availability reload receptor service
-      command: >
+      ansible.builtin.command: >
         /bin/receptorctl --socket /var/run/awx-receptor/receptor.sock reload
       register: _receptor_reload
+      changed_when: _receptor_reload.rc != 0
       tags:
         - high-availability-setup
         - high-availability-setup-relaod
@@ -326,13 +328,13 @@
         - playground-setup-reload
   
     - name: high-availability set mesh-exec1 instance id fact
-      set_fact:
+      ansible.builtin.set_fact:
         _exec1: "{{ _exec1 | default({}) | combine( {'name': item.hostname, 'id': item.id} ) }}"
       loop: "{{ query('awx.awx.controller_api', 'instances', verify_ssl=False, oauth_token=auth_token, query_params={ 'hostname': lab_dbn_check_instance_name }) | list }}"
       tags:
         - high-availability-setup
         - high-availability-setup-health-check
-        - high-availability-check 
+        - high-availability-check
         - high-availability-check-health-check
         - high-availability-solve
         - high-availability-solve-health-check
@@ -340,8 +342,8 @@
         - playground-setup-health-check
 
     - name: high-availability refresh node health
-      uri:
-        url: "https://localhost/api/v2/instances/{{_exec1.id }}/health_check/"
+      ansible.builtin.uri:
+        url: "https://localhost/api/v2/instances/{{ _exec1.id }}/health_check/"
         method: POST
         user: "{{ username }}"
         password: "{{ admin_password }}"
@@ -351,7 +353,7 @@
       tags:
         - high-availability-setup
         - high-availability-setup-health-check
-        - high-availability-check 
+        - high-availability-check
         - high-availability-check-health-check
         - high-availability-solve
         - high-availability-solve-health-check
@@ -373,7 +375,7 @@
         - high-availability-solve-jt
 
     - name: high-availability clear job history
-      uri:
+      ansible.builtin.uri:
         url: "https://localhost/api/v2/system_job_templates/1/launch/"
         method: POST
         body_format: json
@@ -410,7 +412,7 @@
         state: present
         controller_oauthtoken: "{{ auth_token }}"
         validate_certs: false
-        variables:  "{{ item.lab_host_vars }}"
+        variables: "{{ item.lab_host_vars }}"
       loop: "{{ lab_dbn_hosts }}"
       tags:
         - high-availability-setup
@@ -448,7 +450,7 @@
         - high-availability-check-jt
 
     - name: high-availability assert lab inventory in job list
-      assert:
+      ansible.builtin.assert:
         that:
           - lab_inv_name in _high_availability_check_jt.results | community.general.json_query('[].summary_fields.inventory.name')
         fail_msg: "FAIL: {{ lab_inv_name }} not used to run {{ lab_jt_name }} job template."
@@ -457,9 +459,9 @@
         - high-availability-check-jt
 
     - name: high-availability assert instance is healthy
-      assert:
+      ansible.builtin.assert:
         that:
-          -  _health_check.json.errors.find('Receptor error') == -1
+          - _health_check.json.errors.find('Receptor error') == -1
         fail_msg: "FAIL: {{ lab_dbn_check_instance_name }} is in an unhealthy state."
       tags:
         - high-availability-check
