@@ -1,9 +1,9 @@
 ---
 - node:
-    id: mesh-automation-controller
+    id: mesh-controller
     firewallrules:
       - action: "reject"
-        tonode: "mesh-automation-controller"
+        tonode: "mesh-controller"
         toservice: "control"
 
 - work-signing:
@@ -27,15 +27,15 @@
 # TLS
 - tls-server:
     name: tls_server
-    cert: /etc/receptor/tls/mesh-automation-controller.crt
-    key: /etc/receptor/tls/mesh-automation-controller.key
+    cert: /etc/receptor/tls/mesh-controller.crt
+    key: /etc/receptor/tls/mesh-controller.key
     clientcas: /etc/receptor/tls/ca/mesh-CA.crt
     requireclientcert: true
 
 - tls-client:
     name: tls_client
-    cert: /etc/receptor/tls/mesh-automation-controller.crt
-    key: /etc/receptor/tls/mesh-automation-controller.key
+    cert: /etc/receptor/tls/mesh-controller.crt
+    key: /etc/receptor/tls/mesh-controller.key
     rootcas: /etc/receptor/tls/ca/mesh-CA.crt
     insecureskipverify: false
 
