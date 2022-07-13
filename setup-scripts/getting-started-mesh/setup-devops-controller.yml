@@ -215,7 +215,7 @@
     
 ## Controller setup
 - name: Controller config for devops-controller
-  hosts: controller.acme.example.com
+  hosts: controller.example.com
   gather_facts: true
     
   tasks:
@@ -230,7 +230,7 @@
             description: 'Instruqt lab'
             scope: "write"
             state: present
-            controller_host: controller
+            controller_host: "{{ controller_hostname }}"
             controller_username: "{{ controller_admin_user }}"
             controller_password: "{{ controller_admin_password }}"
             validate_certs: false
@@ -266,7 +266,7 @@
             description: 'Instruqt lab'
             scope: "write"
             state: present
-            controller_host: controller
+            controller_host: "{{ controller_hostname }}"
             controller_username: "{{ controller_admin_user }}"
             controller_password: "{{ controller_admin_password }}"
             validate_certs: false
