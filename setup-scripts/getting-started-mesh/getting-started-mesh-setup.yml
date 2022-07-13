@@ -37,7 +37,7 @@
       tags:
         - setup-env
 
-   # Create auth login token
+        # Create auth login token
     - name: get auth token and restart automation-controller if it fails
       block:
         - name: Refresh facts
@@ -187,7 +187,7 @@
         - setup-env
         - lab-jt
 
-  # Solve / check mesh-instance-groups
+        # Solve / check mesh-instance-groups
     - name: Solve mesh-instance-groups
       awx.awx.instance_group:
         state: present
@@ -214,7 +214,7 @@
       tags:
         - mesh-instance-groups-instances-check
 
-  # Solve / check multi-site
+        # Solve / check multi-site
     - name: Solve multi-site instance groups and inventories
       awx.awx.inventory:
         name: "{{ item.name }}"
@@ -290,7 +290,7 @@
         - multi-site-check-inv-jt
         - multi-site-check
 
-  # Setup / solve / check high-availability
+        # Setup / solve / check high-availability
     - name: high-availability solve mesh route and dublin setup templates
       awx.awx.job_launch:
         name: "{{ item.jt_name }}"
@@ -316,6 +316,14 @@
         - high-availability-setup
         - high-availability-setup-conf-file
 
+    - name: restart receptor service
+      ansible.builtin.service:
+        name: receptor
+        state: restarted
+      tags:
+        - high-availability-setup
+        - high-availability-setup-conf-file
+
     - name: high-availability reload receptor service
       ansible.builtin.command: >
         /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock reload
@@ -323,10 +331,10 @@
       changed_when: _receptor_reload.rc != 0
       tags:
         - high-availability-setup
-        - high-availability-setup-relaod
+        - high-availability-setup-reload
         - playground-setup
         - playground-setup-reload
-  
+
     - name: high-availability set mesh-exec1 instance id fact
       ansible.builtin.set_fact:
         _exec1: "{{ _exec1 | default({}) | combine( {'name': item.hostname, 'id': item.id} ) }}"
@@ -467,7 +475,7 @@
         - high-availability-check
         - high-availability-check-health-check
 
-  # Setup / solve / check playground
+        # Setup / solve / check playground
     - name: Setup playground remove instance groups
       awx.awx.instance_group:
         state: absent
