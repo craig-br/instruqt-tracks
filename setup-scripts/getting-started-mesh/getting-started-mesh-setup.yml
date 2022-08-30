@@ -10,52 +10,34 @@
 # <challenge-slug>-setup - setup challenge
 ##
 - name: Instruqt config getting started with controller
-  hosts: localhost
+  hosts: controller.raleigh.example.com
   gather_facts: true
   become: true
-
-  vars:
-    custom_facts_dir: "/etc/ansible/facts.d"
-    custom_facts_file: custom_facts.fact
-
   tags:
     - getting-started-mesh
 
   tasks:
-    - name: Ensure tower/controller is online and working
-      ansible.builtin.uri:
-        url: https://localhost/api/v2/ping/
-        method: GET
-        user: "{{ username }}"
-        password: "{{ admin_password }}"
-        validate_certs: false
-        force_basic_auth: true
-      register: controller_online
-      until: controller_online is success
-      delay: 3
-      retries: 5
-      tags:
-        - setup-env
-
-        # Create auth login token
     - name: get auth token and restart automation-controller if it fails
       block:
         - name: Refresh facts
-          ansible.builtin.setup:
+          setup:
 
         - name: Create oauth token
           awx.awx.token:
             description: 'Instruqt lab'
             scope: "write"
             state: present
-            controller_config_file: "{{ playbook_dir }}/../controller.cfg"
+            controller_host: "{{ controller_hostname }}"
+            controller_username: "{{ controller_admin_user }}"
+            controller_password: "{{ controller_admin_password }}"
+            validate_certs: false
           register: _auth_token
           until: _auth_token is not failed
           delay: 3
           retries: 5
       rescue:
         - name: In rescue block for auth token
-          ansible.builtin.debug:
+          debug:
             msg: "failed to get auth token. Restarting automation controller service"
 
         - name: restart the controller service
@@ -64,11 +46,11 @@
             state: restarted
 
         - name: Ensure tower/controller is online and working
-          ansible.builtin.uri:
+          uri:
             url: https://localhost/api/v2/ping/
             method: GET
-            user: "{{ username }}"
-            password: "{{ admin_password }}"
+            user: "{{ controller_admin_user }}"
+            password: "{{ controller_admin_password }}"
             validate_certs: false
             force_basic_auth: true
           register: controller_online
@@ -81,7 +63,9 @@
             description: 'Instruqt lab'
             scope: "write"
             state: present
-            controller_config_file: "{{ playbook_dir }}/../controller.cfg"
+            controller_host: "{{ controller_hostname }}"
+            controller_username: "{{ controller_admin_user }}"
+            controller_password: "{{ controller_admin_password }}"
             validate_certs: false
           register: _auth_token
           until: _auth_token is not failed
@@ -92,19 +76,29 @@
           ansible.builtin.file:
             path: "{{ custom_facts_dir }}"
             state: directory
-            recurse: true
+            recurse: yes
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
+            mode: 0755
+          become: true
 
         - name: Create _auth_token custom fact
           ansible.builtin.copy:
             content: "{{ _auth_token.ansible_facts }}"
             dest: "{{ custom_facts_dir }}/{{ custom_facts_file }}"
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
+            mode: 0644
+          become: true
       check_mode: false
       when: ansible_local.custom_facts.controller_token is undefined
       tags:
         - auth-token
 
     - name: refresh facts
-      ansible.builtin.setup:
+      setup:
+        filter:
+          - ansible_local
       tags:
         - always
 
@@ -113,9 +107,22 @@
         auth_token: "{{ ansible_local.custom_facts.controller_token }}"
         cacheable: true
       check_mode: false
+      when: auth_token is undefined
       tags:
         - always
 
+## Controller objects
+    - name: Add Organization
+      awx.awx.organization:
+        name: "{{ lab_organization }}"
+        description: "ACME Corp Organization"
+        state: present
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      tags:
+        - setup-env
+        - controller-org
+  
     - name: Add lab inventories
       awx.awx.inventory:
         name: "{{ item.name }}"
@@ -123,7 +130,8 @@
         organization: "{{ lab_organization }}"
         state: present
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       loop: "{{ lab_inventories }}"
       tags:
         - setup-env
@@ -134,7 +142,8 @@
         inventory: "{{ item.lab_host_inventory }}"
         state: present
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
         variables: "{{ item.lab_host_vars }}"
       loop: "{{ lab_hosts }}"
       tags:
@@ -143,12 +152,13 @@
     - name: Add the lab ssh credential
       awx.awx.credential:
         name: "{{ lab_credential_name }}"
-        organization: "Default"
+        organization: "{{ lab_organization }}"
         credential_type: Machine
         inputs:
           ssh_key_data: "{{ lookup('file', '/home/rhel/.ssh/id_rsa') }}"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       tags:
         - setup-env
 
@@ -157,12 +167,13 @@
         name: "{{ lab_project_name }}"
         scm_type: git
         scm_url: "https://github.com/craig-br/instruqt-track-content/"
-        organization: "Default"
+        organization: "{{ lab_organization }}"
         scm_update_on_launch: false
         scm_update_cache_timeout: 60
         scm_branch: "devel"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       tags:
         - setup-env
         - lab-project
@@ -170,6 +181,7 @@
     - name: Create job templates
       awx.awx.job_template:
         name: "{{ item.jt_name }}"
+        organization: "{{ lab_organization }}"
         state: present
         become_enabled: "{{ item.jt_become }}"
         project: "{{ lab_project_name }}"
@@ -181,11 +193,40 @@
         ask_inventory_on_launch: "{{  item.jt_prompt_inventory }}"
         extra_vars: "{{ item.jt_extra_vars | default(omit) }}"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       loop: "{{ lab_job_templates }}"
       tags:
         - setup-env
         - lab-jt
+  
+    - name: Add student user to {{ lab_organization }}
+      awx.awx.user:
+        username: "{{ student_user }}"
+        password: "{{ student_password }}"
+        # organization: "{{ lab_organization }}"
+        state: present
+        controller_oauthtoken: "{{ auth_token }}"
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
+      tags:
+        - setup-env
+        - controller-users
+
+    - name: Give users access to job templates
+      awx.awx.role:
+        user: "{{ item.user }}"
+        role: "{{ item.role }}"
+        job_templates: "{{ item.job_template  | default( omit ) }}"
+        workflows: "{{ item.workflows | default( omit )}}"
+        state: "{{ item.state }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
+      loop: "{{ controller_user_vars }}"
+      tags:
+        - setup-env
+        - controller-users
 
         # Solve / check mesh-instance-groups
     - name: Solve mesh-instance-groups
@@ -194,7 +235,8 @@
         name: "{{ item.lab_instance_group_name }}"
         instances: "{{ item.lab_instance_group_hosts }}"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       loop: "{{ lab_instance_groups }}"
       tags:
         - mesh-instance-groups-solve
@@ -223,7 +265,8 @@
         state: present
         instance_groups: "{{ item.inv_instance_groups }}"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       loop: "{{ lab_inventories }}"
       tags:
         - multi-site-solve
@@ -235,7 +278,8 @@
         organization: "{{ lab_organization }}"
         inventory: "{{ lab_us_inventory_name }}"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
         wait: true
       loop: "{{ lab_job_templates }}"
       tags:
@@ -248,7 +292,8 @@
         organization: "{{ lab_organization }}"
         inventory: "{{ lab_jhb_inventory_name }}"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
         wait: true
       loop: "{{ lab_job_templates }}"
       tags:
@@ -262,7 +307,8 @@
         state: present
         instance_groups: "{{ lab_inv_igs }}"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       check_mode: true
       register: _multi_site_check_inv
       failed_when: _multi_site_check_inv["changed"] | bool
@@ -275,7 +321,8 @@
         status: successful
         query: {"name": "{{ lab_jt_name }}"}
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       register: _multi_site_check_inv
       tags:
         - multi-site-check-inv-jt
@@ -296,8 +343,8 @@
         name: "{{ item.jt_name }}"
         organization: "{{ lab_organization }}"
         controller_oauthtoken: "{{ auth_token }}"
-        inventory: "{{ item.jt_inventory }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
         wait: true
       when: '"Debug info" not in item.jt_name'
       loop: "{{ lab_dbn_check_job_templates }}"
@@ -374,9 +421,10 @@
       awx.awx.job_launch:
         name: "{{ item.jt_name }}"
         organization: "{{ lab_organization }}"
-        controller_oauthtoken: "{{ auth_token }}"
         inventory: "{{ item.jt_inventory }}"
-        validate_certs: false
+        controller_oauthtoken: "{{ auth_token }}"
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
         wait: true
       when: '"Debug info" in item.jt_name'
       loop: "{{ lab_dbn_check_job_templates }}"
@@ -392,8 +440,8 @@
         body:
           extra_vars:
             days: 0
-        user: "{{ username }}"
-        password: "{{ admin_password }}"
+        user: "{{ controller_admin_user }}"
+        password: "{{ controller_admin_password }}"
         validate_certs: false
         force_basic_auth: true
       register: _job_history
@@ -409,7 +457,8 @@
         organization: "{{ lab_organization }}"
         state: present
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       loop: "{{ lab_dbn_inventories }}"
       tags:
         - high-availability-setup
@@ -422,7 +471,8 @@
         inventory: "{{ item.lab_host_inventory }}"
         state: present
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
         variables: "{{ item.lab_host_vars }}"
       loop: "{{ lab_dbn_hosts }}"
       tags:
@@ -444,7 +494,8 @@
         ask_inventory_on_launch: "{{  item.jt_prompt_inventory }}"
         extra_vars: "{{ item.jt_extra_vars | default(omit) }}"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       loop: "{{ lab_dbn_job_templates }}"
       tags:
         - high-availability-setup
@@ -455,8 +506,9 @@
       awx.awx.job_list:
         status: successful
         query: {"name": "{{ lab_jt_name }}"}
-        controller_oauthtoken: "{{ ansible_local.custom_facts.controller_token }}"
-        validate_certs: false
+        controller_oauthtoken: "{{ auth_token }}"
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       register: _high_availability_check_jt
       tags:
         - high-availability-check
@@ -486,7 +538,8 @@
         state: absent
         name: "{{ item.lab_instance_group_name }}"
         controller_oauthtoken: "{{ auth_token }}"
-        validate_certs: false
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
       loop: "{{ lab_instance_groups }}"
       tags:
         - playground-setup-igs
