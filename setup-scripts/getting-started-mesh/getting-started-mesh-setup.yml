@@ -116,6 +116,29 @@
       tags:
         - always
 
+    # Update credential with Instruqt pvt ss key 
+    - name: Fetch the lab ssh private key
+      ansible.builtin.slurp:
+        src: "/home/{{ ansible_user }}/.ssh/id_rsa"
+      register: __instruqt_pvt_key
+      tags:
+        - setup-env
+        - lab-cred
+
+    - name: Update lab ssh credential
+      awx.awx.credential:
+        name: "{{ lab_credential_name }}"
+        organization: "{{ lab_organization }}"
+        credential_type: Machine
+        inputs:
+          ssh_key_data: "{{ __instruqt_pvt_key.content | b64decode }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
+      tags:
+        - setup-env
+        - lab-cred
+        
 ## Instruqt challenges setup/check/solve
     # Solve / check mesh-instance-groups
     - name: Solve mesh-instance-groups
