@@ -42,6 +42,13 @@ lab_inventories:
     description: "Johannesburg data center. South Africa"
     inv_instance_groups:
       - "Johannesburg data center"
+lab_instance_groups:
+  - lab_instance_group_name: Raleigh data center
+    lab_instance_group_hosts:
+      - raleigh-controller
+  - lab_instance_group_name: Johannesburg data center
+    lab_instance_group_hosts:
+      - jhb-exec
 
 # Dublin vars
 lab_dbn_inventories:
