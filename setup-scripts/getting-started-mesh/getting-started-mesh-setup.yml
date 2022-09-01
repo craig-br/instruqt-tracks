@@ -17,7 +17,6 @@
     - getting-started-mesh
 
 ## Create auth token
-
   tasks:
     - name: get auth token and restart automation-controller if it fails
       block:
@@ -117,7 +116,7 @@
       tags:
         - always
 
-    # Update credential with Instruqt pvt ssh key 
+    # Update credential with Instruqt pvt ssh key
     - name: Fetch the lab ssh private key
       ansible.builtin.slurp:
         src: "/home/{{ ansible_user }}/.ssh/id_rsa"
@@ -139,7 +138,7 @@
       tags:
         - setup-env
         - lab-cred
-        
+
 ## Instruqt challenges setup/check/solve
     # Solve / check mesh-instance-groups
     - name: Solve mesh-instance-groups
