@@ -1,6 +1,6 @@
 ---
 # Lab extra vars
-lab_credential_name: "Lab Machine Credential"
+lab_credential_name: "ACME Corp credential"
 lab_us_inventory_name: "Raleigh DC"
 lab_jhb_inventory_name: "Johannesburg DC"
 lab_organization: "ACME Corp"
@@ -29,7 +29,7 @@ lab_job_templates:
     jt_playbook: "getting-started-mesh/playbooks/mesh_traceroute.yml"
     jt_prompt_inventory: true
     jt_extra_vars:
-      mesh_target: "{{ lab_exec_node_hostname }}"
+      mesh_target: "jhb-exec"
     jt_inventory: "Raleigh DC"
     jt_become: true
     survey_enabled: false
@@ -60,7 +60,7 @@ lab_dbn_hosts:
   - lab_host_name: "hop.dublin.example.com"
     lab_host_inventory: "Dublin DC"
     lab_host_vars:
-      ansible_host: "{{ lab_hop_node_hostname }}"
+      ansible_host: "dublin-hop"
       ansible_python_interpreter: /usr/bin/python3
 lab_dbn_job_templates:
   - jt_name: "Setup Dublin hop node"
@@ -69,7 +69,7 @@ lab_dbn_job_templates:
     jt_become: true
     jt_prompt_inventory: true
     survey_enabled: false
-lab_dbn_check_instance_name: "{{ lab_exec_node_hostname }}"
+lab_dbn_check_instance_name: "jhb-exec"
 
 # high-availability job templates to run with correct inventory
 lab_dbn_check_job_templates:
