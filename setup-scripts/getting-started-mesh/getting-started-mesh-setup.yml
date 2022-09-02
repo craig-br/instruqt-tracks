@@ -238,23 +238,33 @@
     - name: List job template run list
       awx.awx.job_list:
         status: successful
-        query: {"name": "{{ lab_jt_name }}"}
+        query: {"name": "{{ lab_jt_name }}",
+                "inventory__name": "{{ lab_inv_name }}"}
+        # query: {"name": "{{ lab_jt_name }}"}
         controller_oauthtoken: "{{ auth_token }}"
         controller_host: "{{ controller_hostname }}"
         validate_certs: "{{ controller_validate_certs }}"
       register: _multi_site_check_inv
+      failed_when: _multi_site_check_inv.count == 0
       tags:
         - multi-site-check-inv-jt
         - multi-site-check
 
-    - name: assert lab inventory in job list
-      ansible.builtin.assert:
-        that:
-          - lab_inv_name in _multi_site_check_inv.results | community.general.json_query('[].summary_fields.inventory.name')
-        fail_msg: "FAIL: {{ lab_inv_name }} not found in {{ lab_jt_name }}"
+    - name: debug _multi_site_check_inv
+      debug:
+        var: _multi_site_check_inv.count | from_yaml
       tags:
         - multi-site-check-inv-jt
         - multi-site-check
+
+    # - name: assert lab inventory in job list
+    #   ansible.builtin.assert:
+    #     that:
+    #       - lab_inv_name in _multi_site_check_inv.results | community.general.json_query('[].summary_fields.inventory.name')
+    #     fail_msg: "FAIL: {{ lab_inv_name }} not found in {{ lab_jt_name }}"
+    #   tags:
+    #     - multi-site-check-inv-jt
+    #     - multi-site-check
 
         # Setup / solve / check high-availability
     - name: high-availability solve mesh route and dublin setup templates
