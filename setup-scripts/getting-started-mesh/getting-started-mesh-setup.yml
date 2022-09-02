@@ -336,7 +336,7 @@
         validate_certs: false
         force_basic_auth: true
       register: _health_check
-      until: not _health_check.failed | bool
+      # until: not _health_check.failed | bool
       retries: 10
       delay: 3
       tags:
