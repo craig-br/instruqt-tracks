@@ -453,7 +453,7 @@
         controller_host: "{{ controller_hostname }}"
         validate_certs: "{{ controller_validate_certs }}"
       register: _high_availability_check_jt
-      # failed_when: _high_availability_check_jt.count == 0
+      failed_when: _high_availability_check_jt.count == 0
       tags:
         - high-availability-check
         - high-availability-check-jt
