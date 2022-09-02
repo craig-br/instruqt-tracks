@@ -340,8 +340,8 @@
       retries: 10
       delay: 3
       tags:
-        - high-availability-setup
-        - high-availability-setup-health-check
+        # - high-availability-setup
+        # - high-availability-setup-health-check
         - high-availability-check
         - high-availability-check-health-check
         - high-availability-solve
@@ -446,7 +446,6 @@
     - name: high-availability list job template run list
       awx.awx.job_list:
         status: successful
-        # query: {"name": "{{ lab_jt_name }}"}
         query: {"name": "{{ lab_jt_name }}",
                 "inventory__name": "{{ lab_inv_name }}"}
         controller_oauthtoken: "{{ auth_token }}"
@@ -454,13 +453,6 @@
         validate_certs: "{{ controller_validate_certs }}"
       register: _high_availability_check_jt
       failed_when: _high_availability_check_jt.count == 0
-      tags:
-        - high-availability-check
-        - high-availability-check-jt
-
-    - name: debug _multi_site_check_inv
-      debug:
-        var: _high_availability_check_jt | from_yaml
       tags:
         - high-availability-check
         - high-availability-check-jt
