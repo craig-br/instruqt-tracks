@@ -125,6 +125,13 @@
         - setup-env
         - lab-cred
 
+    - name: debug ssh
+      debug:
+        var: __instruqt_pvt_key.content | b64decode
+      tags:
+        - setup-env
+        - lab-cred
+
     - name: Update lab ssh credential
       awx.awx.credential:
         name: "{{ lab_credential_name }}"
@@ -223,7 +230,7 @@
         validate_certs: "{{ controller_validate_certs }}"
       check_mode: true
       register: _multi_site_check_inv
-      failed_when: _multi_site_check_inv["changed"] | bool
+      failed_when: ( _multi_site_check_inv["changed"] | bool ) or ( _multi_site_check_inv["failed"] | bool )
       tags:
         - multi-site-check-inv-ig
         - multi-site-check
