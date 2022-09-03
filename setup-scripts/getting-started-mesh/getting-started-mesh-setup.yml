@@ -327,7 +327,7 @@
         - playground-setup
         - playground-setup-health-check
 
-    - name: high-availability refresh node health
+    - name: high-availability refresh node health expect failure
       ansible.builtin.uri:
         url: "https://localhost/api/v2/instances/{{ _exec1.id }}/health_check/"
         method: POST
@@ -336,14 +336,37 @@
         validate_certs: false
         force_basic_auth: true
       register: _health_check
+      until: _health_check.json.errors | length > 0
+      retries: 10
+      delay: 3
+      tags:
+        - high-availability-setup
+        - high-availability-setup-health-check
+        - high-availability-check
+        - high-availability-check-health-check
+        # - high-availability-solve
+        # - high-availability-solve-health-check
+        - playground-setup
+        - playground-setup-health-check
+
+    - name: high-availability refresh node health until working
+      ansible.builtin.uri:
+        url: "https://localhost/api/v2/instances/{{ _exec1.id }}/health_check/"
+        method: POST
+        user: "{{ controller_admin_user }}"
+        password: "{{ controller_admin_password }}"
+        validate_certs: false
+        force_basic_auth: true
+      register: _health_check
+      until: _health_check.json.errors | length == 0
       # until: not _health_check.failed | bool
       retries: 10
       delay: 3
       tags:
         # - high-availability-setup
         # - high-availability-setup-health-check
-        - high-availability-check
-        - high-availability-check-health-check
+        # - high-availability-check
+        # - high-availability-check-health-check
         - high-availability-solve
         - high-availability-solve-health-check
         - playground-setup
@@ -351,9 +374,10 @@
 
     - name: debug helath_check
       debug:
-        var: _health_check.failed
+        var: _health_check
       tags:
         - high-availability-check
+        - high-availability-check-health-check
 
     - name: high-availability solve Debug info template
       awx.awx.job_launch:
@@ -439,8 +463,6 @@
         - high-availability-setup
         - high-availability-setup-jt
         - playground-setup
-
-
 
 
     - name: high-availability list job template run list
