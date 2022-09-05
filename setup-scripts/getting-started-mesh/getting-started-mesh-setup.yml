@@ -2,9 +2,10 @@
 - name: Configure all hosts
   hosts: all
   become: true
+
   tasks:
-  # For some reason, the authorized_key file dissappears after instruqt setup sequence
-  - name: Add instruqt_lab ssh key to authorized keys on nodes
+    # For some reason, the authorized_key file disappears after instruqt setup sequence
+  - name: Add instruqt_lab ssh key to authorized keys on nodes # noqa no-jinja-nesting
     ansible.posix.authorized_key:
       user: "{{ ansible_user }}"
       state: present
@@ -153,7 +154,7 @@
         - setup-env
         - lab-cred
 
-    - name: Add instruqt_lab ssh key to authorized keys on nodes
+    - name: Add instruqt_lab ssh key to authorized keys on nodes # noqa no-jinja-nesting
       ansible.posix.authorized_key:
         user: "{{ ansible_user }}"
         state: present
@@ -162,7 +163,7 @@
       tags:
         - ssh-key
         - setup-env
-      
+
 ## Instruqt challenges setup/check/solve
     # Solve / check mesh-instance-groups
     - name: Solve mesh-instance-groups
@@ -266,12 +267,12 @@
         - multi-site-check-inv-jt
         - multi-site-check
 
-    - name: debug _multi_site_check_inv
-      debug:
-        var: _multi_site_check_inv.count | from_yaml
-      tags:
-        - multi-site-check-inv-jt
-        - multi-site-check
+    # - name: debug _multi_site_check_inv
+    #   debug:
+    #     var: _multi_site_check_inv.count | from_yaml
+    #   tags:
+    #     - multi-site-check-inv-jt
+    #     - multi-site-check
 
     # - name: assert lab inventory in job list
     #   ansible.builtin.assert:
@@ -283,10 +284,10 @@
     #     - multi-site-check
 
         # Setup / solve / check high-availability
-    - name: high-availability set {{ lab_exec_node_hostname }} instance id fact
+    - name: high-availability set {{ lab_exec_node_hostname }} instance id fact  # noqa yaml[line-length] 
       ansible.builtin.set_fact:
         _exec1: "{{ _exec1 | default({}) | combine( {'name': item.hostname, 'id': item.id} ) }}"
-      loop: "{{ query('awx.awx.controller_api', 'instances', verify_ssl=False, oauth_token=auth_token, query_params={ 'hostname': lab_dbn_check_instance_name }) | list }}" # noqa yaml[trailing-spaces] 
+      loop: "{{ query('awx.awx.controller_api', 'instances', verify_ssl=False, oauth_token=auth_token, query_params={ 'hostname': lab_dbn_check_instance_name }) | list }}"
       tags:
         - high-availability-setup
         - high-availability-setup-health-check
@@ -296,7 +297,7 @@
         - high-availability-solve-health-check
         - playground-setup
         - playground-setup-health-check
-  
+
     - name: high-availability solve mesh dublin hop templates
       awx.awx.job_launch:
         name: "{{ item.jt_name }}"
@@ -323,7 +324,7 @@
         - high-availability-solve
         - high-availability-solve-ping
 
-    - name: high-availability solve receptor ping {{ lab_exec_node_hostname}}
+    - name: high-availability solve receptor ping {{ lab_exec_node_hostname }}
       ansible.builtin.command: >
         /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock ping {{ lab_exec_node_hostname }}
       register: _lab_exec_node_hostname_ping
@@ -345,18 +346,11 @@
         force_basic_auth: true
       register: _health_check
       until: _health_check.json.errors | length == 0
-      # until: not _health_check.failed | bool
       retries: 20
       delay: 3
       tags:
-        # - high-availability-setup
-        # - high-availability-setup-health-check
-        # - high-availability-check
-        # - high-availability-check-health-check
         - high-availability-solve
         - high-availability-solve-health-check
-        # - playground-setup
-        # - playground-setup-health-check
 
     - name: high-availability solve mesh route info jt
       awx.awx.job_launch:
@@ -388,8 +382,9 @@
         - high-availability-solve-jt
 
     - name: Stop receptor service on {{ lab_hop_node_hostname }}
-      ansible.builtin.command: >
-        systemctl stop receptor
+      ansible.builtin.service:
+        name: receptor
+        state: stopped
       delegate_to: "{{ lab_hop_node_hostname }}"
       tags:
         - high-availability-setup
@@ -442,20 +437,6 @@
         - playground-setup
         - playground-setup-reload
 
-    # - name: high-availability set {{ lab_exec_node_hostname }} instance id fact
-    #   ansible.builtin.set_fact:
-    #     _exec1: "{{ _exec1 | default({}) | combine( {'name': item.hostname, 'id': item.id} ) }}"
-    #   loop: "{{ query('awx.awx.controller_api', 'instances', verify_ssl=False, oauth_token=auth_token, query_params={ 'hostname': lab_dbn_check_instance_name }) | list }}" # noqa yaml[trailing-spaces] 
-    #   tags:
-    #     - high-availability-setup
-    #     - high-availability-setup-health-check
-    #     - high-availability-check
-    #     - high-availability-check-health-check
-    #     - high-availability-solve
-    #     - high-availability-solve-health-check
-    #     - playground-setup
-    #     - playground-setup-health-check
-
     - name: high-availability refresh exec node health until failed for setup
       ansible.builtin.uri:
         url: "https://localhost/api/v2/instances/{{ _exec1.id }}/health_check/"
@@ -471,10 +452,6 @@
       tags:
         - high-availability-setup
         - high-availability-setup-health-check
-        # - high-availability-check
-        # - high-availability-check-health-check
-        # - high-availability-solve
-        # - high-availability-solve-health-check
         - playground-setup
         - playground-setup-health-check
 
@@ -488,72 +465,11 @@
         force_basic_auth: true
       register: _health_check
       failed_when: _health_check.json.errors | length > 0
-      # until: _health_check.json.errors | length == 0
-      # until: not _health_check.failed | bool
       retries: 10
       delay: 3
       tags:
-        # - high-availability-setup
-        # - high-availability-setup-health-check
         - high-availability-check
         - high-availability-check-health-check
-        # - high-availability-solve
-        # - high-availability-solve-health-check
-        # - playground-setup
-        # - playground-setup-health-check
-
-    # - name: high-availability refresh node health until working for solve
-    #   ansible.builtin.uri:
-    #     url: "https://localhost/api/v2/instances/{{ _exec1.id }}/health_check/"
-    #     method: POST
-    #     user: "{{ controller_admin_user }}"
-    #     password: "{{ controller_admin_password }}"
-    #     validate_certs: false
-    #     force_basic_auth: true
-    #   register: _health_check
-    #   until: _health_check.json.errors | length == 0
-    #   # until: not _health_check.failed | bool
-    #   retries: 10
-    #   delay: 3
-    #   tags:
-    #     # - high-availability-setup
-    #     # - high-availability-setup-health-check
-    #     # - high-availability-check
-    #     # - high-availability-check-health-check
-    #     - high-availability-solve
-    #     - high-availability-solve-health-check
-    #     # - playground-setup
-    #     # - playground-setup-health-check
-
-    - name: debug helath_check
-      debug:
-        var: _health_check
-      tags:
-        - high-availability-check
-        - high-availability-check-health-check
-
-    # - name: high-availability solve Debug info template
-    #   awx.awx.job_launch:
-    #     name: "{{ item.jt_name }}"
-    #     organization: "{{ lab_organization }}"
-    #     inventory: "{{ item.jt_inventory }}"
-    #     controller_oauthtoken: "{{ auth_token }}"
-    #     controller_host: "{{ controller_hostname }}"
-    #     validate_certs: "{{ controller_validate_certs }}"
-    #     wait: true
-    #   when: '"Debug info" in item.jt_name'
-    #   loop: "{{ lab_dbn_check_job_templates }}"
-    #   tags:
-    #     - high-availability-solve
-    #     - high-availability-solve-jt
-
-    # - name: high-availability stop hop receptor service
-    #   ansible.builtin.command: >
-    #     systemctl stop receptor
-    #   delegate_to: "{{ lab_hop_node_hostname }}"
-    #   tags:
-    #   - high-availability-setup
-    #   - high-availability-setup-hop-receptor
 
     - name: high-availability clear job history
       ansible.builtin.uri:
