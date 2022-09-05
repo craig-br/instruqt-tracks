@@ -68,6 +68,8 @@ lab_dbn_job_templates:
     jt_inventory: "Dublin DC"
     jt_become: true
     jt_prompt_inventory: true
+    jt_extra_vars:
+      mesh_target: "jhb-exec"
     survey_enabled: false
 lab_dbn_check_instance_name: "jhb-exec"
 

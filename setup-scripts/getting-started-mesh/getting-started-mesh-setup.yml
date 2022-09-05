@@ -311,6 +311,30 @@
         - high-availability-solve
         - high-availability-solve-jt
 
+    - name: high-availability solve receptor ping {{ lab_hop_node_hostname }}
+      ansible.builtin.command: >
+        /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock ping {{ lab_hop_node_hostname }}
+      register: _lab_hop_node_hostname_ping
+      until: _lab_hop_node_hostname_ping.rc == 0
+      changed_when: false
+      retries: 10
+      delay: 3
+      tags:
+        - high-availability-solve
+        - high-availability-solve-ping
+
+    - name: high-availability solve receptor ping {{ lab_exec_node_hostname}}
+      ansible.builtin.command: >
+        /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock ping {{ lab_exec_node_hostname }}
+      register: _lab_exec_node_hostname_ping
+      until: _lab_exec_node_hostname_ping.rc == 0
+      changed_when: false
+      retries: 10
+      delay: 3
+      tags:
+        - high-availability-solve
+        - high-availability-solve-ping
+
     - name: high-availability refresh node health until working for solve
       ansible.builtin.uri:
         url: "https://localhost/api/v2/instances/{{ _exec1.id }}/health_check/"
@@ -322,7 +346,7 @@
       register: _health_check
       until: _health_check.json.errors | length == 0
       # until: not _health_check.failed | bool
-      retries: 15
+      retries: 20
       delay: 3
       tags:
         # - high-availability-setup
@@ -334,10 +358,25 @@
         # - playground-setup
         # - playground-setup-health-check
 
+    - name: high-availability solve mesh route info jt
+      awx.awx.job_launch:
+        name: "{{ item.jt_name }}"
+        organization: "{{ lab_organization }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        wait: true
+      when: '"Mesh route info" in item.jt_name'
+      loop: "{{ lab_dbn_check_job_templates }}"
+      tags:
+        - high-availability-solve
+        - high-availability-solve-jt
+
     - name: high-availability solve mesh Debug info
       awx.awx.job_launch:
         name: "{{ item.jt_name }}"
         organization: "{{ lab_organization }}"
+        inventory: "{{ lab_jhb_inventory_name }}"
         controller_oauthtoken: "{{ auth_token }}"
         controller_host: "{{ controller_hostname }}"
         validate_certs: "{{ controller_validate_certs }}"
@@ -378,6 +417,19 @@
         - high-availability-setup-conf-file
         - playground-setup
 
+    - name: high-availability setup receptor ping {{ lab_hop_node_hostname }} until failed
+      ansible.builtin.command: >
+        /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock ping {{ lab_hop_node_hostname }}
+      register: _lab_hop_node_hostname_ping
+      until: _lab_hop_node_hostname_ping.rc != 0
+      failed_when: _lab_hop_node_hostname_ping.rc == 0
+      changed_when: false
+      retries: 10
+      delay: 3
+      tags:
+        - high-availability-setup
+        - high-availability-setup-reload
+
     - name: high-availability reload receptor service
       ansible.builtin.command: >
         /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock reload
@@ -404,7 +456,7 @@
     #     - playground-setup
     #     - playground-setup-health-check
 
-    - name: high-availability refresh node health until failed for setup
+    - name: high-availability refresh exec node health until failed for setup
       ansible.builtin.uri:
         url: "https://localhost/api/v2/instances/{{ _exec1.id }}/health_check/"
         method: POST
