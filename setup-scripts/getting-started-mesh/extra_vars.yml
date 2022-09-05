@@ -72,11 +72,12 @@ lab_dbn_job_templates:
 lab_dbn_check_instance_name: "jhb-exec"
 
 # high-availability job templates to run with correct inventory
+# Order of job templates is important
 lab_dbn_check_job_templates:
-  - jt_name: "Mesh route info"
-    jt_inventory: "Raleigh DC"
   - jt_name: "Setup Dublin hop node"
     jt_inventory: "Dublin DC"
+  - jt_name: "Mesh route info"
+    jt_inventory: "Raleigh DC"
   - jt_name: "Debug info"
     jt_inventory: "Johannesburg DC"
 
