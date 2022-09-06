@@ -25,7 +25,7 @@
 # <challenge-slug>-setup - setup challenge
 ##
 - name: Instruqt config getting started with controller
-  hosts: controller.raleigh.example.com
+  hosts: automationcontroller
   gather_facts: true
   become: true
   tags:
@@ -267,24 +267,8 @@
         - multi-site-check-inv-jt
         - multi-site-check
 
-    # - name: debug _multi_site_check_inv
-    #   debug:
-    #     var: _multi_site_check_inv.count | from_yaml
-    #   tags:
-    #     - multi-site-check-inv-jt
-    #     - multi-site-check
-
-    # - name: assert lab inventory in job list
-    #   ansible.builtin.assert:
-    #     that:
-    #       - lab_inv_name in _multi_site_check_inv.results | community.general.json_query('[].summary_fields.inventory.name')
-    #     fail_msg: "FAIL: {{ lab_inv_name }} not found in {{ lab_jt_name }}"
-    #   tags:
-    #     - multi-site-check-inv-jt
-    #     - multi-site-check
-
         # Setup / solve / check high-availability
-    - name: high-availability set {{ lab_exec_node_hostname }} instance id fact  # noqa yaml[line-length] 
+    - name: high-availability set {{ lab_exec_node_hostname }} instance id fact  # noqa yaml[line-length]
       ansible.builtin.set_fact:
         _exec1: "{{ _exec1 | default({}) | combine( {'name': item.hostname, 'id': item.id} ) }}"
       loop: "{{ query('awx.awx.controller_api', 'instances', verify_ssl=False, oauth_token=auth_token, query_params={ 'hostname': lab_dbn_check_instance_name }) | list }}"
