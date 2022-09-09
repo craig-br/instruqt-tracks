@@ -1,0 +1,24 @@
+version: "3"
+virtualmachines:
+- name: raleigh-controller
+  image: red-hat-mbu/controller-edge-image
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: n2-standard-2
+- name: jhb-kiosk
+  image: red-hat-mbu/edge-kiosk-node
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: n1-standard-2
+- name: dublin-kiosk
+  image: red-hat-mbu/edge-kiosk-node
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: n1-standard-2
+  allow_external_ingress:
+  - https
+- name: dublin-exec
+  image: red-hat-mbu/dublin-edge-image
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: n1-standard-2
+- name: jhb-exec
+  image: red-hat-mbu/jhb-edge-image
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: n1-standard-2

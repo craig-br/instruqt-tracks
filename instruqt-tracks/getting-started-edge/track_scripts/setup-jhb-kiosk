@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euxo pipefail
+VNC_PASSWORD=instruqt
+VNC_USER=instruqt
+
+until [ -f /opt/instruqt/bootstrap/host-bootstrap-completed ]; do
+    echo "Waiting for instruqt bootstrap to complete"
+    sleep 1
+done
