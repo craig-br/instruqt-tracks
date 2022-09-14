@@ -131,6 +131,18 @@
       tags:
         - always
 
+
+    - name: Update lab project
+      awx.awx.project_update:
+        name: "{{ lab_project_name }}"
+        wait: no
+        controller_oauthtoken: "{{ auth_token }}"
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
+      tags:
+        - setup-env
+        - lab-project
+
     # Update credential with Instruqt pvt ssh key
     - name: Fetch the lab ssh private key
       ansible.builtin.slurp:

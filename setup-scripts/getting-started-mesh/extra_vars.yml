@@ -8,6 +8,7 @@ lab_inv_group_name: "web"
 lab_exec_node_hostname: jhb-exec
 lab_hop_node_hostname: dublin-hop
 lab_project_name: "ACME Corp repo"
+lab_repo_branch: devel
 
 controller_hostname: raleigh-controller
 controller_validate_certs: false
