@@ -135,7 +135,7 @@
     - name: Update lab project
       awx.awx.project_update:
         name: "{{ lab_project_name }}"
-        wait: no
+        wait: false
         controller_oauthtoken: "{{ auth_token }}"
         controller_host: "{{ controller_hostname }}"
         validate_certs: "{{ controller_validate_certs }}"
