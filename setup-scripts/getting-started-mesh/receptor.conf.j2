@@ -1,9 +1,9 @@
 ---
 - node:
-    id: automation-controller21
+    id: {{ controller_hostname }}
     firewallrules:
       - action: "reject"
-        tonode: "automation-controller21"
+        tonode: "{{ controller_hostname }}"
         toservice: "control"
 
 - work-signing:
@@ -27,15 +27,15 @@
 # TLS
 - tls-server:
     name: tls_server
-    cert: /etc/receptor/tls/automation-controller21.crt
-    key: /etc/receptor/tls/automation-controller21.key
+    cert: /etc/receptor/tls/{{ controller_hostname }}.crt
+    key: /etc/receptor/tls/{{ controller_hostname }}.key
     clientcas: /etc/receptor/tls/ca/mesh-CA.crt
     requireclientcert: true
 
 - tls-client:
     name: tls_client
-    cert: /etc/receptor/tls/automation-controller21.crt
-    key: /etc/receptor/tls/automation-controller21.key
+    cert: /etc/receptor/tls/{{ controller_hostname }}.crt
+    key: /etc/receptor/tls/{{ controller_hostname }}.key
     rootcas: /etc/receptor/tls/ca/mesh-CA.crt
     insecureskipverify: false
 
@@ -43,9 +43,9 @@
 - local-only
 
 # Peers
-# mesh-exec1 peer removed
+# {{ lab_exec_node_hostname }} peer removed
 - tcp-peer:
-    address: mesh-hop1:27199
+    address: {{ lab_hop_node_hostname }}:27199
     redial: true
     tls: tls_client
 
