@@ -7,20 +7,20 @@ teaser: In this challenge, we'll explore the lab environment
 tabs:
 - title: Controller
   type: service
-  hostname: raleigh-controller
+  hostname: controller-edge
   port: 443
 - title: code
   type: service
-  hostname: raleigh-controller
+  hostname: controller-edge
   path: /editor/
   port: 443
   new_window: true
 - title: jhb-exec
   type: terminal
-  hostname: jhb-exec
+  hostname: jhb-edge
 - title: dublin-exec
   type: terminal
-  hostname: dublin-exec
+  hostname: dublin-edge
 - title: jhb-kiosk
   type: terminal
   hostname: jhb-kiosk

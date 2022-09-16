@@ -2,14 +2,14 @@
 # Lab extra vars
 lab_credential_name: "ACME Corp credential"
 lab_us_inventory_name: "Raleigh DC"
-lab_jhb_inventory_name: "Johannesburg DC"
+lab_jhb_inventory_name: "Johannesburg devices"
 lab_organization: "ACME Corp"
 lab_inv_group_name: "web"
 lab_exec_node_hostname: jhb-exec
 lab_hop_node_hostname: dublin-hop
 lab_project_name: "ACME Corp repo"
 
-controller_hostname: raleigh-controller
+controller_hostname: controller-edge
 controller_validate_certs: false
 controller_admin_user: admin
 controller_admin_password: "ansible123!"
@@ -52,20 +52,20 @@ lab_instance_groups:
 
 # Dublin vars
 lab_dbn_inventories:
-  - name: "Dublin DC"
-    description: "Dublin data center. Ireland"
-lab_dbn_inventory_name: "Dublin DC"
+  - name: "Dublin devices"
+    description: "Dublin. Ireland"
+lab_dbn_inventory_name: "Dublin devices"
 lab_dbn_host_name: "hop.dublin.example.com"
 lab_dbn_hosts:
   - lab_host_name: "hop.dublin.example.com"
-    lab_host_inventory: "Dublin DC"
+    lab_host_inventory: "Dublin devices"
     lab_host_vars:
-      ansible_host: "dublin-hop"
+      ansible_host: "dublin-kiosk"
       ansible_python_interpreter: /usr/bin/python3
 lab_dbn_job_templates:
   - jt_name: "Setup Dublin hop node"
     jt_playbook: "getting-started-mesh/playbooks/dublin_hop_node.yml"
-    jt_inventory: "Dublin DC"
+    jt_inventory: "Dublin endpoints"
     jt_become: true
     jt_prompt_inventory: true
     jt_extra_vars:
@@ -95,3 +95,45 @@ lab_dbn_check_job_templates:
 #     #   - "Debug info"
 #     state: present
 
+lab_devops_worklow:
+  - workflow_name: "DevOps Workflow"
+    workflow_inventory: "ACME Corp DC"
+    workflow_vars: {"tag_name": "{{ tag_name | default( default_tag_name ) }}",
+                     "acme_venv": "{{ acme_venv }}"}
+    workflow_org: "{{ lab_organization }}"
+    workflow_prompt_vars: true
+lab_devops_worklow_nodes:
+  - workflow_node_id: "Deploy to Prod?"
+    workflow_node_jt: "DevOps Workflow"      
+    workflow_node_org: "{{ lab_organization }}"
+    workflow_node_approval:
+      description: "Deploy to Prod?"
+      name: "Deploy to Prod?"
+  - workflow_node_id: "Create App Release"
+    workflow_node_jt: "DevOps Workflow"      
+    workflow_node_org: "{{ lab_organization }}"
+    workflow_node_unified_jt: "Create App Release"
+  - workflow_node_id: "Config Webservers"
+    workflow_node_jt: "DevOps Workflow"      
+    workflow_node_org: "{{ lab_organization }}"
+    workflow_node_unified_jt: "Configure Webservers"
+  - workflow_node_id: "Deploy ACME App"
+    workflow_node_jt: "DevOps Workflow"      
+    workflow_node_org: "{{ lab_organization }}"
+    workflow_node_unified_jt: "Deploy ACMECorp App"
+  - workflow_node_id: "Deploy to Prod?"
+    workflow_node_jt: "DevOps Workflow"      
+    workflow_node_org: "{{ lab_organization }}"
+    workflow_node_success_nodes:
+      - "Config Webservers"
+      - "Create App Release"
+  - workflow_node_id: "Create App Release"
+    workflow_node_jt: "DevOps Workflow"      
+    workflow_node_org: "{{ lab_organization }}"
+    workflow_node_success_nodes:
+      - "Deploy ACME App"
+  - workflow_node_id: "Config Webservers"
+    workflow_node_jt: "DevOps Workflow"      
+    workflow_node_org: "{{ lab_organization }}"
+    workflow_node_success_nodes:
+      - "Deploy ACME App"
