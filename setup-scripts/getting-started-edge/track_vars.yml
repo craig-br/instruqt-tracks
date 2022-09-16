@@ -3,11 +3,12 @@
 lab_credential_name: "ACME Corp credential"
 lab_us_inventory_name: "Raleigh DC"
 lab_jhb_inventory_name: "Johannesburg devices"
+lab_dublin_inventory_name: "Dublin devices"
 lab_organization: "ACME Corp"
+lab_jt_workflow_name: "Deploy Edge Application"
 lab_inv_group_name: "web"
-lab_exec_node_hostname: jhb-exec
-lab_hop_node_hostname: dublin-hop
 lab_project_name: "ACME Corp repo"
+lab_repo_branch: devel
 
 controller_hostname: controller-edge
 controller_validate_certs: false
@@ -18,70 +19,89 @@ custom_facts_file: custom_facts.fact
 student_user: student
 student_password: learn_ansible
 
-lab_job_templates:
-  - jt_name: "Debug info"
-    jt_playbook: "getting-started-mesh/playbooks/debug_info.yml"
-    jt_prompt_inventory: true
-    jt_inventory: "Raleigh DC"
-    jt_become: false
-    survey_enabled: false
-  - jt_name: "Mesh route info"
-    jt_playbook: "getting-started-mesh/playbooks/mesh_traceroute.yml"
-    jt_prompt_inventory: true
-    jt_extra_vars:
-      mesh_target: "jhb-exec"
-    jt_inventory: "Raleigh DC"
-    jt_become: true
-    survey_enabled: false
 lab_inventories:
   - name: "Raleigh DC"
     description: "Raleigh data center. United States"
     inv_instance_groups:
       - "Raleigh data center"
-  - name: "Johannesburg DC"
-    description: "Johannesburg data center. South Africa"
+  - name: "Johannesburg devices"
+    description: "Johannesburg. South Africa"
     inv_instance_groups:
-      - "Johannesburg data center"
+      - "Johannesburg region"
+  - name: "Dublin devices"
+    description: "Dublin. Ireland"
+    inv_instance_groups:
+      - "Dublin region"
+
 lab_instance_groups:
   - lab_instance_group_name: Raleigh data center
     lab_instance_group_hosts:
-      - raleigh-controller
-  - lab_instance_group_name: Johannesburg data center
+      - controller-edge
+  - lab_instance_group_name: Johannesburg region
     lab_instance_group_hosts:
-      - jhb-exec
+      - jhb-edge
+  - lab_instance_group_name: Dublin region
+    lab_instance_group_hosts:
+      - dublin-edge
 
-# Dublin vars
-lab_dbn_inventories:
-  - name: "Dublin devices"
-    description: "Dublin. Ireland"
-lab_dbn_inventory_name: "Dublin devices"
-lab_dbn_host_name: "hop.dublin.example.com"
-lab_dbn_hosts:
-  - lab_host_name: "hop.dublin.example.com"
+lab_hosts:
+  - lab_host_name: "ral-controller.example.com"
+    lab_host_inventory: "Raleigh DC"
+    lab_host_vars:
+      ansible_host: controller-edge
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_host_key_checking: false
+  - lab_host_name: "jhb-kiosk.example.com"
+    lab_host_inventory: "Johannesburg devices"
+    lab_host_vars:
+      ansible_host: jhb-edge 
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_host_key_checking: false
+  - lab_host_name: "dublin-kiosk.example.com"
     lab_host_inventory: "Dublin devices"
     lab_host_vars:
-      ansible_host: "dublin-kiosk"
+      ansible_host: dublin-edge 
       ansible_python_interpreter: /usr/bin/python3
-lab_dbn_job_templates:
-  - jt_name: "Setup Dublin hop node"
-    jt_playbook: "getting-started-mesh/playbooks/dublin_hop_node.yml"
-    jt_inventory: "Dublin endpoints"
-    jt_become: true
-    jt_prompt_inventory: true
-    jt_extra_vars:
-      mesh_target: "jhb-exec"
-    survey_enabled: false
-lab_dbn_check_instance_name: "jhb-exec"
+      ansible_host_key_checking: false
 
-# high-availability job templates to run with correct inventory
-# Order of job templates is important
-lab_dbn_check_job_templates:
-  - jt_name: "Setup Dublin hop node"
-    jt_inventory: "Dublin DC"
-  - jt_name: "Mesh route info"
-    jt_inventory: "Raleigh DC"
-  - jt_name: "Debug info"
-    jt_inventory: "Johannesburg DC"
+# lab_groups:
+#   - group_name: webservers
+#     group_desc: "ACME Corp Webservers"
+#     group_hosts:
+#       - web1.acme.example.com
+#     group_preserve_hosts: true
+#     group_inventory: "ACME Corp DC"
+
+lab_job_templates:
+  - jt_name: "Deploy app - Johannesburg"
+    jt_playbook: "getting-started-mesh/playbooks/debug_info.yml"
+    jt_prompt_inventory: true
+    jt_inventory: "Johannesburg devices"
+    jt_become: false
+    survey_enabled: false
+  - jt_name: "Deploy app - Dublin"
+    jt_playbook: "getting-started-mesh/playbooks/debug_info.yml"
+    jt_prompt_inventory: true
+    jt_inventory: "Dublin devices"
+    jt_become: false
+    survey_enabled: false
+
+lab_jt_worklows:
+  - workflow_name: "{{ lab_jt_workflow_name }}"
+    # workflow_inventory: "ACME Corp DC"
+    # workflow_vars: {"tag_name": "{{ tag_name | default( default_tag_name ) }}",
+    #                  "acme_venv": "{{ acme_venv }}"}
+    # workflow_org: "{{ lab_organization }}"
+    # workflow_prompt_vars: true
+lab_jt_worklow_nodes:
+  - workflow_node_id: "Deploy app - Jhb"
+    workflow_node_jt: "{{ lab_jt_workflow_name }}"     
+    workflow_node_org: "{{ lab_organization }}"
+    workflow_node_unified_jt: "Deploy app - Johannesburg"
+  - workflow_node_id: "Deploy app - Dublin"
+    workflow_node_jt: "{{ lab_jt_workflow_name }}" 
+    workflow_node_org: "{{ lab_organization }}"
+    workflow_node_unified_jt: "Deploy app - Dublin"
 
 # controller_user_vars:
 #   - user: student
@@ -94,46 +114,3 @@ lab_dbn_check_job_templates:
 #     #   - "Mesh route info"
 #     #   - "Debug info"
 #     state: present
-
-lab_devops_worklow:
-  - workflow_name: "DevOps Workflow"
-    workflow_inventory: "ACME Corp DC"
-    workflow_vars: {"tag_name": "{{ tag_name | default( default_tag_name ) }}",
-                     "acme_venv": "{{ acme_venv }}"}
-    workflow_org: "{{ lab_organization }}"
-    workflow_prompt_vars: true
-lab_devops_worklow_nodes:
-  - workflow_node_id: "Deploy to Prod?"
-    workflow_node_jt: "DevOps Workflow"      
-    workflow_node_org: "{{ lab_organization }}"
-    workflow_node_approval:
-      description: "Deploy to Prod?"
-      name: "Deploy to Prod?"
-  - workflow_node_id: "Create App Release"
-    workflow_node_jt: "DevOps Workflow"      
-    workflow_node_org: "{{ lab_organization }}"
-    workflow_node_unified_jt: "Create App Release"
-  - workflow_node_id: "Config Webservers"
-    workflow_node_jt: "DevOps Workflow"      
-    workflow_node_org: "{{ lab_organization }}"
-    workflow_node_unified_jt: "Configure Webservers"
-  - workflow_node_id: "Deploy ACME App"
-    workflow_node_jt: "DevOps Workflow"      
-    workflow_node_org: "{{ lab_organization }}"
-    workflow_node_unified_jt: "Deploy ACMECorp App"
-  - workflow_node_id: "Deploy to Prod?"
-    workflow_node_jt: "DevOps Workflow"      
-    workflow_node_org: "{{ lab_organization }}"
-    workflow_node_success_nodes:
-      - "Config Webservers"
-      - "Create App Release"
-  - workflow_node_id: "Create App Release"
-    workflow_node_jt: "DevOps Workflow"      
-    workflow_node_org: "{{ lab_organization }}"
-    workflow_node_success_nodes:
-      - "Deploy ACME App"
-  - workflow_node_id: "Config Webservers"
-    workflow_node_jt: "DevOps Workflow"      
-    workflow_node_org: "{{ lab_organization }}"
-    workflow_node_success_nodes:
-      - "Deploy ACME App"
