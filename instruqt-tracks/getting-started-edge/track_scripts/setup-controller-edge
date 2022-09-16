@@ -12,7 +12,7 @@ chown -R rhel:rhel /home/rhel/.ssh
 
 # Get instruqt lab content
 CONTENT_DIR="setup-scripts/getting-started-edge"
-SCM_BRANCH="getting-started-edge"
+SCM_BRANCH="devel"
 
 /usr/bin/svn export https://github.com/craig-br/instruqt-tracks/branches/${SCM_BRANCH}/${CONTENT_DIR} /tmp/${CONTENT_DIR} --force
 
