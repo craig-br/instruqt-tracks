@@ -91,7 +91,7 @@ lab_jt_worklows:
     # workflow_inventory: "ACME Corp DC"
     # workflow_vars: {"tag_name": "{{ tag_name | default( default_tag_name ) }}",
     #                  "acme_venv": "{{ acme_venv }}"}
-    # workflow_org: "{{ lab_organization }}"
+    workflow_org: "{{ lab_organization }}"
     # workflow_prompt_vars: true
 lab_jt_worklow_nodes:
   - workflow_node_id: "Deploy app - Jhb"
