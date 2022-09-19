@@ -1,0 +1,16 @@
+slug: getting-started-edge-lab
+id: vj92suyqtxbt
+title: LAB - Getting started with Ansible Automation Platform and edge
+teaser: A short description of the track.
+description: |-
+  A long description of the track.
+
+  You can use any GitHub flavoured markdown.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: redhat
+developers:
+- cbrandt@redhat.com
+private: false
+published: false
+checksum: "13861648006816805807"
