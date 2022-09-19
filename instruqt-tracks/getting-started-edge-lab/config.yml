@@ -1,6 +1,22 @@
 version: "3"
-containers:
-- name: shell
-  image: ubuntu
-  shell: /bin/bash
-  memory: 256
+virtualmachines:
+- name: dublin-edge
+  image: red-hat-mbu/dublin-edge-lab-image
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: e2-medium
+- name: jhb-kiosk
+  image: red-hat-mbu/rhel8
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: e2-medium
+- name: jhb-edge
+  image: red-hat-mbu/dublin-edge-lab-mage
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: e2-medium
+- name: controller-edge-lab
+  image: red-hat-mbu/controller-edge-lab-image
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: e2-standard-2
+- name: dublin-kiosk
+  image: red-hat-mbu/rhel8
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: e2-medium
