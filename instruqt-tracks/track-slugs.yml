@@ -1,4 +1,5 @@
 ---
 tracks:
+  - { slug: getting-started-edge-lab, id: vj92suyqtxbt }
   - { slug: getting-started-edge, id: 5dzvgw2aslvq }
   - { slug: getting-started-mesh, id: akkabmifu15z }
