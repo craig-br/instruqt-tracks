@@ -30,11 +30,13 @@ tags:
 - ansible automation platform
 - mesh
 - automation mesh
+- prod
 owner: redhat
 developers:
 - cbrandt@redhat.com
 private: true
 published: true
+maintenance: false
 show_timer: true
 skipping_enabled: true
-checksum: "7150567507765600647"
+checksum: "18184922144985121114"
