@@ -1,6 +1,6 @@
 ---
 slug: edge-workflow
-id: mcxnzn3qrlee
+id: wqlqlrbocqmy
 type: challenge
 title: Simplifying the process using a controller workflow
 teaser: Automate everything!

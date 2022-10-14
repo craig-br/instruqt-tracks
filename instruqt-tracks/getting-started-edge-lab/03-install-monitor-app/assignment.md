@@ -1,6 +1,6 @@
 ---
 slug: install-monitor-app
-id: 3iznf9lfepae
+id: ixax5xfgyiqu
 type: challenge
 title: Monitoring edge network traffic
 teaser: Next, we'll install a monitoring software in the Dublin and Johannesburg devices
