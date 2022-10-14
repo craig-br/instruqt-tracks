@@ -13,19 +13,18 @@ description: |-
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 level: beginner
 tags:
+- prod
 - ' edge'
 - ' security'
 - ' container'
 - ' podman'
 - ' rhel'
-- prod
 owner: redhat
 developers:
 - cbrandt@redhat.com
 - dmendoza@redhat.com
 private: false
 published: false
-maintenance: false
 show_timer: true
 skipping_enabled: true
-checksum: "3276164035701091648"
+checksum: "16239336005947006878"

@@ -1,6 +1,6 @@
 ---
 slug: edge-playground
-id: sb4koo6nciix
+id: n7lqm9qwtf2r
 type: challenge
 title: Playground
 teaser: Use the remaining time to flex your new skills or explore the lab.
