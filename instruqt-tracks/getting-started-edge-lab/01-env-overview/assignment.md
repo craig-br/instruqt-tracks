@@ -1,6 +1,6 @@
 ---
 slug: env-overview
-id: uhiitqy4fbmr
+id: dgxqaikeb9ta
 type: challenge
 title: Environment overview
 teaser: In this challenge, we'll review the ACME Corp environment.

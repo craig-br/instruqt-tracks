@@ -1,6 +1,6 @@
 ---
 slug: playground
-id: mgywzlmyzv0e
+id: 6n4oinsnyput
 type: challenge
 title: Automation mesh playground
 teaser: Test your mesh skills in this challenge!
@@ -110,6 +110,11 @@ If the `Debug info` job template executes successfully, you’ve completed your 
 ===
 
 Press the `Next` button to close the lab.
+
+🐛 Encountered an issue?
+====
+
+If you have encountered an issue or have noticed something not quite right, please [open an issue](https://github.com/ansible/instruqt/issues/new?labels=getting-started-mesh&title=Getting+started+with+automation+mesh+issue&assignees=craig-br).
 
 <style type="text/css" rel="stylesheet">
   .lightbox {

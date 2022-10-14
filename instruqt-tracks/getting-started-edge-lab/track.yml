@@ -1,6 +1,6 @@
 slug: getting-started-edge-lab
 id: vj92suyqtxbt
-title: LAB - Getting started with Ansible Automation Platform and edge
+title: Getting started with Ansible Automation Platform and edge
 teaser: Scaling Containerized Applications to the Edge
 description: |-
   # Application Delivery with AAP and Podman at the Edge
@@ -27,4 +27,4 @@ private: false
 published: false
 show_timer: true
 skipping_enabled: true
-checksum: "13374383972593860228"
+checksum: "171758651472845417"
