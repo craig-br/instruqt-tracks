@@ -6,14 +6,13 @@ title: Simplifying the process using a controller workflow
 teaser: Automate everything!
 notes:
 - type: text
-  contents: "# Final mission: Why multiple clicks? How can you escale?\nConfigure
+  contents: "# Final mission: Why multiple clicks? How can you scale?\n##### Configure
     a workflow job template to deploy the Ignition application \U0001F4F2, monitoring
-    application \U0001F50E and firewall configuration globally \U0001F50E. This now
-    includes the Johannesburg factory HMI devices using automation mesh.\nClick the
-    Start button to begin this adventure!\n<center><img src=\"https://github.com/dafmendo/pictures_for_github/blob/bb8f0bbe2ae2c5c8ca8d71e3115ad02fd563d4c6/workflow-arch.png?raw=true\"></center>\n<style
-    type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n  text-align: center;\n}\np {\n
-    \ text-align: center;\n}\nimg {\n  display: block;\n  margin-left: auto;\n  margin-right:
-    auto;\n  height: 60%;\n\n}\n</style>"
+    application \U0001F50E and firewall configuration globally \U0001F50E.\n#####
+    This now includes the Johannesburg factory HMI devices using automation mesh.\n#####
+    Click the Start button to begin this adventure!\n\n<style type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n
+    \ text-align: center;\n}\np {\n  text-align: center;\n}\nimg {\n  display: block;\n
+    \ margin-left: auto;\n  margin-right: auto;\n  height: 60%;\n\n}\n</style>"
 tabs:
 - title: Controller
   type: service
@@ -22,6 +21,7 @@ tabs:
 - title: Jhb app
   type: service
   hostname: jhb-edge-lab
+  path: /web/login
   port: 8088
   new_window: true
 - title: Jhb mon
@@ -34,6 +34,7 @@ tabs:
 - title: Dublin app
   type: service
   hostname: dublin-edge-lab
+  path: /web/login
   port: 8088
   new_window: true
 - title: Dublin mon
@@ -43,53 +44,46 @@ tabs:
   port: 9090
   url: https://dublin-edge-lab:9090
   new_window: true
-- title: code
-  type: service
-  hostname: controller-edge-lab
-  path: /editor/
-  port: 443
-  new_window: true
 difficulty: basic
 timelimit: 600
 ---
-# Final mission: Orchestration! Configure the Johannesburg factory
-You will deploy the Ignition application, monitoring dashboards and firewall security configuration globally. This now includes the Johannesburg factory HMI devices using automation mesh.
 
-🔐 Ansible controller and monitoring dashboards login credentials
+🔐 Login credentials for the mission
 ===
 
->**Username**:
+>**Controller and monitoring username**:
 > ```yaml
 >student
 >```
->**Password**:
+>**Controller and monitoring password**:
 >```yaml
 >learn_ansible
 >```
 
 🔐 Ignition login credentials
->**Ignition Username**:
+>**Ignition username**:
 > ```yaml
 >admin
 >```
->**Ignition Password**:
+>**Ignition password**:
 >```yaml
 >learn_ansible
 >```
 
 👋 Introduction
 ===
+# Final mission: Orchestration! Configure the Johannesburg factory
+You will deploy the Ignition application, monitoring dashboards and firewall security configuration globally. This now includes the Johannesburg factory HMI devices using automation mesh.
+Orchestrate automation by running multiple automation jobs in multiple geographies and following your pre-defined conditions.
 
 ##### ⏰ Estimated time to complete: *10 minutes*
 
-In this challenge, we’ll review how to orchestrate automation by running multiple automation jobs in multiple geographies and following your pre-defined rules.
-
 >**❗️ Note**
 >
->* If required, log into the automation controller using the provided credentials from the _Controller_ tab.
+>* If required, log into automation controller using the provided credentials from the _Controller_ tab.
 >* You can expand the images by clicking on them for a closer look.
 >* Here’s the [link](https://github.com/craig-br/instruqt-track-content/tree/devel/getting-started-edge-lab/playbooks) to the playbook used in this example.
-* If you want to skip the workflow steps. From **Resources** section click **Templates** and you will see a `Job Template`named: `Help! Create edge workflow`. Click the `Launch` Template button to trigger it and it will deploy the workflow configuration.
+* If you want to skip the workflow steps. Under the **Resources** section click **Templates** and you will see a `Job Template`named: `Help! Create edge workflow`. Click the <img src="https://github.com/IPvSean/pictures_for_github/blob/master/launch_job.png?raw=true" style="width:4%; display:inline-block; vertical-align: middle;" /> icon to deploy the workflow configuration.
 <a href="#help-wf">
   <img alt="Autodeploy workflow" src="../assets/img/help-wf.png" />
 </a>
@@ -101,7 +95,7 @@ In this challenge, we’ll review how to orchestrate automation by running multi
 ☑️ First task - Explore the Global smart inventories
 ===
 
-##### ✏️ Explore *Global* inventories in the **Automation controller**.
+##### ✏️ Explore *Global* inventories in **automation controller**.
 
 * On the side navigation under the **Resources** section, click **Inventories**.
 * Observe there are three `Global` inventories, which are Smart Inventories.
@@ -115,7 +109,7 @@ In this challenge, we’ll review how to orchestrate automation by running multi
   <img alt="Global Inventories" src="../assets/img/global-inventories.png" />
 </a>
 
-* Click the `Global edge firewalls` inventory and notice it uses a `Smart host filter` to populate firewall hosts from Dublin and Johannesburg for this inventory.
+* Click the `Global edge firewalls` inventory and note it uses a `Smart host filter` to populate firewall hosts from Dublin and Johannesburg for this inventory.
 ℹ️ For more information about `Smart host filters`, please visit the [official documentation](https://docs.ansible.com/automation-controller/latest/html/userguide/inventories.html).
 
 <a href="#global-edge-firewalls">
@@ -136,7 +130,7 @@ In this challenge, we’ll review how to orchestrate automation by running multi
   <img alt="Global edge firewalls hosts" src="../assets/img/global-edge-firewalls-hosts.png" />
 </a>
 
-Go back to`Inventories` and repeat the same steps for `Global monitoring devices` and `Global kiosk devices`. Notice the similarities and differences across the three inventories.
+Go back to **Inventories** and repeat the same steps for `Global monitoring devices` and `Global kiosk devices`. Note that the inventories are using different Smart filters to group hosts together.
 
 ☑️ Second Task - Orchestrate application and monitoring dashboards deployment and security configuration
 ===
@@ -204,7 +198,7 @@ Click on `Save` button and the `Visualizer` window will automatically open.
   <img alt="Global kiosk devices inventory" src="../assets/img/global-kiosk-inventory-wf.png" />
 </a>
 
-* Finally `Preview` the configuration for this Node, and click on `Save`.
+* Finally click on `Save`.
 <a href="#preview-deployedgeapplication">
   <img alt="Preview deploy edge app" src="../assets/img/preview-deployedgeapplication.png" />
 </a>
@@ -244,7 +238,7 @@ Click on `Save` button and the `Visualizer` window will automatically open.
   <img alt="Global monitoring devices inventory" src="../assets/img/deploy-mondash-inventory-wf.png" />
 </a>
 
-* Finally `Preview` the configuration for this Node, and click on `Save`.
+* Click on `Save`.
 <a href="#deploy-mondash-preview-wf">
   <img alt="Preview deploy monitoring dashboards" src="../assets/img/deploy-mondash-preview-wf.png" />
 </a>
@@ -264,7 +258,7 @@ Click on `Save` button and the `Visualizer` window will automatically open.
   <img alt="Add firewall node" src="../assets/img/deploy-fw-plus.png" />
 </a>
 
-* Select the rule `On Success` and click `Next`.
+* Select the condition `On Success` and click `Next`.
 <a href="#rule-onsuccess">
   <img alt="On Success" src="../assets/img/rule-onsuccess.png" />
 </a>
@@ -291,7 +285,7 @@ Click on `Save` button and the `Visualizer` window will automatically open.
   <img alt="Global edge firewalls inventory" src="../assets/img/config-fw-inventory-wf.png" />
 </a>
 
-* Finally `Preview` the configuration for this Node, and click on `Save`.
+* Click on `Save`.
 <a href="#config-fw-preview-wf">
   <img alt="Preview configure firewalls" src="../assets/img/config-fw-preview-wf.png" />
 </a>
@@ -311,14 +305,12 @@ Click on `Save` button and the `Visualizer` window will automatically open.
   <img alt="Save workflow" src="../assets/img/wf-save.png" />
 </a>
 
-The controller will take you out the visualizer and you will go back into **Resources** - **Templates** tab.
-
 ☑️ Third task - Launch Global edge configuration workflow
 ===
 ##### ✏️ Launch *Global edge configuration* workflow template.
 * On the side navigation under the **Resources** section, click **Templates**.
-* Click the `Global edge configuration` rocket icon to launch the template, or click the `Launch` button.
-* The workflow will run automatically and you be redirected into **Views** - **Jobs** tab to can observe the live execution.
+* Click the `Global edge configuration` <img src="https://github.com/IPvSean/pictures_for_github/blob/master/launch_job.png?raw=true" style="width:4%; display:inline-block; vertical-align: middle;" /> icon to launch the workflow template.
+* The workflow will run automatically and you will be redirected into **Views** - **Jobs** tab to observe the live execution.
 
 <a href="#wf-run">
   <img alt="Global edge configuration execution" src="../assets/img/wf-run.png" />
@@ -338,9 +330,7 @@ The controller will take you out the visualizer and you will go back into **Reso
   <img alt="Workflow finalized" src="../assets/img/wf-finalized.png" />
 </a>
 
->ℹ️ Note that depending on the workflow and the automation rules, not all the Nodes are always executed.
-
-☑️ Final task - Login into the Monitoring dashboards and HMI devices
+☑️ Final task - Test if it worked!
 ===
 * Please log in the monitoring dashboards and applications by clickling into `Jhb app`, `Jhb mon`,  `Dublin app` and `Dublin mon` tabs.
 
@@ -352,9 +342,9 @@ The controller will take you out the visualizer and you will go back into **Reso
   <img alt="Dublin and Johannessburg tabs" src="../assets/img/apps-mondash.png" />
 </a>
 
-* You will notice the monitoring dashboards and applications for ALL the locations are available. Login with the corresponding credentials.
+* The monitoring dashboards and applications for ALL the locations must be available. Login with the corresponding credentials.
 
-✅ Check the Challenge
+✅ Check the challenge
 ===
 Press the `Check` button below to go to the next challenge once you’ve completed the tasks.
 

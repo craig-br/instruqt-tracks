@@ -7,13 +7,13 @@ teaser: In this challenge, we'll install the Ignition application to the Dublin 
 notes:
 - type: text
   contents: "# First mission:  Deploy the application in a consistent scalable manner
-    into Dublin factory HMI \U0001F4F2.\nYou are based in Raleigh and are tasked to
-    deploy the application remotely. As you are a seasoned veteran \U0001F94B you
-    tested the application deployment in pre-production, and have a containerized
-    image ready \U0001F947. Your mission, should you choose to accept it, is to deploy
-    the factory control application in Dublin plant HMI device \U0001F4F2.  <center><img
-    src=\"https://github.com/dafmendo/pictures_for_github/blob/fd9d1c424a130fbe4de73730b24d2a8c1d85e4bb/industrialapp-deploy-mesh.png?raw=true\"></center>\nClick
-    on Start button to accept.\n<style type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n
+    into Dublin factory HMI \U0001F4F2.\n##### You are based in Raleigh and are tasked
+    to deploy the application remotely.\n##### As you are a seasoned veteran \U0001F94B
+    you tested the application deployment in pre-production, and have a containerized
+    image ready \U0001F947.\n##### Your mission, should you choose to accept it, is
+    to deploy the factory control application in Dublin plant HMI device \U0001F4F2.\n<center><img
+    src=\"https://github.com/dafmendo/pictures_for_github/blob/fd9d1c424a130fbe4de73730b24d2a8c1d85e4bb/industrialapp-deploy-mesh.png?raw=true\"></center>\n#####
+    Click on Start button to accept.\n<style type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n
     \ text-align: center;\n}\np {\n  text-align: center;\n}\nimg {\n  display: block;\n
     \ margin-left: auto;\n  margin-right: auto;\n  height: 60%;\n\n}\n</style>"
 tabs:
@@ -24,42 +24,29 @@ tabs:
 - title: Dublin app
   type: service
   hostname: dublin-edge-lab
-  port: 8088
-  new_window: true
-- title: jhb app
-  type: service
-  hostname: jhb-edge-lab
+  path: /web/login
   port: 8088
   new_window: true
 difficulty: basic
 timelimit: 600
 ---
-# First mission: Deploy the application in a consistent scalable manner into Dublin factory
-You will deploy an industrial application into Dublin factory HMI device, via the Dublin execution node.
-<a href="#deploy_app_template">
-  <img alt="Deploy edge application in Dublin" src="../assets/img/dublin-deployment.png" />
-</a>
 
-<a href="#" class="lightbox" id="deploy_app_template">
-  <img alt="Deploy edge application in Dublin" src="../assets/img/dublin-deployment.png" />
-</a>
-
-🔐 Ansible controller and Ignition application login credentials
+🔐 Login credentials for the mission
 ===
 
->**Ansible Controller Username**:
+>**Controller username**:
 > ```yaml
 >student
 >```
->**Password**:
+>**Controller password**:
 >```yaml
 >learn_ansible
 >```
->**Ignition Username**:
+>**Ignition username**:
 > ```yaml
 >admin
 >```
->**Ignition Password**:
+>**Ignition password**:
 >```yaml
 >learn_ansible
 >```
@@ -67,13 +54,21 @@ You will deploy an industrial application into Dublin factory HMI device, via th
 👋 Introduction
 ===
 
-##### ⏰ Estimated time to complete: *10 minutes*
+### First mission: Deploy the application in a consistent scalable manner into Dublin factory
+You will deploy an industrial application into Dublin factory HMI device, via the Dublin execution node.
+<a href="#dublin-deployment">
+  <img alt="Deploy edge application in Dublin" src="../assets/img/dublin-deployment.png" />
+</a>
 
-In this challenge, we’ll review how to deploy an application into a single remote location using the corresponding instance group.
+<a href="#" class="lightbox" id="dublin-deployment">
+  <img alt="Deploy edge application in Dublin" src="../assets/img/dublin-deployment.png" />
+</a>
+
+##### ⏰ Estimated time to complete: *10 minutes*
 
 >**❗️ Note**
 >
->* If required, log into the automation controller using the provided credentials from the _Controller_ tab.
+>* If required, log into automation controller using the provided credentials from the _Controller_ tab.
 >* You can expand the images by clicking on them for a closer look.
 >* Here’s the [link](https://github.com/craig-br/instruqt-track-content/blob/65e9c23585f22e0c725108c1277a4c524bf58513/getting-started-edge-lab/playbooks/deploy_application.yml) to the playbook used in this example.
 
@@ -82,7 +77,7 @@ In this challenge, we’ll review how to deploy an application into a single rem
 
 >ℹ️ [Job Templates](https://docs.ansible.com/automation-controller/latest/html/userguide/job_templates.html) are useful to execute the same job many times, and comprise a definition and set of parameters for running an Ansible job.
 
-##### ✏️ Explore *Deploy edge application* job template in the **Automation controller**.
+##### ✏️ Explore *Deploy edge application* job template in **automation controller**.
 
 * On the side navigation under the **Resources** section, click on **Templates**.
 * Click on the `Deploy edge application` dropdown arrow.
@@ -95,8 +90,7 @@ In this challenge, we’ll review how to deploy an application into a single rem
   <img alt="Deploy edge application" src="../assets/img/deploy_app_template.png" />
 </a>
 
-The `Deploy edge application` job template is used to execute the playbook in *Dublin region* inventory by default if no other instance is specified during the automation job launch.
-Therefore `dublin-edge-lab`execution node will be used at the moment of execution to deploy the application.
+The `Deploy edge application` job template uses the *Dublin region* inventory by default, which uses the `Dublin instance group`. And the `Dublin instance group` will use the local `dublin-edge-lab`execution node to run all the automation jobs.
 
 <a href="#deploy_app_template_dublin">
   <img alt="Deploy edge application inventory" src="../assets/img/deploy_app_template_dublin.png" />
@@ -108,9 +102,8 @@ Therefore `dublin-edge-lab`execution node will be used at the moment of executio
 
 ##### ✏️ Launch *Deploy edge application* job template.
 
-* Please log in to automation controller using the provided credentials.
 * On the side navigation under the **Resources** section, click on **Templates**.
-* Click on the `Deploy edge application` rocket icon to launch the template.
+* Click on the `Deploy edge application` <img src="https://github.com/IPvSean/pictures_for_github/blob/master/launch_job.png?raw=true" style="width:4%; display:inline-block; vertical-align: middle;" /> icon to launch the template.
 * Leave the default `Dublin region` selected and click on the `Next` button.
 <a href="#Deploy app template region prompt">
   <img alt="Deploy app template region prompt" src="../assets/img/deploy_app_template_prompt.png" />
@@ -152,16 +145,6 @@ Therefore `dublin-edge-lab`execution node will be used at the moment of executio
   <img alt="Dublin App" src="../assets/img/dublin-app.png" />
 </a>
 
-* Discard any alert, if you get a Quick Start pop-up, choose the `No thanks`option as we will not configure the industrial application as part of this lab.
-
-<a href="#Ignition Quick Start">
-  <img alt="Ignition Quick Start" src="../assets/img/nothanks.png" />
-</a>
-
-<a href="#" class="lightbox" id="Ignition Quick Start">
-  <img alt="Ignition Quick Start" src="../assets/img/nothanks.png" />
-</a>
-
 * Please log in the application using the admin credentials above.
 
 <a href="#Ignition Login">
@@ -170,6 +153,16 @@ Therefore `dublin-edge-lab`execution node will be used at the moment of executio
 
 <a href="#" class="lightbox" id="Ignition Login">
   <img alt="Ignition Login" src="../assets/img/Ignition_login.png" />
+</a>
+
+* Discard any alert, if you get a Quick Start pop-up, choose the `No thanks`option as we will not configure the industrial application as part of this lab.
+
+<a href="#Ignition Quick Start">
+  <img alt="Ignition Quick Start" src="../assets/img/nothanks.png" />
+</a>
+
+<a href="#" class="lightbox" id="Ignition Quick Start">
+  <img alt="Ignition Quick Start" src="../assets/img/nothanks.png" />
 </a>
 
 ✅ Check the Challenge

@@ -6,16 +6,15 @@ title: Environment overview
 teaser: In this challenge, we'll review the ACME Corp environment.
 notes:
 - type: text
-  contents: "# ACME Corp. Dublin and Johannesburg Plants\n## The settings per Plant\n#####
-    An industrial site is a complex ecosystem, your Plant Manager has tasked you to
-    monitor \U0001F50E\U0001F4CA and improve the production line and packaging \U0001F6E0\U0001F4C8.
-    To achieve that, ACME will deploy an application to ruggedized servers with HMI
-    (Human Machine Interface) displays connected to them.\n##### To the average user
-    this will look like  a tablet device \U0001F4F2 with an application running in
-    kiosk mode (surprise! its RHEL running under the covers).\n##### Dependencies
-    such as: IPAM, DNS configuration, networking connectivity, patches and hardening
-    must be solved in parallel or as day 2 operations post deployment.\n##### How
-    can you scale? \U0001F914\n\n<style type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n
+  contents: "# ACME Corp. Dublin and Johannesburg plants\n##### An industrial site
+    is a complex ecosystem, your Plant Manager has tasked you to monitor \U0001F50E\U0001F4CA
+    and improve the production line and packaging \U0001F6E0\U0001F4C8. To achieve
+    that, ACME will deploy an application to ruggedized servers with HMI (Human Machine
+    Interface) displays connected to them.\n##### To the average user this will look
+    like  a tablet device \U0001F4F2 with an application running in kiosk mode (surprise!
+    its RHEL running under the covers).\n##### Dependencies such as: IPAM, DNS configuration,
+    networking connectivity, patches and hardening must be solved in parallel or as
+    day 2 operations post deployment.\n\n<style type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n
     \ text-align: center;\n}\np {\n  text-align: center;\n}\nimg {\n  display: block;\n
     \ margin-left: auto;\n  margin-right: auto;\n  height: 60%;\n\n}\n</style>"
 - type: text
@@ -33,33 +32,32 @@ tabs:
 difficulty: basic
 timelimit: 600
 ---
-# ACME Corp
-ACME Corp uses Ansible Automation Platform extensively to manage their edge ecosystem across multiple regions.
 
-🔐 Login credentials
+🔐 Login credentials for the mission
 ===
 All the logins use the same credentials.
 
->**Username**:
+>**Controller username**:
 > ```yaml
 >student
 >```
->**Password**:
+>**Controller password**:
 >```yaml
 >learn_ansible
 >```
 
 👋 Introduction
 ===
+### ACME Corp
+ACME Corp uses Ansible Automation Platform extensively to manage their edge ecosystem across multiple regions.
+In this challenge, we’ll review their installation, learn more about mesh worker node types and explore controller instances and instance groups.
 
 ##### ⏰ Estimated time to complete: *10 minutes*
-
-In this challenge, we’ll review their installation, learn more about mesh worker node types and explore controller instances and instance groups.
 
 >**❗️ Note**
 >
 >* Perform all tasks in the _Controller_ tab located at the top-left of your browser.
->* If required, log into the automation controller using the provided credentials.
+>* If required, log into automation controller using the provided credentials.
 >* You can expand the images by clicking on them for a closer look.
 
 ☑️ First task - ACME Corp automation mesh overview

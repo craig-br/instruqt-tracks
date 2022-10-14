@@ -12,6 +12,7 @@ tabs:
 - title: Jhb app
   type: service
   hostname: jhb-edge-lab
+  path: /web/login
   port: 8088
   new_window: true
 - title: Jhb mon
@@ -24,6 +25,7 @@ tabs:
 - title: Dublin app
   type: service
   hostname: dublin-edge-lab
+  path: /web/login
   port: 8088
   new_window: true
 - title: Dublin mon

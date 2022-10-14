@@ -6,26 +6,20 @@ title: Monitoring edge network traffic
 teaser: Next, we'll install a monitoring software in the Dublin and Johannesburg devices
 notes:
 - type: text
-  contents: "# Second mission:  Dublin locations require monitoring.\nYou are based
-    in Raleigh and are tasked to deploy the linux monitoring \U0001F50E application
-    remotely. Connectivity is a precious resource and it is critical to monitor traffic
-    statistics \U0001F4CA to understand bandwith utilization and other performance
-    Key Performance Indicators \U0001F4C8. Your mission, should you choose to accept
-    it \U0001F94B, is to deploy the IT performance \"eyes\" \U0001F440 into the HMI
-    device \U0001F4F2 to obtain these KPIs from Dublin plant. Click on Start button
-    to accept.\n<style type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n  text-align:
-    center;\n}\np {\n  text-align: center;\n}\nimg {\n  display: block;\n  margin-left:
-    auto;\n  margin-right: auto;\n  height: 60%;\n\n}\n</style>"
+  contents: "# Second mission:  Dublin locations require monitoring.\n##### You are
+    based in Raleigh and are tasked to deploy the RHEL monitoring \U0001F50E application
+    remotely.\n##### Connectivity is a precious resource and it is critical to monitor
+    traffic statistics \U0001F4CA to understand bandwith utilization \U0001F4C8.\n#####
+    Your mission, should you choose to accept it \U0001F94B, is to deploy the IT performance
+    \"eyes\" \U0001F440 into the Dublin plant.\n##### Click on Start button begin.\n<style
+    type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n  text-align: center;\n}\np {\n
+    \ text-align: center;\n}\nimg {\n  display: block;\n  margin-left: auto;\n  margin-right:
+    auto;\n  height: 60%;\n\n}\n</style>"
 tabs:
 - title: Controller
   type: service
   hostname: controller-edge-lab
   port: 443
-- title: Dublin app
-  type: service
-  hostname: dublin-edge-lab
-  port: 8088
-  new_window: true
 - title: Dublin mon
   type: service
   hostname: dublin-edge-lab
@@ -33,27 +27,19 @@ tabs:
   port: 9090
   url: https://dublin-edge-lab:9090
   new_window: true
-- title: code
-  type: service
-  hostname: controller-edge-lab
-  path: /editor/
-  port: 443
-  new_window: true
 difficulty: basic
 timelimit: 600
 ---
-# Second mission: Deploy the monitoring dashboard into Dublin factory
-You will deploy a monitoring dashboard application into Dublin factory HMI device, via the Dublin execution node.
 
-🔐 Ansible controller login credentials
+🔐 Login credentials for the mission
 ===
 All the logins use the same credentials.
 
->**Username**:
+>**Controller and monitoring username**:
 > ```yaml
 >student
 >```
->**Password**:
+>**Controller and monitoring password**:
 >```yaml
 >learn_ansible
 >```
@@ -61,20 +47,21 @@ All the logins use the same credentials.
 👋 Introduction
 ===
 
-##### ⏰ Estimated time to complete: *10 minutes*
-
+### Second mission: Deploy the monitoring dashboard into Dublin factory
 In this challenge, we’ll review how to deploy the monitoring dashboards application into a single remote location using the corresponding instance group.
+
+##### ⏰ Estimated time to complete: *10 minutes*
 
 >**❗️ Note**
 >
->* If required, log into the automation controller using the provided credentials from the _Controller_ tab.
+>* If required, log into automation controller using the provided credentials from the _Controller_ tab.
 >* You can expand the images by clicking on them for a closer look.
 >* Here’s the [link](https://github.com/craig-br/instruqt-track-content/blob/65e9c23585f22e0c725108c1277a4c524bf58513/getting-started-edge-lab/playbooks/deploy_monitoring.yml) to the playbook used in this example.
 
 ☑️ Task - Deploy monitoring dashboards job template
 ===
 
-##### ✏️ Explore *Deploy monitoring dashboards* job template in the **Automation controller**.
+##### ✏️ Explore *Deploy monitoring dashboards* job template in **automation controller**.
 
 * On the side navigation under the **Resources** section, click on **Templates**.
 * Click on the `Deploy monitoring dashboards` dropdown arrow.
@@ -87,7 +74,7 @@ In this challenge, we’ll review how to deploy the monitoring dashboards applic
   <img alt="Deploy monitoring dashboards" src="../assets/img/deploy_mondash_template.png" />
 </a>
 
-The `Deploy monitoring dashboards` job template uses the `Dublin region` inventory by default if no other instance is specified at launch. The `dublin-edge-lab`execution node is associated with the `Dublin region` inventory and runs the job template.
+The `Deploy monitoring dashboards` job template uses the `Dublin region` inventory by default. The `dublin-edge-lab`execution node is associated with the `Dublin region` inventory and runs the job template.
 
 <a href="#deploy_mondash_template_dublin">
   <img alt="Deploy monitoring dashboards inventory" src="../assets/img/deploy_mondash_template_dublin.png" />
@@ -100,8 +87,8 @@ The `Deploy monitoring dashboards` job template uses the `Dublin region` invento
 ##### ✏️ Launch *Deploy monitoring dashboards* job template.
 
 * On the side navigation under the **Resources** section, click on **Templates**.
-* Click on the `Deploy monitoring dashboards` rocket icon to launch the template.
-* Select `Dublin region` in the prompt and click on the `Next` button.
+* Click on the `Deploy monitoring dashboards` <img src="https://github.com/IPvSean/pictures_for_github/blob/master/launch_job.png?raw=true" style="width:4%; display:inline-block; vertical-align: middle;" /> icon to launch the template.
+* Leave the default `Dublin region` selected in the Inventory prompt and click on the `Next` button.
 <a href="#Deploy monitoring dashboards template region prompt">
   <img alt="Deploy monitoring dashboards template region prompt" src="../assets/img/deploy_mondash_template_prompt.png" />
 </a>

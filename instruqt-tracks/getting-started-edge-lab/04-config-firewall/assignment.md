@@ -8,12 +8,12 @@ teaser: We've installed the monitoring software, but we can't access it! We will
 notes:
 - type: text
   contents: "# Third mission:  Dublin locations require access to reach the monitoring
-    dashboards.\nThe monitoring dashboards \U0001F4CA are deployed, however the traffic
-    is restricted \U0001F6AB. In this challenge you will configure the firewall rules
-    to allow ONLY the traffic required \U0001F50E✅. Click on Start button to solve
-    this challenge using automation.\n<style type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n
-    \ text-align: center;\n}\np {\n  text-align: center;\n}\nimg {\n  display: block;\n
-    \ margin-left: auto;\n  margin-right: auto;\n  height: 60%;\n\n}\n</style>"
+    dashboards.\n##### The monitoring dashboards \U0001F4CA are deployed, however
+    the traffic is restricted \U0001F6AB.\n##### In this challenge you will configure
+    the firewall rules to allow ONLY the traffic required \U0001F50E✅.\n##### Click
+    on Start button to solve this challenge using automation.\n<style type=\"text/css\"
+    rel=\"stylesheet\">\nh1,h2{\n  text-align: center;\n}\np {\n  text-align: center;\n}\nimg
+    {\n  display: block;\n  margin-left: auto;\n  margin-right: auto;\n  height: 60%;\n\n}\n</style>"
 tabs:
 - title: Controller
   type: service
@@ -22,6 +22,7 @@ tabs:
 - title: Dublin app
   type: service
   hostname: dublin-edge-lab
+  path: /web/login
   port: 8088
   new_window: true
 - title: Dublin mon
@@ -34,17 +35,16 @@ tabs:
 difficulty: basic
 timelimit: 600
 ---
-# Third mission: Configure the firewall rules to allow the access to the monitoring dashboard into Dublin factory
 
-🔐 Ansible controller and monitoring credentials
+🔐 Login credentials for the mission
 ===
 All the logins use the same credentials.
 
->**Username**:
+>**Controller and monitoring username**:
 > ```yaml
 >student
 >```
->**Password**:
+>**Controller and monitoring password**:
 >```yaml
 >learn_ansible
 >```
@@ -52,20 +52,21 @@ All the logins use the same credentials.
 👋 Introduction
 ===
 
-##### ⏰ Estimated time to complete: *10 minutes*
-
+### Third mission: Configure the firewall rules to allow the access to the monitoring dashboard into Dublin factory
 In this challenge, we’ll review how to automate the firewall configuration for a single remote location using the corresponding instance group.
+
+##### ⏰ Estimated time to complete: *10 minutes*
 
 >**❗️ Note**
 >
->* If required, log into the automation controller using the provided credentials from the _Controller_ tab.
+>* If required, log into automation controller using the provided credentials from the _Controller_ tab.
 >* You can expand the images by clicking on them for a closer look.
 >* Here’s the [link](https://github.com/craig-br/instruqt-track-content/blob/65e9c23585f22e0c725108c1277a4c524bf58513/getting-started-edge-lab/playbooks/configure_firewall.yml) to the playbook used in this example.
 
 ☑️ Task - Configure firewalls rules into a remote location
 ===
 
-##### ✏️ Explore *Configure edge firewalls* job template in the **Automation controller**.
+##### ✏️ Explore *Configure edge firewalls* job template in **automation controller**.
 
 * On the side navigation under the **Resources** section, click on **Templates**.
 * Click on the `Configure edge firewalls` dropdown arrow.
@@ -91,7 +92,7 @@ The `Configure edge firewalls` job template uses the  `Dublin region` inventory 
 ##### ✏️ Launch *Configure edge firewalls* job template.
 
 * On the side navigation under the **Resources** section, click on **Templates**.
-* Click on the `Configure edge firewalls` rocket icon to launch the template.
+* Click on the `Configure edge firewalls` <img src="https://github.com/IPvSean/pictures_for_github/blob/master/launch_job.png?raw=true" style="width:4%; display:inline-block; vertical-align: middle;" /> icon to launch the template.
 * Keep the default `Dublin region` selected and click on `Next`.
 <a href="#Configure edge firewalls template region prompt">
   <img alt="Configure edge firewalls template region prompt" src="../assets/img/config_fw_template_prompt.png" />
@@ -101,7 +102,7 @@ The `Configure edge firewalls` job template uses the  `Dublin region` inventory 
   <img alt="Configure edge firewalls template region prompt" src="../assets/img/config_fw_template_prompt.png" />
 </a>
 
-* Preview the settings and click `Launch` to trigger the automation job.
+* Click `Launch` to trigger the automation job.
 
 <a href="#Launch Configure edge firewalls template">
   <img alt="Launch Configure edge firewalls template" src="../assets/img/config_fw_template_launch.png" />
@@ -111,7 +112,7 @@ The `Configure edge firewalls` job template uses the  `Dublin region` inventory 
   <img alt="Launch Configure edge firewalls template" src="../assets/img/config_fw_template_launch.png" />
 </a>
 
->ℹ️ The `Configure edge firewalls template` will execute multiple tasks including information gathering, templating, pulling the container image, and restarting services. Check all the tasks executed under the **Views** section, inside **Jobs**.
+>ℹ️ The `Configure edge firewalls` template will configure the firewall to allow the traffic to the monitoring application. Check the tasks executed under the **Views** section, inside **Jobs**.
 
 <a href="#View Configure edge firewalls template job execution">
   <img alt="View Configure edge firewalls template job execution" src="../assets/img/config_fw_template_job.png" />
@@ -144,7 +145,7 @@ The `Configure edge firewalls` job template uses the  `Dublin region` inventory 
   <img alt="Monitoring dashboards" src="../assets/img/mondash-user.png" />
 </a>
 
-* The monitoring dashboards will show linux statistics including traffic utilization.
+* The monitoring dashboards will show RHEL statistics including traffic utilization.
 
 <a href="#Monitoring dashboards KPIs">
   <img alt="Monitoring dashboards KPIs" src="../assets/img/mondash-traffic.png" />
@@ -154,7 +155,7 @@ The `Configure edge firewalls` job template uses the  `Dublin region` inventory 
   <img alt="Monitoring dashboards KPIs" src="../assets/img/mondash-traffic.png" />
 </a>
 
-✅ Check the Challenge
+✅ Check the challenge
 ===
 Press the `Check` button below to go to the next challenge once you’ve completed the tasks.
 
