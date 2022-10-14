@@ -1,6 +1,6 @@
-slug: getting-started-edge-lab-dev
-id: gb9aovt6cehx
-title: DEV - LAB - Getting started with Ansible Automation Platform and edge
+slug: getting-started-edge-lab
+id: 
+title: LAB - Getting started with Ansible Automation Platform and edge
 teaser: Scaling Containerized Applications to the Edge
 description: |-
   # Application Delivery with AAP and Podman at the Edge
@@ -12,7 +12,7 @@ description: |-
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 level: beginner
 tags:
-- dev
+- prod
 - ' edge'
 - ' security'
 - ' container'
