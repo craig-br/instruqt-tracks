@@ -1,5 +1,5 @@
 slug: getting-started-edge-lab
-id: 
+id: vj92suyqtxbt
 title: LAB - Getting started with Ansible Automation Platform and edge
 teaser: Scaling Containerized Applications to the Edge
 description: |-
@@ -7,7 +7,7 @@ description: |-
 
   Acme Corp is a chemical company that has industrial facilities across the globe.
   A new, containerized industrial control application must be deployed in the **Dublin** and **Johannesburg** plants.
-  
+
   ## Architecture per site:
   <center><img src="https://github.com/dafmendo/pictures_for_github/blob/287d8a28097d0aa52b32bfc6069aaf33f604e480/industrialapp-deploy.png?raw=true"></center>
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
@@ -27,4 +27,4 @@ private: false
 published: false
 show_timer: true
 skipping_enabled: true
-checksum: "18303597837217182632"
+checksum: "13374383972593860228"
