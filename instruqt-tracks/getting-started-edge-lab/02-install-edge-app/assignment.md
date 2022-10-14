@@ -42,6 +42,7 @@ timelimit: 600
 >```yaml
 >learn_ansible
 >```
+
 >**Ignition username**:
 > ```yaml
 >admin

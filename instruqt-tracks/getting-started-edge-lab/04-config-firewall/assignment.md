@@ -38,7 +38,6 @@ timelimit: 600
 
 🔐 Login credentials for the mission
 ===
-All the logins use the same credentials.
 
 >**Controller and monitoring username**:
 > ```yaml
@@ -49,6 +48,14 @@ All the logins use the same credentials.
 >learn_ansible
 >```
 
+>**Ignition username**:
+> ```yaml
+>admin
+>```
+>**Ignition password**:
+>```yaml
+>learn_ansible
+>```
 👋 Introduction
 ===
 

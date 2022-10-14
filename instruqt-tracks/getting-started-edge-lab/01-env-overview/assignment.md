@@ -35,7 +35,6 @@ timelimit: 600
 
 🔐 Login credentials for the mission
 ===
-All the logins use the same credentials.
 
 >**Controller username**:
 > ```yaml
