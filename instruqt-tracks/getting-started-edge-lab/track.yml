@@ -5,14 +5,15 @@ teaser: Scaling Containerized Applications to the Edge
 description: |-
   # Application Delivery with AAP and Podman at the Edge
 
-  Acme Corp is a chemical company that has industrial facilities across multiple countries in the world.
-  It is required to deploy a containerized industrial control application for **two plants** located one in **Dublin** and the second in **Johannesburg**.
+  Acme Corp is a chemical company that has industrial facilities across the globe.
+  A new, containerized industrial control application must be deployed in the **Dublin** and **Johannesburg** plants.
+
   ## Architecture per site:
   <center><img src="https://github.com/dafmendo/pictures_for_github/blob/287d8a28097d0aa52b32bfc6069aaf33f604e480/industrialapp-deploy.png?raw=true"></center>
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 level: beginner
 tags:
-- dev
+- prod
 - ' edge'
 - ' security'
 - ' container'
@@ -26,4 +27,4 @@ private: false
 published: false
 show_timer: true
 skipping_enabled: true
-checksum: "171758651472845417"
+checksum: "16239336005947006878"

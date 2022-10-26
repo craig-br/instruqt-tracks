@@ -1,6 +1,6 @@
 ---
 slug: env-overview
-id: dgxqaikeb9ta
+id: 3bscbhuizrqg
 type: challenge
 title: Environment overview
 teaser: In this challenge, we'll review the ACME Corp environment.
@@ -35,7 +35,6 @@ timelimit: 600
 
 🔐 Login credentials for the mission
 ===
-All the logins use the same credentials.
 
 >**Controller username**:
 > ```yaml
@@ -77,11 +76,11 @@ In this challenge, we’ll review their installation, learn more about mesh work
 
 ##### ACME Corp’s automation mesh configuration and worker node types.
 
-* `controller-edge-lab` - Located in the Raleigh headquarters and configured as a **hybrid node**.
+* `controller-edge-lab` - Located in the Raleigh headquarters and configured as a *hybrid node*.
 
-* `jhb-edge-lab` - Located in the Johannesburg remote chemical plant and configured as an **execution node**.
+* `jhb-edge-lab` - Located in the Johannesburg remote chemical plant and configured as an *execution node*.
 
-* `dublin-edge-lab` - Located in an Irish remote chemical plant and configured as a **execution node**.
+* `dublin-edge-lab` - Located in an Irish remote chemical plant and configured as a *execution node*.
 
 >**❗️ Note**\
 >Automation mesh also provides: **control** node type which only runs controller runtime tasks, and **hop nodes** which, *like jump hosts*, don’t run any execution or control plane tasks and only route traffic to other execution nodes. These nodes aren’t used in this lab.
@@ -106,7 +105,7 @@ In this challenge, we’ll review their installation, learn more about mesh work
 </a>
 
 
-* Click on the `jhb-edge-lab` instance and look at the `Node Type`. `jhb-edge-lab` is configured as an **execution node**.
+* Click on the `jhb-edge-lab` instance and look at the *Node Type*. `jhb-edge-lab` is configured as an *execution node*.
 
 <a href="#jhb-exec">
   <img alt="JHB Exec node" src="../assets/img/jhb_exec_node.png" />
@@ -118,7 +117,7 @@ In this challenge, we’ll review their installation, learn more about mesh work
 
 * Click on **Instance Groups** under the **Administration** section to return to the main instance group window.
 * Click on the `controlplane` instance group.
-* Click on the `Instances` tab on the top.
+* Click on the **Instances** tab on the top.
 
 <a href="#control_ig">
   <img alt="Control IG" src="../assets/img/control_ig.png" />
@@ -130,7 +129,7 @@ In this challenge, we’ll review their installation, learn more about mesh work
 
 >ℹ️ The `controlplane` instance group is the preselected instance group for all mesh worker nodes that run [control plane](https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.1/html-single/red_hat_ansible_automation_platform_automation_mesh_guide/index#control_plane) tasks.
 
-* Click on the `controller-edge-lab` instance and look at the **Node Type**. `controller-edge-lab` is configured as a **hybrid node**.
+* Click on the `controller-edge-lab` instance and look at the *Node Type*. `controller-edge-lab` is configured as a *hybrid node*.
 
 <a href="#hybrid_node">
   <img alt="Control IG" src="../assets/img/hybrid_node.png" />

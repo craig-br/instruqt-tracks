@@ -1,6 +1,6 @@
 ---
 slug: install-edge-app
-id: xpyhdhtou0qn
+id: y02soflkzpj1
 type: challenge
 title: Installing the industrial edge application
 teaser: In this challenge, we'll install the Ignition application to the Dublin factory.
@@ -11,11 +11,11 @@ notes:
     to deploy the application remotely.\n##### As you are a seasoned veteran \U0001F94B
     you tested the application deployment in pre-production, and have a containerized
     image ready \U0001F947.\n##### Your mission, should you choose to accept it, is
-    to deploy the factory control application in Dublin plant HMI device \U0001F4F2.\n<center><img
-    src=\"https://github.com/dafmendo/pictures_for_github/blob/fd9d1c424a130fbe4de73730b24d2a8c1d85e4bb/industrialapp-deploy-mesh.png?raw=true\"></center>\n#####
-    Click on Start button to accept.\n<style type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n
-    \ text-align: center;\n}\np {\n  text-align: center;\n}\nimg {\n  display: block;\n
-    \ margin-left: auto;\n  margin-right: auto;\n  height: 60%;\n\n}\n</style>"
+    to deploy the factory control application in Dublin plant HMI device \U0001F4F2.\n#####
+    Click on Start button to accept.\n\n<center><img src=\"https://github.com/dafmendo/pictures_for_github/blob/a00524b755041463dcfe6b4860cd273e1c9c195c/industrialapp-deploy.png?raw=true\"></center>\n\n\n<style
+    type=\"text/css\" rel=\"stylesheet\">\nh1,h2{\n  text-align: center;\n}\np {\n
+    \ text-align: center;\n}\nimg {\n  display: block;\n  margin-left: auto;\n  margin-right:
+    auto;\n  height: 60%;\n\n}\n</style>"
 tabs:
 - title: Controller
   type: service
@@ -42,6 +42,7 @@ timelimit: 600
 >```yaml
 >learn_ansible
 >```
+
 >**Ignition username**:
 > ```yaml
 >admin
@@ -129,8 +130,8 @@ The `Deploy edge application` job template uses the *Dublin region* inventory by
   <img alt="View Deploy app template job execution" src="../assets/img/deploy_app_template_job.png" />
 </a>
 
-<a href="#" class="lightbox" id="View Deploy app template execution">
-  <img alt="View Deploy app template execution" src="../assets/img/deploy_app_template_job.png" />
+<a href="#" class="lightbox" id="View Deploy app template job execution">
+  <img alt="View Deploy app template job execution" src="../assets/img/deploy_app_template_job.png" />
 </a>
 
 

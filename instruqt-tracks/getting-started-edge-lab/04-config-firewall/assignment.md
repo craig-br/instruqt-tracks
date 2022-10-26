@@ -1,6 +1,6 @@
 ---
 slug: config-firewall
-id: ncvqfub0wlls
+id: wqhyqu9u5cfy
 type: challenge
 title: Configuring the edge firewall
 teaser: We've installed the monitoring software, but we can't access it! We will configure
@@ -38,7 +38,6 @@ timelimit: 600
 
 🔐 Login credentials for the mission
 ===
-All the logins use the same credentials.
 
 >**Controller and monitoring username**:
 > ```yaml
@@ -49,6 +48,14 @@ All the logins use the same credentials.
 >learn_ansible
 >```
 
+>**Ignition username**:
+> ```yaml
+>admin
+>```
+>**Ignition password**:
+>```yaml
+>learn_ansible
+>```
 👋 Introduction
 ===
 
@@ -123,7 +130,7 @@ The `Configure edge firewalls` job template uses the  `Dublin region` inventory 
 </a>
 
 
-☑️ Final task - Login into the Dublin Monitoring dashboards
+☑️ Final task - Login into the Dublin monitoring dashboards
 ===
 * Please log in the monitoring dashboards by clicking into `Dublin mon` tab.
 
@@ -155,9 +162,9 @@ The `Configure edge firewalls` job template uses the  `Dublin region` inventory 
   <img alt="Monitoring dashboards KPIs" src="../assets/img/mondash-traffic.png" />
 </a>
 
-✅ Check the challenge
+✅ Go to the next challenge
 ===
-Press the `Check` button below to go to the next challenge once you’ve completed the tasks.
+Press the `Next` button below to go to the next challenge once you’ve completed the tasks.
 
 🐛 Encountered an issue?
 ====
