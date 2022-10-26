@@ -117,7 +117,7 @@ The `Deploy monitoring dashboards` job template uses the `Dublin region` invento
 </a>
 
 
-☑️ Final task - Login into the Dublin Monitoring dashboards
+☑️ Final task - Login into the Dublin monitoring dashboards
 ===
 * Please log in the monitoring dashboards by clicking into `Dublin mon` tab.
 
@@ -140,7 +140,7 @@ We’ll configure this in the next challenge.
   <img alt="Service not ready yet" src="../assets/img/pleasewait.png" />
 </a>
 
-✅ Check the Challenge
+✅ Check the challenge
 ===
 Press the `Check` button below to go to the next challenge once you’ve completed the tasks.
 

@@ -130,7 +130,7 @@ The `Configure edge firewalls` job template uses the  `Dublin region` inventory 
 </a>
 
 
-☑️ Final task - Login into the Dublin Monitoring dashboards
+☑️ Final task - Login into the Dublin monitoring dashboards
 ===
 * Please log in the monitoring dashboards by clicking into `Dublin mon` tab.
 
@@ -162,9 +162,9 @@ The `Configure edge firewalls` job template uses the  `Dublin region` inventory 
   <img alt="Monitoring dashboards KPIs" src="../assets/img/mondash-traffic.png" />
 </a>
 
-✅ Check the challenge
+✅ Go to the next challenge
 ===
-Press the `Check` button below to go to the next challenge once you’ve completed the tasks.
+Press the `Next` button below to go to the next challenge once you’ve completed the tasks.
 
 🐛 Encountered an issue?
 ====

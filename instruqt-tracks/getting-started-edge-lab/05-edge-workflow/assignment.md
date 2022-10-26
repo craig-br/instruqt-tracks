@@ -60,7 +60,6 @@ timelimit: 600
 >learn_ansible
 >```
 
-🔐 Ignition login credentials
 >**Ignition username**:
 > ```yaml
 >admin
@@ -120,7 +119,7 @@ Orchestrate automation by running multiple automation jobs in multiple geographi
   <img alt="Global edge firewalls" src="../assets/img/global-edge-firewalls.png" />
 </a>
 
-* You can see the filtered hosts that are populated in the `Hosts`tab.
+* You can see the filtered hosts that are populated in the **Hosts** tab.
 
 <a href="#global-edge-firewalls-hosts">
   <img alt="Global edge firewalls hosts" src="../assets/img/global-edge-firewalls-hosts.png" />
@@ -157,12 +156,12 @@ Use the following settings:
 >ACME Corp
 >```
 
-<a href="#Workflow settings">
-  <img alt="Workflow settings" src="../assets/img/wf-settings.png" />
+<a href="#wf-settings">
+  <img alt="Workflow-settings" src="../assets/img/wf-settings.png" />
 </a>
 
 <a href="#" class="lightbox" id="wf-settings">
-  <img alt="Workflow settings" src="../assets/img/wf-settings.png" />
+  <img alt="Workflow-settings" src="../assets/img/wf-settings.png" />
 </a>
 
 Click on `Save` button and the `Visualizer` window will automatically open.
@@ -198,7 +197,7 @@ Click on `Save` button and the `Visualizer` window will automatically open.
   <img alt="Global kiosk devices inventory" src="../assets/img/global-kiosk-inventory-wf.png" />
 </a>
 
-* Finally click on `Save`.
+* Click on `Save`.
 <a href="#preview-deployedgeapplication">
   <img alt="Preview deploy edge app" src="../assets/img/preview-deployedgeapplication.png" />
 </a>
@@ -220,7 +219,7 @@ Click on `Save` button and the `Visualizer` window will automatically open.
   <img alt="Deploy edge aplication plus" src="../assets/img/deploy-edge-app-plus.png" />
 </a>
 
-* In the`Add Node` Choose the `Deploy monitoring dashboards` Job Template. Once ready click `Next`.
+* Select the `Deploy monitoring dashboards` job template. Once ready click `Next`.
 <a href="#deploy-mondash-wf">
   <img alt="Add Deploy monitoring dashboards Node" src="../assets/img/deploy-mondash-wf.png" />
 </a>

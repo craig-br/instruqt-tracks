@@ -22,4 +22,4 @@ done
 
 
 # Use playbook to setup environment
-/bin/ansible-playbook /tmp/${CONTENT_DIR}/getting-started-edge-lab-setup.yml -i /tmp/${CONTENT_DIR}/inventory.ini --tags setup-env -e @/tmp/${CONTENT_DIR}/track_vars.yml -v
+#/bin/ansible-playbook /tmp/${CONTENT_DIR}/getting-started-edge-lab-setup.yml -i /tmp/${CONTENT_DIR}/inventory.ini --tags setup-env -e @/tmp/${CONTENT_DIR}/track_vars.yml -v
