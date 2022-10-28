@@ -36,7 +36,6 @@ developers:
 - cbrandt@redhat.com
 private: true
 published: true
-maintenance: false
 show_timer: true
 skipping_enabled: true
-checksum: "6322832305845636287"
+checksum: "5290444422249411579"
