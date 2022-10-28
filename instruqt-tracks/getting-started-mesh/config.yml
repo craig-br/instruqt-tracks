@@ -11,4 +11,4 @@ virtualmachines:
 - name: raleigh-controller
   image: red-hat-mbu/raleigh-controller-image
   shell: /bin/su - rhel -s /bin/bash
-  machine_type: n2-standard-4
+  machine_type: n2-standard-2

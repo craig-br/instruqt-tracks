@@ -1,20 +1,4 @@
 ---
-# - name: Configure all hosts
-#   hosts: all
-#   become: true
-#   gather_facts: false
-
-#   tasks:
-#     - name: Add instruqt_lab ssh key to authorized keys on nodes # noqa no-jinja-nesting
-#       ansible.posix.authorized_key:
-#         user: "{{ ansible_user }}"
-#         state: present
-#         key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}"
-#         comment: "Instruqt lab key"
-#       tags:
-#         - ssh-key
-#         - setup-env
-# # ##
 # https://play.instruqt.com/redhat/tracks/getting-started-edge-lab/
 #
 # Tags:
@@ -24,6 +8,22 @@
 # <challenge-slug>-solve - solve challenge
 # <challenge-slug>-setup - setup challenge
 ##
+- name: Instruqt config getting-started-mesh
+  hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    # Solve / check mesh-instance-groups
+    # For some reason, the authorized_key file disappears after instruqt setup sequence on rhel user
+    - name: Add instruqt_lab ssh key to authorized keys on nodes
+      ansible.posix.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ lookup('file', '/home/' + ansible_user + '/.ssh/instruqt_lab.pub') }}"
+        comment: "Instruqt lab key"
+      tags:
+        - env-overview-setup
+
 - name: Instruqt config getting started with edge lab
   hosts: automationcontroller
   gather_facts: false
@@ -39,39 +39,7 @@
       validate_certs: "{{ controller_validate_certs }}"
 
   tasks:
-    # Update credential with Instruqt pvt ssh key
-    # - name: Update the {{ lab_credential_name }} with Instruqt ssh key
-    #   block:
-    #     - name: Fetch the Instruqt ssh private key
-    #       ansible.builtin.slurp:
-    #         src: "{{ lookup('env', 'HOME') + '/.ssh/id_rsa' }}"
-    #       register: __instruqt_pvt_key
-
-    #     - name: Update credential - {{ lab_credential_name }}
-    #       # controller_credentials var has to go here for ssh_key_data
-    #       vars:
-    #         controller_credentials:
-    #           - name: "{{ lab_credential_name }}"
-    #             description: "{{ lab_credential_name }}"
-    #             organization: "{{ lab_organization }}"
-    #             credential_type: Machine
-    #             inputs:
-    #               ssh_key_data: "{{ __instruqt_pvt_key.content | b64decode }}"
-    #       ansible.builtin.import_role:
-    #         name: redhat_cop.controller_configuration.credentials
-    #   tags:
-    #     - setup-env
-    #     - lab-cred
-
-    # - name: Update project - {{ lab_project_name }}
-    #   ansible.builtin.import_role:
-    #     name: redhat_cop.controller_configuration.projects
-    #   when: controller_projects is defined
-    #   tags:
-    #     - setup-env
-    #     - lab-project
-
-## Setup, check and solve challenges
+  ## Setup, check and solve challenges
     # Need inventory to create job template
     - name: Setup - create inventories - {{ lab_inv_name }}
       awx.awx.inventory:
@@ -103,7 +71,7 @@
         ask_inventory_on_launch: "{{ item.ask_inventory_on_launch | default(false) }}"
         ask_limit_on_launch: "{{ item.ask_limit_on_launch | default(omit) }}"
         extra_vars: "{{ item.extra_vars | default(omit) }}"
-        limit: "{{ lab_jt_limit | default(omit)}}"
+        limit: "{{ lab_jt_limit | default(omit) }}"
         execution_environment: "{{ item.execution_environment }}"
         <<: *controller_login
       loop: "{{ controller_templates }}"
@@ -193,7 +161,7 @@
         extra_vars: "{{ item.extra_vars | default(omit) }}"
         ask_variables_on_launch: "{{ item.ask_variables_on_launch | default(false) }}"
         organization: "{{ item.organization | default(omit) }}"
-        state: "{{ lab_workflow_state | default('present')}}"
+        state: "{{ lab_workflow_state | default('present') }}"
         <<: *controller_login
       check_mode: "{{ check_mode | default(false) }}"
       register: __workflow_template
@@ -219,7 +187,7 @@
       loop: "{{ controller_workflow_nodes }}"
       when: (controller_workflow_nodes is defined) and (lab_workflow_name == item.workflow_job_template)
       tags:
-          - edge-workflow-solve
+        - edge-workflow-solve
 
     - name: Assert if __workflow_template changed
       ansible.builtin.assert:

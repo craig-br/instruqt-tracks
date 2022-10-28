@@ -1,6 +1,6 @@
 ---
 slug: config-firewall
-id: wqhyqu9u5cfy
+id: 0c5n3czzntyq
 type: challenge
 title: Configuring the edge firewall
 teaser: We've installed the monitoring software, but we can't access it! We will configure
