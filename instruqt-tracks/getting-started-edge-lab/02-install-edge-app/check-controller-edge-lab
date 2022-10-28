@@ -18,7 +18,11 @@ for key,val in parsed_extra_vars_file.items():
         for template in parsed_extra_vars_file[key]:
             if template['name'] == parsed_extra_vars_file.get('lab_edge_app_jt_name'):
                 for inventory in template["inventories"]:
-                    lab_jt_inv_output = subprocess.run(["ansible-playbook", setup_scripts_path + "/getting-started-edge-lab-setup.yml", "-i", setup_scripts_path + "/inventory.ini", "-e", "lab_inv_name=" + quote(inventory), "-e", "lab_jt_name=" + quote(template["name"]), "-e", "@" + setup_scripts_path + "/track_vars.yml", "--tags", "install-edge-app-check"])
+                    lab_jt_inv_output = subprocess.run(["ansible-playbook", setup_scripts_path + "/getting-started-edge-lab-setup.yml",
+                                                        "-i", setup_scripts_path + "/inventory.ini", "-e", "lab_inv_name=" + quote(inventory),
+                                                        "-e", "lab_jt_name=" + quote(template["name"]),
+                                                        "-e", "@" + setup_scripts_path + "/track_vars.yml",
+                                                        "--tags", "install-edge-app-check"])
                 if lab_jt_inv_output.returncode > 0:
                     print ( "FAIL: Please make sure you've run the " + quote(template["name"]) + " job template using the " + quote(inventory) + " inventory." )
                     exit(1)

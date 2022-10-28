@@ -1,6 +1,6 @@
 ---
 slug: multi-site
-id: nmesc2q6dvn4
+id: ekiqjy5lpclv
 type: challenge
 title: Multi-site automation using mesh
 teaser: Run automation jobs across multiple sites using automation mesh

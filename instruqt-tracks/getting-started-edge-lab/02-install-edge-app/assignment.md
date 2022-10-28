@@ -1,6 +1,6 @@
 ---
 slug: install-edge-app
-id: y02soflkzpj1
+id: inoxr4coboga
 type: challenge
 title: Installing the industrial edge application
 teaser: In this challenge, we'll install the Ignition application to the Dublin factory.

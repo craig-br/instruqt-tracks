@@ -9,7 +9,7 @@ description: |-
   A new, containerized industrial control application must be deployed in the **Dublin** and **Johannesburg** plants.
 
   ## Architecture per site:
-  <center><img src="https://github.com/dafmendo/pictures_for_github/blob/287d8a28097d0aa52b32bfc6069aaf33f604e480/industrialapp-deploy.png?raw=true"></center>
+  <center><img src="https://github.com/dafmendo/pictures_for_github/blob/c03c3aac7070c3a7be9a970ddbadcdb9df0db091/industrialapp-deploy.png?raw=true"></center>
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 level: beginner
 tags:
@@ -22,9 +22,9 @@ tags:
 owner: redhat
 developers:
 - cbrandt@redhat.com
-- dmendoza@redhat.com
-private: false
-published: false
+private: true
+published: true
+maintenance: true
 show_timer: true
 skipping_enabled: true
-checksum: "16239336005947006878"
+checksum: "4453875145417239256"

@@ -1,6 +1,6 @@
 ---
 slug: overview
-id: mty58hmvzprs
+id: ajyblqss4adg
 type: challenge
 title: Automation mesh overview
 teaser: Explore automation mesh concepts

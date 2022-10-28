@@ -1,5 +1,6 @@
 ---
 # Lab extra vars
+track_slug: getting-started-mesh
 lab_credential_name: "ACME Corp credential"
 lab_us_inventory_name: "Raleigh DC"
 lab_jhb_inventory_name: "Johannesburg DC"
@@ -12,10 +13,8 @@ lab_repo_branch: devel
 
 controller_hostname: raleigh-controller
 controller_validate_certs: false
-controller_admin_user: admin
-controller_admin_password: "ansible123!"
-custom_facts_dir: "/etc/ansible/facts.d"
-custom_facts_file: custom_facts.fact
+controller_username: admin
+controller_password: "ansible123!"
 student_user: student
 student_password: learn_ansible
 
