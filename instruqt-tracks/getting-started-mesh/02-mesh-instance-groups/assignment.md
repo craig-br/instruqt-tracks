@@ -1,6 +1,6 @@
 ---
 slug: mesh-instance-groups
-id: pj7ettlvmivo
+id: lkxr0tyzho6c
 type: challenge
 title: Automation mesh and instance groups
 teaser: Create new instance groups and allocate mesh worker nodes for local and remote
