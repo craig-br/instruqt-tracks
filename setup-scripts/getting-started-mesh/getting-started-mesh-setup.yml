@@ -93,7 +93,7 @@
         inventory: "{{ lab_us_inventory_name }}"
         wait: true
         <<: *controller_login
-      retries: 50
+      retries: 60
       delay: 1
       loop: "{{ lab_job_templates }}"
       tags:
@@ -184,8 +184,8 @@
       register: _lab_hop_node_hostname_ping
       until: _lab_hop_node_hostname_ping.rc == 0
       changed_when: false
-      retries: 30
-      delay: 1
+      retries: 10
+      delay: 3
       tags:
         - high-availability-solve
 
@@ -195,8 +195,8 @@
       register: _lab_exec_node_hostname_ping
       until: _lab_exec_node_hostname_ping.rc == 0
       changed_when: false
-      retries: 30
-      delay: 1
+      retries: 10
+      delay: 3
       tags:
         - high-availability-solve
 
@@ -221,8 +221,8 @@
         force_basic_auth: true
       register: __health_check
       until: __health_check.json.node_state == "ready"
-      retries: 50
-      delay: 1
+      retries: 20
+      delay: 3
       tags:
         - high-availability-solve
 
@@ -260,6 +260,7 @@
       delegate_to: "{{ lab_hop_node_hostname }}"
       tags:
         - high-availability-setup
+        - playground-setup
 
     - name: High-availability remove stanza from receptor.conf - {{ lab_exec_node_hostname }}
       ansible.builtin.template:
@@ -288,10 +289,11 @@
       until: _lab_hop_node_hostname_ping.rc != 0
       failed_when: _lab_hop_node_hostname_ping.rc == 0
       changed_when: false
-      retries: 50
+      retries: 60
       delay: 1
       tags:
         - high-availability-setup
+        - playground-setup
 
     - name: High-availability perform health check
       ansible.builtin.uri:
@@ -315,7 +317,7 @@
         force_basic_auth: true
       register: __health_check
       until: __health_check.json.node_state == "unavailable"
-      retries: 50
+      retries: 60
       delay: 1
       tags:
         - high-availability-setup
@@ -402,7 +404,7 @@
         validate_certs: false
         force_basic_auth: true
       until: __health_check.json.node_state == "ready"
-      retries: 50
+      retries: 30
       delay: 1
       register: __health_check
       tags:

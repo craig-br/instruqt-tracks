@@ -97,7 +97,7 @@ They’ll use the pre-created `Debug info` [job template](https://docs.ansible.c
 ##### ✏️ Let’s execute the `Debug info` job template in the Raleigh data center.
 
 * On the side navigation under the **Resources** section, click on **Templates**.
-* Click on the <img src="https://github.com/IPvSean/pictures_for_github/blob/master/launch_job.png?raw=true" style="width:4%; display:inline-block; vertical-align: middle;" /> icon under the **Actions** column on the `Debug info job` template row. This will open a new window.
+* Click on the <img src="https://github.com/IPvSean/pictures_for_github/blob/master/launch_job.png?raw=true" style="width:4%; display:inline-block; vertical-align: middle;" /> icon under the **Actions** column on the `Debug info` job template row. This will open a new window.
 
 <a href="#debug_info_raleigh">
   <img alt="debug_info_raleigh" src="../assets/img/debug_info_raleigh.png" />
@@ -237,6 +237,9 @@ If you have encountered an issue or have noticed something not quite right, plea
     max-width: 60%;
     max-height: 60%;
   }
+  html {
+    font-size: 14px;
+  }
   img {
     display: block;
     margin-left: auto;
@@ -246,17 +249,16 @@ If you have encountered an issue or have noticed something not quite right, plea
   h1 {
     font-size: 18px;
   }
-    h2 {
+  h2 {
     font-size: 16px;
     font-weight: 600
   }
-    h3 {
+  h3 {
     font-size: 14px;
     font-weight: 600
   }
-    h5 {
-    font-size: 16px;
-    font-weight: 600
+  p {
+    font-size: 14px;
   }
   p span {
     font-size: 14px;
