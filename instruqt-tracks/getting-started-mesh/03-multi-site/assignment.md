@@ -54,7 +54,7 @@ ACME Corp must assign the correct instance groups to the Johannesburg and Raleig
 ##### ✏️ Let’s associate the `Raleigh data center` instance group with the `Raleigh DC` inventory.
 
 * On the side navigation under the **Resources** section, click on **Inventories**.
-* Click on the `Raleigh DC inventory`.
+* Click on the `Raleigh DC` inventor`.
 * Click on **Edit**.
 * Click on the magnifying glass button under **Instance Groups**.
 * Check the box next to **Raleigh data center**.
@@ -69,7 +69,7 @@ ACME Corp must assign the correct instance groups to the Johannesburg and Raleig
   <img alt="raleigh_inv_ig" src="../assets/img/raleigh_inv_ig.png" />
 </a>
 
-##### ✏️ Let’s do the same for the `Johannesburg data center` instance group and `Johannesburg DC inventory`.
+##### ✏️ Let’s do the same for the `Johannesburg data center` instance group and `Johannesburg DC` inventory.
 
 * On the side navigation under the **Resources** section, click on **Inventories**.
 * Click on the `Johannesburg DC` inventory.
