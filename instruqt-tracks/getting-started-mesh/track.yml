@@ -34,7 +34,6 @@ tags:
 owner: redhat
 developers:
 - cbrandt@redhat.com
-maintenance: false
 show_timer: true
 skipping_enabled: true
-checksum: "11609668483336248978"
+checksum: "3615237349401922452"

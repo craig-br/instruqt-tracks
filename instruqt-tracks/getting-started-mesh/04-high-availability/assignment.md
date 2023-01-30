@@ -1,6 +1,6 @@
 ---
 slug: high-availability
-id: aeei07qvpsro
+id: mrys4whkrab3
 type: challenge
 title: Resilient automation with mesh
 teaser: Automation mesh offers flexible design options and native resilience across
