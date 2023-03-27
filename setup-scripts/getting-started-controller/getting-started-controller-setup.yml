@@ -177,7 +177,8 @@
       awx.awx.project:
         name: "{{lab_project_name }}"
         scm_type: git
-        scm_url: "https://github.com/ansible/product-demos"
+        scm_url: "https://github.com/craig-br/instruqt-track-content.git"
+        scm_branch: devel
         organization: "Default"
         scm_update_on_launch: false
         scm_update_cache_timeout: 60
@@ -195,7 +196,7 @@
         project: "{{ lab_project_name }}"
         credential: "{{ lab_credential_name }}"
         inventory: "{{ lab_inventory_name }}"
-        playbook: "playbooks/infrastructure/debug_info.yml"
+        playbook: "playbooks/debug_info.yml"
         controller_config_file: "{{ playbook_dir }}/../controller.cfg"
         validate_certs: false
       tags:
