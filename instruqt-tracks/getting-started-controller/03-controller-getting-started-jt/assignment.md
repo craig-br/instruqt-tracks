@@ -83,7 +83,4 @@ All tasks are done in the controller dashboard
 h1 {
 	text-align: center
 	}
-	img {
-		width: 100%
-	}
 </style>
