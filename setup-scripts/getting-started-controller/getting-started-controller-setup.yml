@@ -196,7 +196,7 @@
         project: "{{ lab_project_name }}"
         credential: "{{ lab_credential_name }}"
         inventory: "{{ lab_inventory_name }}"
-        playbook: "playbooks/debug_info.yml"
+        playbook: "getting-started-controller/playbooks/debug_info.yml"
         controller_config_file: "{{ playbook_dir }}/../controller.cfg"
         validate_certs: false
       tags:
