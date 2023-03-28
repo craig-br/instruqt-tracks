@@ -31,11 +31,14 @@ tags:
 - automation controller
 - devops
 - jenkins
+- dev
 owner: redhat
 developers:
 - cbrandt@redhat.com
-private: true
-published: false
 show_timer: true
 skipping_enabled: true
-checksum: "13087332056447677530"
+lab_config:
+  overlay: false
+  width: 25
+  position: right
+checksum: "13237449195189949887"
