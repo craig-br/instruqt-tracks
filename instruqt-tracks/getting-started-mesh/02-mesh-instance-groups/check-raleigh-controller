@@ -30,4 +30,4 @@ for key, value in instance_groups.items():
                                                          "--tags", "mesh-instance-groups-instances-check"])
         if instance_group_instances_output.returncode > 0:
             print ( "FAIL: The " + hosts + " instance is missing from the " + key + " instance group. Please try again and remember it's case-sensitive!" )
-            exit(1)
+

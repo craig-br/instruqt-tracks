@@ -1,0 +1,532 @@
+---
+##
+# https://play.instruqt.com/redhat/tracks/lightspeed101/
+#
+# Tags:
+# <challenge-slug>-check - check challenge
+# <challenge-slug>-solve - solve challenge
+# <challenge-slug>-setup - setup challenge
+##
+
+- name: Check, solve and setup lightspeed-101
+  hosts: automationcontroller
+  gather_facts: false
+  become: true
+
+  vars_files:
+    - track_vars.yml
+    - vault_track_vars.yml
+
+  vars:
+    controller_login: &controller_login
+      controller_username: "{{ controller_username }}"
+      controller_password: "{{ controller_password }}"
+      controller_host: "{{ controller_hostname }}"
+      validate_certs: "{{ controller_validate_certs }}"
+    track_slug: lightspeed-101
+
+  tasks:
+    - name: Setup initial playbook files for challenges
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/files/initial_playbooks/{{ init_playbook_name }}"
+        dest: "~{{ student_username }}/{{ gitea_repo_name }}/{{ init_playbook_name }}"
+        owner: "{{ student_username }}"
+        group: "{{ student_username }}"
+        remote_src: true
+        mode: "644"
+      tags:
+        - setup-keywords-playbook
+        - setup-external-content-playbook
+        - setup-generate-tasks-playbook
+
+    - name: Setup generate_tasks add Playbooks to repo
+      ansible.builtin.command:
+        cmd: "git add {{ item }}"
+        chdir: "~{{ student_username }}/{{ gitea_repo_name }}"
+      become_user: "{{ student_username }}"
+      register: __add_output
+      changed_when: __add_output.rc == 0
+      loop: "{{ generate_tasks['playbooks']  }}"
+      tags:
+        - setup-generate-tasks-playbook
+
+    - name: Setup generate_tasks add Playbooks to repo
+      ansible.builtin.command:
+        cmd: "git add {{ item }}"
+        chdir: "~{{ student_username }}/{{ gitea_repo_name }}"
+      become_user: "{{ student_username }}"
+      register: __add_output
+      changed_when: __add_output.rc == 0
+      loop: "{{ keywords['playbooks']  }}"
+      tags:
+        - setup-keywords-playbook
+
+    # - debug:
+    #     var: __add_output
+    #   tags:
+    #     - setup-keywords-playbook
+    #     - setup-external-content-playbook
+    #     - setup-generate-tasks-playbook
+
+    - name: Push challenge setup commit to repo
+      ansible.builtin.command:
+        cmd: "{{ item }}"
+        chdir: "~{{ student_username }}/{{ gitea_repo_name }}"
+      become_user: "{{ student_username }}"
+      register: __output
+      # changed_when: '"nothing to commit" not in __output.stdout'
+      failed_when: false # TODO loop with matching changed_when and failed_when text.
+      loop:
+        - "git commit -m'Challenge setup commit.'"
+        - "git push -u origin main --force"
+      tags:
+        - setup-keywords-playbook
+        - setup-external-content-playbook
+        - setup-generate-tasks-playbook
+
+    - name: Create job templates 
+      tags:
+        - setup-keywords-jt
+        - setup-external-content-jt
+        - setup-generate-tasks-jt
+      block:
+        - name: Sync Project - {{ lab.project.name }}
+          awx.awx.project_update:
+            name: "{{ lab.project.name }}"
+            wait: true
+            timeout: 60
+            <<: *controller_login
+
+        - name: Setup - create job templates - {{ jt_name }}
+          awx.awx.job_template:
+            name: "{{ item.name }}"
+            state: "{{ item.state }}"
+            become_enabled: "{{ item.become_enabled | default(omit)}}"
+            project: "{{ item.project }}"
+            credentials: "{{ item.credentials }}"
+            inventory: "{{ item.inventory }}"
+            playbook: "{{ item.playbook }}"
+            survey_spec: "{{ item.survey_spec | default(omit) }}"
+            ask_inventory_on_launch: "{{ item.ask_inventory_on_launch | default(false) }}"
+            ask_limit_on_launch: "{{ item.ask_limit_on_launch | default(omit) }}"
+            extra_vars: "{{ item.extra_vars | default(omit) }}"
+            limit: "{{ jt_limit | default(omit) }}"
+            execution_environment: "{{ item.execution_environment }}"
+            job_tags: "{{ item.job_tags | default(omit) }}"
+            <<: *controller_login
+          loop: "{{ controller_templates }}"
+          register: __create_templates_job_async
+          when: 
+            - item["name"] == jt_name
+            - controller_templates is defined
+          async: 1000
+          poll: 0
+
+    - name: Solve configure-tools VS Code settings
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/files/configure_settings_solve.json"
+        dest: "~{{ student_username }}/.config/Code/User/settings.json"
+        owner: "{{ student_username }}"
+        group: "{{ student_username }}"
+        remote_src: true
+        mode: "0644"
+      register: __settings_file
+      tags:
+        - solve-configure-tools
+
+    - name: Check configure-tools presnt VS Code settings
+      tags:
+        - check-configure-tools
+      block:
+        - name: Check Lightspeed config present
+          ansible.builtin.lineinfile:
+            path: "~{{ student_username }}/.config/Code/User/settings.json"
+            state: present
+            search_string: "{{ item.search_string }}"
+            line: "{{ item.line }}"
+            owner: "{{ student_username }}"
+            group: "{{ student_username }}"
+            mode: "0644"
+          check_mode: "{{ check_mode | default(true) }}"
+          register: __vscode_lightspeed
+          loop: "{{ configure_tools['vscode_settings']['present'] }}"
+
+        - name: Assert __vscode_lightspeed changed
+          ansible.builtin.assert:
+            that: 
+              - not __vscode_lightspeed.changed
+            fail_msg: The VS Code settings.json missing Lightspeed entries.
+            success_msg: VS Code Lightspeed config entries present.
+
+        - name: Check Ansible Lint and validation is not disabled
+          ansible.builtin.lineinfile:
+            path: "~{{ student_username }}/.config/Code/User/settings.json"
+            state: absent
+            search_string: "{{ item.search_string }}"
+            line: "{{ item.line }}"
+            owner: "{{ student_username }}"
+            group: "{{ student_username }}"
+            mode: "0644"
+          check_mode: "{{ check_mode | default(true) }}"
+          register: __vscode_lint
+          loop: "{{ configure_tools['vscode_settings']['absent'] }}"
+
+        - name: Assert __vscode_lint changed
+          ansible.builtin.assert:
+            that: 
+              - not __vscode_lint.changed
+            fail_msg: Ansible Lint or validation disabled in VS Code settings.json.
+            success_msg: Ansible Lint and validation ctive in VS Code settings.json.
+  
+    # - name: Assert __settings_file changed
+    #   ansible.builtin.assert:
+    #     that: 
+    #       - not __settings_file.changed
+    #     fail_msg: The VS Code settings.json changed.
+    #     success_msg: VS Code matches solve settings.json
+    #   tags:
+    #     - check-configure-tools
+
+    - name: Setup generate-tasks copy sshd_config file
+      tags:
+        - setup-generate-tasks-ssh
+      block:
+        - name: Copy sshd_config file
+          ansible.builtin.copy:
+            src: generate_tasks_sshd_config
+            dest: /etc/ssh/sshd_config
+            owner: root
+            group: root
+            mode: "0644"
+
+        - name: Restart SSH service
+          ansible.builtin.systemd:
+            name: sshd
+            state: restarted
+
+    #  Can't use blockinfile because of markers
+    - name: Check and solve generate-tasks-ssh entries
+      ansible.builtin.lineinfile:
+        path: "/etc/ssh/sshd_config"
+        mode: "0644"
+        owner: root
+        group: root
+        search_string: "{{ item.search_string }}"
+        line: "{{ item.line }}"
+        state: present
+      check_mode: "{{ check_mode | default(true) }}"
+      register: __sshd_entries
+      tags: 
+        - check-generate-tasks-ssh
+        - solve-generate-tasks-ssh
+      loop: "{{ generate_tasks['ssh_keys'] }}"
+
+    - name: Assert __sshd_entries changed
+      ansible.builtin.assert:
+        that: 
+          - not __sshd_entries.changed
+        fail_msg: The sshd_config file changed. Missing entries.
+        success_msg: The sshd_config had the correct entries.
+      tags: 
+        - check-generate-tasks-ssh
+  
+    - name: Restart SSH service
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted
+      tags: 
+        - solve-generate-tasks-ssh
+
+        # - name: Add sshd_config entries
+        #   ansible.builtin.blockinfile:
+        #     path: "/etc/ssh/sshd_config"
+        #     mode: "0644"
+        #     owner: root
+        #     group: root
+        #     state: present
+        #     block: |
+        #       PasswordAuthentication no
+        #       PermitRootLogin no
+
+
+
+#     ## Challenges check and solve
+#     # update-pipeline
+#     - name: Check controller job ran successfully - {{ lab_jt_name }}
+#       awx.awx.job_list:
+#         status: successful
+#         query:
+#           name: "{{ lab_jt_name }}"
+#         <<: *controller_login
+#       register: __controller_job_check
+#       failed_when: not __controller_job_check.results
+#       tags:
+#         - update-pipeline-check
+
+#     - name: Run job template solve - {{ lab_jt_name }}
+#       awx.awx.job_launch:
+#         job_template: "{{ lab_jt_name }}"
+#         wait: true
+#         <<: *controller_login
+#       register: __controller_job_run
+#       until: __controller_job_run is success
+#       retries: 10
+#       delay: 1
+#       tags:
+#         - update-pipeline-solve
+
+# ## update-app
+#     - name: Update-app-solve generate Jenkins crumb
+#       ansible.builtin.uri:
+#         url: https://jenkins:6443/crumbIssuer/api/json
+#         mode: json
+#         force_basic_auth: true
+#         url_username: "{{ student_user }}"
+#         url_password: "{{ student_password }}"
+#         validate_certs: false
+#         return_content: true
+#       register: __jenkins_crumb
+#       tags:
+#         - update-app-solve
+#         - update-app-solve-jenkins
+#         - controller-approval-solve
+
+#     - name: Update-app-solve get ACMECorp builds
+#       ansible.builtin.uri:
+#         headers:
+#           Cookie: "{{ __jenkins_crumb.cookies_string }}"
+#           Jenkins-Crumb: "{{ __jenkins_crumb.json.crumb }}"
+#         url: https://jenkins:6443/job/ACMECorp/api/json?pretty=true&tree=builds[number,status,url]
+#         method: GET
+#         force_basic_auth: true
+#         url_username: "{{ student_user }}"
+#         url_password: "{{ student_password }}"
+#         return_content: true
+#         validate_certs: false
+#       register: __jenkins_builds
+#       tags:
+#         - update-app-solve
+#         - update-app-solve-jenkins
+#         - controller-approval-solve
+
+#     - name: Update-app-solve cancel ACMECorp Jenkins builds
+#       ansible.builtin.uri:
+#         headers:
+#           Cookie: "{{ __jenkins_crumb.cookies_string }}"
+#           Jenkins-Crumb: "{{ __jenkins_crumb.json.crumb }}"
+#         url: "https://jenkins:6443/job/ACMECorp/{{ item.number }}/doDelete/api/json"
+#         method: POST
+#         mode: json
+#         force_basic_auth: true
+#         url_username: "{{ student_user }}"
+#         url_password: "{{ student_password }}"
+#         return_content: true
+#         validate_certs: false
+#         follow_redirects: true
+#         status_code: 200
+#       register: __remove_jenkins_builds
+#       failed_when: false
+#       when:
+#         - __jenkins_builds.json.builds is defined
+#         - __jenkins_builds.json.builds | length > 0
+#       loop: "{{ __jenkins_builds.json.builds }}"
+#       tags:
+#         - update-app-solve
+#         - update-app-solve-jenkins
+#         - controller-approval-solve
+
+#     # Need delay to give time for DevOps Workflow to start for check
+#     - name: Update-app-check Get running DevOps jobs
+#       ansible.builtin.uri:
+#         url: "https://{{ controller_hostname }}/api/v2/workflow_jobs/?name={{ lab_jt_name | urlencode }}"
+#         method: GET
+#         force_basic_auth: true
+#         url_username: "{{ controller_username }}"
+#         url_password: "{{ controller_password }}"
+#         return_content: true
+#         validate_certs: false
+#       register: __jt_devops_jobs_running
+#       until: __jt_devops_jobs_running is search('running')
+#       delay: 1
+#       retries: 35
+#       tags:
+#         - update-app-check-workflow-jt
+
+#     - name: Update-app-solve stop DevOps workflow jobs
+#       ansible.builtin.uri:
+#         url: "https://{{ controller_hostname }}/api/v2/workflow_jobs/{{ item.id }}/cancel/"
+#         method: POST
+#         force_basic_auth: true
+#         url_username: "{{ controller_username }}"
+#         url_password: "{{ controller_password }}"
+#         return_content: true
+#         validate_certs: false
+#         status_code: [202]
+#       register: __devops_jt_jobs_cancel
+#       loop: "{{ query( 'awx.awx.controller_api', 'workflow_jobs',
+#                         username=controller_username,
+#                         password=controller_password,
+#                         verify_ssl=controller_validate_certs,
+#                         query_params={ 'name': lab_jt_name } ) | list  }}"
+#       when:
+#         - item.status != 'canceled'
+#         - item.status != 'successful'
+#         - item.status != 'failed'
+#       tags:
+#         - update-app-solve-workflow-jt
+#         - update-app-solve
+#         - controller-approval-solve
+
+#     - name: Update-app - home.html edits
+#       ansible.builtin.lineinfile:
+#         state: present
+#         path: "/home/{{ student_user }}/acme_corp/app/lets_quiz/templates/quiz/home.html"
+#         insertafter: '        <!-- FIX ME -->'
+#         search_string: '<p class="display-4 d-none d-sm-block">Test your skills and become a master.</p>'
+#         line: '        <p class="display-4 d-none d-sm-block">The latest and greatest version of the app deployed successfully.</p>'
+#       check_mode: "{{ home_page_check_mode | default(false) }}"
+#       register: __home_page_edits
+#       tags:
+#         - update-app-check-home-page
+#         - update-app-solve
+
+#     - name: Update-app - debug home page edits
+#       ansible.builtin.debug:
+#         var: __home_page_edits
+#         verbosity: 2
+#       tags:
+#         - update-app-check-home-page
+#         - update-app-solve
+
+#     - name: Update-app - check if home.html was changed
+#       ansible.builtin.assert:
+#         that:
+#           - not __home_page_edits.changed
+#         fail_msg: The home.html page does not contain the correct line
+#       tags:
+#         - update-app-check-home-page
+
+#     - name: Gather controller facts
+#       ansible.builtin.setup:
+#       tags:
+#         - update-app-solve
+#         - controller-approval-solve
+
+#     # This is to trigger the pipeline each time the solve script runs
+#     - name: Update-app-solve add date/time line
+#       ansible.builtin.lineinfile:
+#         state: present
+#         path: "/home/{{ student_user }}/acme_corp/app/lets_quiz/manage.py"
+#         search_string: '# solve-script-run '
+#         line: '# solve-script-run {{ ansible_date_time.iso8601 }}'
+#       check_mode: "{{ home_page_check_mode | default(false) }}"
+#       register: __home_page_edits
+#       tags:
+#         - update-app-solve
+#         - controller-approval-solve
+
+#     - name: Update-app solve push code to repo
+#       ansible.builtin.command:
+#         cmd: "{{ item }}"
+#         chdir: "/home/{{ student_user }}/acme_corp"
+#       become: true
+#       become_user: "{{ student_user }}"
+#       loop:
+#         - "git add ."
+#         - "git commit -m'Updated home.html'"
+#         - "git push -u origin main --force"
+#       tags:
+#         - update-app-solve
+#         - controller-approval-solve
+
+#     - name: Update-app - check Jenkins pipeline started
+#       environment:
+#         PYTHONHTTPSVERIFY: 0
+#       community.general.jenkins_job_info:
+#         name: "ACMECorp"
+#         url: https://jenkins:6443
+#         user: "{{ student_user }}"
+#         password: "{{ student_password }}"
+#         validate_certs: false
+#       register: __jenkins_job_status
+#       until: __jenkins_job_status.jobs is search('anime')
+#       delay: 3
+#       retries: 6
+#       tags:
+#         - update-app-check-pipeline
+
+#   ## controller-approval
+#     - name: Controller-approval-check get success approvals
+#       ansible.builtin.uri:
+#         url: "https://{{ controller_hostname }}/api/v2/workflow_approvals/?name={{ 'Deploy to Prod?' | urlencode }}&status=successful"
+#         method: GET
+#         force_basic_auth: true
+#         url_username: "{{ controller_username }}"
+#         url_password: "{{ controller_password }}"
+#         return_content: true
+#         validate_certs: false
+#       register: __workflow_approval_success
+#       until: __workflow_approval_success.json.count > 0
+#       delay: 3
+#       retries: 8
+#       tags:
+#         - controller-approval-check-approval
+
+#     - name: Controller-approval-check DevOps Workflow
+#       ansible.builtin.uri:
+#         url: "https://{{ controller_hostname }}/api/v2/workflow_jobs/?name={{ lab_jt_name | urlencode }}&status=successful"
+#         method: GET
+#         force_basic_auth: true
+#         url_username: "{{ controller_username }}"
+#         url_password: "{{ controller_password }}"
+#         return_content: true
+#         validate_certs: false
+#       register: __jt_devops_jobs_success
+#       until: __jt_devops_jobs_success.json.count > 0
+#       delay: 1
+#       retries: 30
+#       tags:
+#         - controller-approval-check-workflow-jt
+
+#     - name: Controller-approval-check home page
+#       ansible.builtin.uri:
+#         url: "http://{{ controller_hostname }}:8000"
+#         method: GET
+#         validate_certs: false
+#         status_code: 200
+#         return_content: true
+#       register: __home_page_status
+#       until: __home_page_status.status == 200
+#       failed_when: __home_page_status.content is not search('The latest and greatest version of the app deployed successfully.')
+#       delay: 3
+#       retries: 5
+#       tags:
+#         - controller-approval-check-home-page
+
+#     - name: Controller-approval-solve get pending approvals
+#       ansible.builtin.uri:
+#         url: "https://{{ controller_hostname }}/api/v2/workflow_approvals/?name={{ 'Deploy to Prod?' | urlencode }}&status=pending"
+#         method: GET
+#         force_basic_auth: true
+#         url_username: "{{ controller_username }}"
+#         url_password: "{{ controller_password }}"
+#         return_content: true
+#         validate_certs: false
+#       register: __workflow_approval_pending
+#       until: __workflow_approval_pending.json.count > 0
+#       delay: 2
+#       retries: 12
+#       tags:
+#         - controller-approval-solve
+
+#     - name: Controller-approval-solve approve pending workflow
+#       awx.awx.workflow_approval:
+#         workflow_job_id: "{{ item.summary_fields.source_workflow_job.id }}"
+#         name: "Deploy to Prod?"
+#         interval: 2
+#         timeout: 10
+#         action: approve
+#         <<: *controller_login
+#       loop: "{{ __workflow_approval_pending.json.results }}"
+#       tags:
+#         - controller-approval-solve

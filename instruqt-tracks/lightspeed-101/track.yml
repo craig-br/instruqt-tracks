@@ -1,0 +1,24 @@
+slug: lightspeed-101
+id: nd92zv3wfctq
+title: Getting started with Ansible Lightspeed
+teaser: Experience how Ansible Lightspeed accelerates your Ansible content development
+  with its  generative AI superpowers.
+description: WIP
+icon: ""
+tags:
+- ansible
+- ' lightspeed'
+- ' wisdom'
+- ' ai'
+owner: redhat
+developers:
+- cbrandt@redhat.com
+maintenance: true
+show_timer: true
+skipping_enabled: true
+timelimit: 7200
+lab_config:
+  overlay: false
+  width: 33
+  position: right
+checksum: "12792428776820868516"

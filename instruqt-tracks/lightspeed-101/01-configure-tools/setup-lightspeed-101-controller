@@ -1,0 +1,6 @@
+# RHEL user loses authorized keys
+for user in rhel
+do 
+    cp -a /root/.ssh/* /home/"${user}"/.ssh/
+    chown -R "${user}":"${user}" /home/"${user}"/.ssh
+done

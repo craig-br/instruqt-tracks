@@ -1,0 +1,28 @@
+---
+- name: Deploy podman application
+  hosts: appservers
+  become: true
+
+  vars:
+    mattermost_app:
+      name: mattermost-preview
+      image: docker.io/mattermost/mattermost-preview
+      state: started
+      ports:
+        - 8065:8065
+      env:
+        MM_TEAMSETTINGS_SITENAME: ACME Corp Chat
+
+  tasks:
+          # TASK 1
+          # # 1a. Uncomment task description below and generate a task suggestion.
+          # # 1b. Note how Ansible Lightspeed used the vars: section.
+
+    - name: Run container with podman using mattermost_app var
+      containers.podman.podman_container:
+        name: "{{ mattermost_app.name }}"
+        image: "{{ mattermost_app.image }}"
+        state: "{{ mattermost_app.state }}"
+        ports: "{{ mattermost_app.ports }}"
+        env: "{{ mattermost_app.env }}"
+      when: mattermost_app is defined

@@ -1,0 +1,154 @@
+---
+# config vars
+track_slug: lightspeed-101
+
+controller_hostname: "{{ vault_controller_hostname }}"
+controller_validate_certs: "{{ vault_controller_validate_certs }}"
+controller_username: "{{ vault_controller_username }}"
+controller_password: "{{ vault_controller_password }}"
+
+student_username: "{{ vault_student_username }}"
+student_password: "{{ vault_student_password }}"
+
+
+# Lab vars
+lab:
+  credential:
+    name: ACME Corp Machine Credential
+  organization: ACME Corp
+  project:
+    name: ACME Corp Repo
+    repo: "{{ gitea_app_url }}/{{ student_username }}/acme_corp.git"
+    branch: main
+  inventory:
+    name: ACME Corp DC
+    description: ACME Corp Data center
+  execution_environment:
+    name: ACME Corp execution environment
+    image: quay.io/acme_corp/summit_ee
+  s3_bucket_name: tmm-instruqt-content.demoredhat.com.private
+  # acme_venv: /home/{{ student_username }}/.virtualenvs/acme_corp
+  workflow_name: Deploy App Workflow
+  # default_tag_name: "0.0.1"
+  navigator_execution_environment: quay.io/acme_corp/summit_ee
+
+# Gitea vars
+gitea_http_port: 8443
+gitea_protocol: https
+gitea_hostname: gitea
+gitea_app_url: "{{ gitea_protocol }}://{{ gitea_hostname }}:{{ gitea_http_port }}"
+gitea_repo_name: acme_corp
+
+configure_tools:
+  vscode_settings:
+    present:
+      - line: '    "ansible.lightspeed.suggestions.enabled": true,'
+        search_string: '"ansible.lightspeed.suggestions.enabled": true,'
+      - line: '    "ansible.lightspeed.enabled": true,'
+        search_string: '"ansible.lightspeed.enabled": true,'
+    absent:
+      - line: '    "ansible.validation.lint.enabled": false'
+        search_string: '"ansible.validation.lint.enabled": false'
+      - line: '    "ansible.validation.enabled": false'
+        search_string: '"ansible.validation.enabled": false'
+
+generate_tasks:
+  playbooks:
+    - harden_appservers.yml
+  jt_names:
+    - Harden app servers
+    - 🚀 Challenge 2 - Generate Playbooks
+  ssh_keys:
+    - search_string: "PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    - search_string: "PermitRootLogin"
+      line: "PermitRootLogin no"
+
+keywords:
+  playbooks:
+    - deploy_monitoring.yml
+    - deploy_app.yml
+  jt_names:
+    - Deploy monitoring
+    - Deploy ACME Corp app
+    - 🚀 Challenge 3 - Generate Playbooks
+
+external_content:
+  playbooks:
+    - configure_firewall.yml
+  jt_names:
+    - Configure firewall
+    - 🚀 Challenge 4 - Generate Playbooks
+
+# Controller objects
+controller_templates:
+  - name: Harden app servers
+    state: present
+    job_type: run
+    playbook: harden_appservers.yml
+    execution_environment: "{{ lab.execution_environment.name }}"
+    inventory: "{{ lab.inventory.name }}"
+    verbosity: 0
+    credentials:
+      - "{{ lab.credential.name }}"
+    project: "{{ lab.project.name }}"
+  - name: Configure firewall
+    state: present
+    job_type: run
+    playbook: configure_firewall.yml
+    execution_environment: "{{ lab.execution_environment.name }}"
+    inventory: "{{ lab.inventory.name }}"
+    credentials:
+      - "{{ lab.credential.name }}"
+    project: "{{ lab.project.name }}"
+  - name: Deploy monitoring
+    state: present
+    job_type: run
+    playbook: deploy_monitoring.yml
+    execution_environment: "{{ lab.execution_environment.name }}"
+    inventory: "{{ lab.inventory.name }}"
+    credentials:
+      - "{{ lab.credential.name }}"
+    project: "{{ lab.project.name }}"
+  - name: Deploy ACME Corp app
+    state: present
+    job_type: run
+    playbook: deploy_app.yml
+    execution_environment: "{{ lab.execution_environment.name }}"
+    inventory: "{{ lab.inventory.name }}"
+    credentials:
+      - "{{ lab.credential.name }}"
+    project: "{{ lab.project.name }}"
+  - name: 🚀 Challenge 2 - Generate Playbooks
+    state: present
+    job_type: run
+    playbook: generate_playbook.yml
+    execution_environment: "{{ lab.execution_environment.name }}"
+    inventory: "{{ lab.inventory.name }}"
+    verbosity: 0
+    credentials:
+      - "{{ lab.credential.name }}"
+    project: "{{ lab.project.name }}"
+    job_tags: generate_tasks_fix_playbook
+  - name: 🚀 Challenge 3 - Generate Playbooks
+    state: present
+    job_type: run
+    playbook: generate_playbook.yml
+    execution_environment: "{{ lab.execution_environment.name }}"
+    inventory: "{{ lab.inventory.name }}"
+    verbosity: 0
+    credentials:
+      - "{{ lab.credential.name }}"
+    project: "{{ lab.project.name }}"
+    job_tags: keywords_fix_playbook
+  - name: 🚀 Challenge 4 - Generate Playbooks
+    state: present
+    job_type: run
+    playbook: generate_playbook.yml
+    execution_environment: "{{ lab.execution_environment.name }}"
+    inventory: "{{ lab.inventory.name }}"
+    verbosity: 0
+    credentials:
+      - "{{ lab.credential.name }}"
+    project: "{{ lab.project.name }}"
+    job_tags: external_content_fix_playbook
