@@ -1,12 +1,4 @@
 ---
-### Challenge Tasks
-# TASK 1
-# # 1a. Uncomment Task 1 description and generate a task suggestion.
-# TASK 2
-# # 2a. Uncomment task description below and generate a task suggestion.
-# TASK 3
-# 3a. Save your changes.
-
 - name: Configure firewall
   hosts: appservers
   become: true
@@ -14,16 +6,17 @@
   vars:
     firewall:
       - permanent: true
+        port: ['9090/tcp', '8065/tcp']
         state: enabled
-        port: 8065/tcp
 
   tasks:
         # TASK 1
         # # 1a. Uncomment task description below and generate a task suggestion.
 
-    # - name: Include redhat.rhel_system_roles.firewall
+    # - name: Include redhat.rhel_system_roles.firewall role
 
         # TASK 2
-        # # 2a. Uncomment task description below and generate a task suggestion.
+        # # 2a. Uncomment task description below and generate a task suggestion. Save.
+        # # 2b. Change "changed_when:" value to true. Save.
 
-    # - name: Run command "podman network reload mattermost-preview" and register result
+    # - name: Run command podman network reload mattermost-preview

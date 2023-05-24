@@ -3,53 +3,42 @@
   hosts: monitoring
   become: true
 
-  # # module_defaults section below.
+        # # module_defaults section below.
 
   module_defaults:
     ansible.builtin.copy:
-      mode: "0644"
+      mode: "644"
 
   tasks:
-    # TASK 1
-    # # 1a. Uncomment task description below and generate an Ansible Playbook task suggestion.
+        # TASK 1
+        # # 1a. Uncomment task description below and generate an Ansible Playbook task suggestion.
 
     - name: Install cockpit and cockpit-podman on RHEL
-      when: ansible_distribution == 'RedHat'
+      when: ansible_facts['distribution'] == "RedHat"
       ansible.builtin.package:
         name:
           - cockpit
           - cockpit-podman
         state: present
 
-    # TASK 2
-    # # 2a. Uncomment task description below and generate an Ansible Playbook task suggestion. Save.
-    # # 2b. Uncomment module_defaults: section above. Save.
-    # # 2c. Remove current Ansible Lightspeed task suggestion below and generate a new one. Save.
-    # # 2d. Note the suggestion did not include "mode: "0644".
-    # # 2d. Note the ansible-lint warning for the task.
-    # # 2e. Add "# noqa risky-file-permissions" without quotation marks to the end of description below. Save.
+        # TASK 2
+        # # 2a. Uncomment task description below and generate an Ansible Playbook task suggestion. Save.
+        # # 2b. Uncomment module_defaults: section above. Save and note the suggestion no longer needed
+        # #     the "mode:" argument.
+        # # 2c. Remove current Ansible Lightspeed task suggestion below and generate a new one. Save.
+        # # 2d. Note the ansible-lint warning for the task.
+        # # 2e. Add "# noqa risky-file-permissions" without quotation marks to the end of task description line below.
 
     - name: Copy ./files/cockpit.conf to /etc/cockpit/ # noqa risky-file-permissions
       ansible.builtin.copy:
         src: ./files/cockpit.conf
         dest: /etc/cockpit/cockpit.conf
 
-    # TASK 3
-    # # 3a. Uncomment Task 3 description and generate a task suggestion.
+        # TASK 3
+        # # 3a. Uncomment the task description below and generate an Ansible Playbook task suggestion.
 
     - name: Enable and start cockpit service
       ansible.builtin.service:
         name: cockpit.socket
         state: started
         enabled: true
-
-    # TASK 4
-    # # 4a. Uncomment Task 4 description and generate an Ansible Playbook task suggestion.
-    # # 4b. Navigate to the bottom of module options in the suggestion.
-    # #     Press "CTRL+I", select "msg" set value to "Cockpit service unreachable."
-
-    - name: Wait 60 seconds for port 9090
-      ansible.builtin.wait_for:
-        port: 9090
-        timeout: 60
-        msg: Cockpit service unreachable.

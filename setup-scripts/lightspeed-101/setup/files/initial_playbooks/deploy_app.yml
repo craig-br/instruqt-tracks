@@ -5,16 +5,25 @@
 
   vars:
     mattermost_app:
+      env:
+        MM_TEAMSETTINGS_SITENAME: ACME Corp Chat
       name: mattermost-preview
       image: docker.io/mattermost/mattermost-preview
       state: started
+      generate_systemd:
+        path: /etc/systemd/system/
+        container_prefix: app
+        restart_policy: always
       ports:
         - 8065:8065
-      env:
-        MM_TEAMSETTINGS_SITENAME: ACME Corp Chat
 
   tasks:
           # TASK 1
           # # 1a. Uncomment task description below and generate a task suggestion.
 
     # - name: Run container with podman using mattermost_app var
+
+          # TASK 2
+          # # 2a. Uncomment task description below and generate a task suggestion.
+
+    # - name: Start and enable 'app-mattermost-preview' service

@@ -22,6 +22,5 @@ setup_sshd = subprocess.run(["ansible-navigator", "run",
                                 "--mode", "stdout"])
 
 if setup_sshd.returncode > 0:
-    print ("FAIL: The SSH config is incorrect. Please make sure you've created the Playbook, commited and pushed the code to the repository,\
-              and run the 'Harden app servers' Job Template.")
+    print ("FAIL: The SSH config is incorrect. Please make sure you've created the Playbook, commited and pushed the code to the repository, and run the 'Harden app servers' Job Template.")
     exit(1)

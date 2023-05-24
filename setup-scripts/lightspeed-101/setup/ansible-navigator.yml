@@ -13,6 +13,7 @@ ansible-navigator:
     environment-variables:
       pass:
         - ANSIBLE_VAULT_PASSWORD_FILE
+        - _SANDBOX_ID
     pull:
       policy: missing
   playbook-artifact:

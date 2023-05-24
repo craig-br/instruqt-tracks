@@ -29,13 +29,15 @@
       register: sestatus_result
       changed_when: false
 
+
         # TASK 3
         # # 3a. Uncomment Task 3 description and generate a task suggestion.
-        # # 3b. Note the "{{ msg }}" variable created by post-processing.
+        # # 3b. Note the "{{ msg }}" variable created by Ansible Lightspeed.
+        # #     Ansible Lightspeed provides working example values in suggestions.
         # # 3c. Remove the current suggestion.
-        # # 3d. Change the task description, without quotation marks to "- name: Print sestatus_result.stdout_lines var".
+        # # 3d. Change the task description, without quotation marks to:
+        # #     "- name: Print sestatus_result.stdout_lines var".
         # # 3e. Generate a new task suggestion.
-
 
     - name: Print sestatus_result.stdout_lines var
       ansible.builtin.debug:
@@ -60,20 +62,11 @@
         line: PasswordAuthentication no
       when: ansible_distribution == 'RedHat'
 
-        # TASK 6
-        # # 6a. Uncomment Task 6 description and generate an Ansible Playbook task suggestion.
-        # # 6b. Note "when: ansible_distribution == 'RedHat'" was automatically added.
-
-    - name: Disable root login
-      ansible.builtin.lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: .*PermitRootLogin.*
-        line: PermitRootLogin no
-      when: ansible_distribution == 'RedHat'
-
         # TASK 7
         # # 7a. Uncomment Task 7 description and generate an Ansible Playbook task suggestion.
-        # # 7b. Save.
+        # # 7b. Note how Ansible Lightspeed learnt as you created the Playbook
+        # #     and added "when: ansible_distribution == 'RedHat'" to the task.
+        # # 7c. Save.
 
     - name: Restart SSH service
       ansible.builtin.service:
