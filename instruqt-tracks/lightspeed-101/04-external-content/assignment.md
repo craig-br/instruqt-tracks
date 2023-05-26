@@ -18,17 +18,17 @@ notes:
     1.2rem;\n}\nimg {\n\t\tdisplay: block;\n  margin-left: au;to;\n  margin-right:
     auto;\n  height: 60%;\n}\n</style>\n"
 tabs:
+- title: Controller
+  type: service
+  hostname: lightspeed-101-controller
+  path: /
+  port: 443
 - title: RHEL
   type: service
   hostname: vnc-proxy
   path: /#/client/c/srv01?username=student&password=learn_ansible
   port: 8080
   new_window: true
-- title: Controller
-  type: service
-  hostname: lightspeed-101-controller
-  path: /
-  port: 443
 - title: App
   type: service
   hostname: lightspeed-101-controller
@@ -58,7 +58,6 @@ All the logins use the same credentials.
 
 👋 Introduction
 ===
-#### Estimated time to complete: *10 minutes*<p>
 
 # 🎯 Your mission: Help ACME Corp configure the firewall
 
@@ -96,14 +95,6 @@ We'll use Ansible Lightspeed to generate Playbook tasks to do the following:
 - Navigate to the end of the Ansible task description line.
 * Uncomment the task description line by manually removing the `#`, or press `Ctrl + /`.
 - At the end of the Ansible task description, press `ENTER` and once a suggestion is generated, press `TAB` to accept it.
-### I cannot type in Visual Studio Code for some reason. How do I solve that?
-
-- It is possible that the `RHEL` tab loses focus and nothing happens when you type in Visual Studio Code.
-- To fix this, switch to any other tab and back to the `RHEL` tab.
-
-<a href="#screen_focus">
-  <img alt="#screen_focus" src="../assets/screen_focus.png" />
-</a>
 
 ### How do I skip this challenge?
 
@@ -115,13 +106,11 @@ Click the `Skip` button located at the bottom right-hand side of the screen to m
 <a href="#" class="lightbox" id="#solution_playbooks">
   <img alt="skip_challenge" src="../assets/skip_challenge.png" />
 
-☑️ Task - Confirm the Monitoring and Chat application is not accessible.
+☑️ Task - Confirm the sites are inaccessible
 ===
 
-* Open the **Monitoring** tab on the top of the screen.
-* Note that the monitoring application is not accessible.
-* Open the **App** tab on the top of the screen.
-* Note that the application is not accessible.
+* Open the **Monitoring** and **App** tabs on the top of the screen.
+* Note that both are not accessible.
 
 <a href="#firewall_config_monitor_broken">
   <img alt="#firewall_config_monitor_broken" src="../assets/firewall_config_monitor_broken.png" />
@@ -131,22 +120,11 @@ Click the `Skip` button located at the bottom right-hand side of the screen to m
   <img alt="firewall_config_monitor_broken" src="../assets/firewall_config_monitor_broken.png" />
 </a>
 
-☑️ Task - Exploring `configure_firewall.yml` Playbook.
+☑️ Task - Generate `configure_firewall.yml` Playbook tasks.
 ===
 
-* If needed, open the **RHEL** tab on the top of the screen and open Visual Studio Code
-* Click on the `configure_firewall.yml` Playbook to open it.
-
-<a href="#config_firewall_open">
-  <img alt="#config_firewall_open" src="../assets/config_firewall_open.png" />
-</a>
-
-<a href="#" class="lightbox" id="#config_firewall_open">
-  <img alt="config_firewall_open" src="../assets/config_firewall_open.png" />
-</a>
-
-* Note that ACME Corp defined the **firewall** variable in the **vars:** section.
-* The Red Hat Enterprise Linux System Roles Ansible Collection uses the **firewall** variable for configuration.
+In this task , ACME Corp defined the **firewall** variable in the **vars:** section.
+	We'll use the Red Hat Enterprise Linux System Roles Ansible Collection and the **firewall** variable to rectify the inaccessible apps.
 
 <a href="#config_firewall_vars">
   <img alt="#config_firewall_vars" src="../assets/config_firewall_vars.png" />
@@ -156,17 +134,10 @@ Click the `Skip` button located at the bottom right-hand side of the screen to m
   <img alt="config_firewall_vars" src="../assets/config_firewall_vars.png" />
 </a>
 
-☑️ Task - Generate `configure_firewall.yml` Playbook tasks.
-===
-
-Follow the instructions in the `configure_firewall.yml` Playbook to generate tasks:
-* Uncomment the line by removing the `#` symbol manually or pressing `CTRL+/` for each task description.
-* Move your cursor to the end of the task description lines and press `ENTER` to generate a suggestion and `TAB` to accept it.
-
 ### ℹ️ *Include redhat.rhel_system_roles.firewall* task.
 
-* Note that Ansible Lightspeed realized the `redhat.rhel_system_roles.firewall` should only target Red Hat Enterprise Linux systems.
-* The task suggestion included `when: ansible_os_family == "RedHat"` to ensure the Role executes as intended.
+* You'll note that Ansible Lightspeed realizes the `redhat.rhel_system_roles.firewall` should only target Red Hat Enterprise Linux systems.
+* The task suggestion will include  `when: ansible_os_family == "RedHat"` to ensure the Role executes as intended.
 
 <a href="#config_firewall_role">
   <img alt="#config_firewall_role" src="../assets/config_firewall_role.png" />
@@ -178,7 +149,7 @@ Follow the instructions in the `configure_firewall.yml` Playbook to generate tas
 
 ### ℹ️ *Run podman network reload mattermost-preview command* task.
 
-* Note that generated task added `changed_when: false`. Reloading the podman network, however, does make changes. Let’s fix it!
+* This task suggestion will include `changed_when: false`. Reloading the podman network, however, does make changes. Let’s fix it!
 
 <a href="#config_firewall_network">
   <img alt="#config_firewall_network" src="../assets/config_firewall_network.png" />
@@ -188,8 +159,6 @@ Follow the instructions in the `configure_firewall.yml` Playbook to generate tas
   <img alt="config_firewall_network" src="../assets/config_firewall_network.png" />
 </a>
 
-* Change `changed_when:` value to `true`
-
 <a href="#config_firewall_changed_true">
   <img alt="#config_firewall_changed_true" src="../assets/config_firewall_changed_true.png" />
 </a>
@@ -198,6 +167,20 @@ Follow the instructions in the `configure_firewall.yml` Playbook to generate tas
   <img alt="config_firewall_changed_true" src="../assets/config_firewall_changed_true.png" />
 </a>
 
+* Open the **srv01** browser tab and open Visual Studio Code if necessary.
+* Click on the `configure_firewall.yml` Playbook to open it.
+
+<a href="#config_firewall_open">
+  <img alt="#config_firewall_open" src="../assets/config_firewall_open.png" />
+</a>
+
+<a href="#" class="lightbox" id="#config_firewall_open">
+  <img alt="config_firewall_open" src="../assets/config_firewall_open.png" />
+</a>
+
+Follow the instructions in the `configure_firewall.yml` Playbook to generate tasks:
+* Uncomment the line by removing the `#` symbol manually or pressing `CTRL+/` for each task description.
+* Move your cursor to the end of the task description lines and press `ENTER` to generate a suggestion and `TAB` to accept it.
 * Fix any issues highlighted by **Ansible Lint**.
 * Save the Playbook by clicking on `File` and then `Save`, or by pressing `CTRL+S`.
 

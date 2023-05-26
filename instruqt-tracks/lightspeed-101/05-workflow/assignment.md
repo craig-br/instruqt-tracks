@@ -58,8 +58,6 @@ All the logins use the same credentials.
 👋 Introduction
 ===
 
-#### Estimated time to complete: *10 minutes*<p>
-
 # Final mission: Orchestration!
 
 In this challenge, we’ll help ACME Corp create an [automation controller workflow](https://docs.ansible.com/automation-controller/latest/html/userguide/workflows.html) to streamline delivering the ACME Corp chat application.

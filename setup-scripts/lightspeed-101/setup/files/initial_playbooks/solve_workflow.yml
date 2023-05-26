@@ -28,22 +28,25 @@
       - all_parents_must_converge: false
         organization: "{{ lab.organization }}"
         workflow_job_template: "{{ lab.workflow_name }}"
-        identifier: "App"
-        unified_job_template: "Deploy ACME Corp app"
-      - all_parents_must_converge: false
-        organization: "{{ lab.organization }}"
-        workflow_job_template: "{{ lab.workflow_name }}"
         identifier: "Monitoring"
         unified_job_template: "Deploy monitoring"
       - all_parents_must_converge: false
         organization: "{{ lab.organization }}"
         workflow_job_template: "{{ lab.workflow_name }}"
+        identifier: "App"
+        unified_job_template: "Deploy ACME Corp app"
+      - all_parents_must_converge: false
+        organization: "{{ lab.organization }}"
+        workflow_job_template: "{{ lab.workflow_name }}"
         identifier: "Firewall"
         unified_job_template: "Configure firewall"
+        # inventory: "{{ lab.inventory.name }}"
         success_nodes:
           - "Monitoring"
           - "App"
-
+    # success_nodes:
+    #   - "App"
+    #   - "Monitoring"
   tasks:
     - name: Create workflow job template - {{ lab.workflow_name }}
       awx.awx.workflow_job_template:

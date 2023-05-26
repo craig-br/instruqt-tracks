@@ -14,12 +14,13 @@
     "security.workspace.trust.enabled": false,
     "window.titleBarStyle": "native",
     "window.openFoldersInNewWindow": "off",
-    "window.zoomLevel": 2,
+    "window.zoomLevel": 1,
     "terminal.integrated.gpuAcceleration": "canvas",
     "ansible.executionEnvironment.enabled": true,
     "ansible.executionEnvironment.image": "quay.io/acme_corp/summit_ee",
     "ansible.lightspeed.URL": "https://lab.ai.ansible.redhat.com/",
     "git.autofetch": false,
+    "editor.renderWhitespace": "all",
     "window.newWindowDimensions": "maximized",
     "files.associations": {
         "*.yml": "ansible"

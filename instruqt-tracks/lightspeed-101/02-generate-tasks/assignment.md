@@ -12,24 +12,24 @@ notes:
     Lightspeed. We'll generate Ansible Playbook tasks that automates the following:\n\n-
     Set SELinux to enforced state.\n- Run sestatus command and check if selinux is
     enforced.\n- Install openssh-server on hosts.\n- Disable password auth on hosts.\n-
-    Restart the ssh service.\n\n\n\n![harden_app.gif](../assets/harden_app.gif)\n\nWe'll
+    Restart the ssh service.\n\n\n![harden_app.gif](../assets/harden_app.gif)\n\nWe'll
     then commit our Playbooks to the repository and run the automation in controller.\n\n</div>\n\n<style
     type=\"text/css\" rel=\"stylesheet\">\n.slideList{\n\tfont-size: 1.2rem;\n\t}\nh1,h2{\n
     \ text-align: center;\n\tfont-size: 36px;\n}\nh3 {\n\tfont-weight: 600;\n\tfont-size:
     1.2rem;\n}\nimg {\n\t\tdisplay: block;\n  margin-left: au;to;\n  margin-right:
     auto;\n  height: 60%;\n}\n</style>\n</style>"
 tabs:
+- title: Controller
+  type: service
+  hostname: lightspeed-101-controller
+  path: /
+  port: 443
 - title: RHEL
   type: service
   hostname: vnc-proxy
   path: /#/client/c/srv01?username=student&password=learn_ansible
   port: 8080
   new_window: true
-- title: Controller
-  type: service
-  hostname: lightspeed-101-controller
-  path: /
-  port: 443
 difficulty: basic
 timelimit: 600
 ---
@@ -49,7 +49,6 @@ All the logins use the same credentials.
 
 👋 Introduction
 ===
-#### Estimated time to complete: *10 minutes*<p>
 
 ACME Corp, a fictitious company, wants to automate the deployment of a Chat application. To do so, they'll need to do the following:
 
@@ -90,30 +89,11 @@ In this challenge, we’ll help ACME Corp harden their app servers by creating a
 * Uncomment the task description line by manually removing the `#`, or press `Ctrl + /`.
 - At the end of the Ansible task description, press `ENTER` and once a suggestion is generated, press `TAB` to accept it.
 
-### I cannot type in Visual Studio Code for some reason. How do I solve that?
-
-- It is possible that the `RHEL` tab loses focus and nothing happens when you type in Visual Studio Code.
-- To fix this, switch to any other tab and back to the `RHEL` tab.
-
-<a href="#screen_focus">
-  <img alt="#screen_focus" src="../assets/screen_focus.png" />
-</a>
-
-### How do I skip this challenge?
-
-Click the `Skip` button located at the bottom right-hand side of the screen to move to the next challenge.
-
-<a href="#skip_challenge">
-  <img alt="#skip_challenge" src="../assets/skip_challenge.png" />
-</a>
-<a href="#" class="lightbox" id="#solution_playbooks">
-  <img alt="skip_challenge" src="../assets/skip_challenge.png" />
-
 
 ☑️ Task 1 - Explore the `harden_appservers.yml` Playbook
 ===
 
-* The **RHEL** tab is open by default.
+* Open the **srv01** external browser tab that has your RHEL instance.
 * If needed, open Visual Studio Code.
 * Follow the instructions outlined in the screenshots below to open `harden_appservers.yml`.
 
@@ -126,10 +106,6 @@ hosts: appservers
 ```
 ☑️ Task 2 - Generate `harden_appservers.yml` Playbook tasks
 ===
-
-* If needed, open Visual Studio Code.
-* Click on `harden_appservers.yml` in the Visual Studio Code Explorer to open `harden_appservers.yml`.
-* Use the comments in `harden_appservers.yml` to guide you creating Ansible tasks.
 
 ### ℹ️ Generating *harden_appservers.yml* content.
 
@@ -145,25 +121,23 @@ hosts: appservers
 >* Ansible Lightspeed saves you time by generating contextually accurate Ansible tasks based on natural, easy-to-understand language.
 >* No need to switch contexts, copy and paste code snippets, or Google which module to use.
 
-* Using the screenshots below as a guide, note how Ansible Lightspeed creates an updated suggestion when  you add `on RHEL` to the `Set SELinux enforced` task description.
-
-![without_RHEL_suggestion.png](../assets/without_RHEL_suggestion.png)
-![with_RHEL_suggestion.png](../assets/with_RHEL_suggestion.png)
-
-* Note how Ansible Lightspeed used context to generate tasks to print variables.
+* In this task you'll note how Ansible Lightspeed used context to generate tasks to print variables.
 
 ![print_msg.png](../assets/print_msg.png)
 ![print_var.png](../assets/print_var.png)
 
+* Open your RHEL instance tab and, if needed, open Visual Studio Code.
+* Click on `harden_appservers.yml` in the Visual Studio Code Explorer to open `harden_appservers.yml`.
+* Use the comments in `harden_appservers.yml` to guide you creating Ansible tasks.
 * Once you've completed the tasks, save `harden_appservers.yml` by navigating to `File` and clicking on `Save` or by pressing `CTRL+S`.
 
 ☑️ Task 3 - Commit and push `harden_appservers.yml` playbook to the repository
 ===
 >❗️ **Note**
 >
-> The lab repository is hosted locally in the lab and no content is pushed to your GitHub account.
+>The lab repository is hosted locally in the lab and no content is pushed to your GitHub account.
 
-* Please follow the screenshots below to commit the changes to the repository.
+* In Visual Studio Code, please follow the screenshots below to commit the changes to the repository.
 
 ![git_changes.png](../assets/git_changes.png)
 ![git_commit.png](../assets/git_commit.png)

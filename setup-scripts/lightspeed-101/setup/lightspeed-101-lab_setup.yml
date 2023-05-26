@@ -406,7 +406,7 @@
             recreate:  "{{ mattermost_app.recreate }}"
           register: __container_start
 
-        - name: Enable 'app-mattermost-preview' in started state
+        - name: Enable 'app-mattermost-preview' in stopped state
           ansible.builtin.systemd:
             name: app-mattermost-preview
             state: stopped

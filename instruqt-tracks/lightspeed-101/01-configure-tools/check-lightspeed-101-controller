@@ -22,5 +22,5 @@ check_configure_tools = subprocess.run(["ansible-navigator", "run",
                                 "--mode", "stdout"])
 
 if check_configure_tools.returncode > 0:
-    print ( "FAIL: Please enable Ansible Lightspeed and Ansible Lint in the Ansible Visual Studio Code extension." )
+    print ( "FAIL: Please enable Ansible Lightspeed and Ansible Lint in the Ansible Visual Studio Code extension Workspace settings." )
     exit(1)

@@ -21,36 +21,38 @@ notes:
     {\n\t\tdisplay: block;\n  margin-left: au;to;\n  margin-right: auto;\n  height:
     60%;\n}\n</style>"
 tabs:
+- title: Controller
+  type: service
+  hostname: lightspeed-101-controller
+  path: /
+  port: 443
 - title: RHEL
   type: service
   hostname: vnc-proxy
   path: /#/client/c/srv01?username=student&password=learn_ansible
   port: 8080
   new_window: true
-- title: Controller
-  type: service
-  hostname: lightspeed-101-controller
-  path: /
-  port: 443
 difficulty: basic
 timelimit: 600
 ---
 👋 Introduction
 ===
-#### Estimated time to complete: *10 minutes*<p>
 
 >### **❗️ Note**
 >You'll need a GitHub account for this lab. If you don't have an account yet,  please create one [here](https://github.com/join) .
-
-- On the top left hand-side of the window, you'll see the `RHEL` and `Controller` tabs.
-- The `RHEL` tab is open by default and connects you to a Red Hat Enterprise Linux system with Visual Studio Code installed.
-
-![RHEL9_desktop.png](../assets/RHEL9_desktop.png)
-
-- The `Controller` tab connects you to [automation controller](https://https://www.ansible.com/products/controller) (previously known as Ansible Tower).
+- On the top left hand-side of the window, you'll see the `Controller` and `RHEL` tabs.
+- The `Controller` tab in the lab browser window connects you to [automation controller](https://https://www.ansible.com/products/controller) (previously known as Ansible Tower).
 - We'll use automation controller in later challenges.
 
 ![controller_login.png](../assets/controller_login.png)
+
+- Click on the `RHEL` tab. This opens a new browser tab called `srv01` and provides access to a Red Hat Enterprise Linux system with Visual Studio Code installed.
+
+- If prompted, allow clipboard access to your RHEL instance.
+
+	![rhel_clipboard.png](../assets/rhel_clipboard.png)
+
+![RHEL9_desktop.png](../assets/RHEL9_desktop.png)
 
 - The login credentials for controller and Cockpit, which we'll use later in the lab, are below:
 
@@ -90,7 +92,7 @@ Click the `Skip` button located at the bottom right-hand side of the screen to m
 ☑️ Task - Enable Ansible Lightspeed
 ===
 
-- The `RHEL` tab is open by default.
+- Navigate to your RHEL instannce external tab.
 - Follow the screenshot instructions below to enable Ansible Lightspeed and Ansible Lint in Visual Studio Code.
 
 

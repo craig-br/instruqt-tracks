@@ -17,17 +17,17 @@ notes:
     1.5rem;\n}\nimg {\n\t\tdisplay: block;\n  margin-left: au;to;\n  margin-right:
     auto;\n  height: 60%;\n}\n</style>"
 tabs:
+- title: Controller
+  type: service
+  hostname: lightspeed-101-controller
+  path: /
+  port: 443
 - title: RHEL
   type: service
   hostname: vnc-proxy
   path: /#/client/c/srv01?username=student&password=learn_ansible
   port: 8080
   new_window: true
-- title: Controller
-  type: service
-  hostname: lightspeed-101-controller
-  path: /
-  port: 443
 - title: App
   type: service
   hostname: lightspeed-101-controller
@@ -67,15 +67,6 @@ Here are a few challenges you can try.
 
 * You can expand the images by clicking on them for a closer look.
 * Solution playbooks are located under the *solution_playbooks* folder in Visual Studio Code, in the RHEL tab.
-
-### I cannot type in Visual Studio Code for some reason. How do I solve that?
-
-- It is possible that the `RHEL` tab loses focus and nothing happens when you type in Visual Studio Code.
-- To fix this, switch to any other tab and back to the `RHEL` tab.
-
-<a href="#screen_focus">
-  <img alt="#screen_focus" src="../assets/screen_focus.png" />
-</a>
 
 ### How do I generate Ansible Lightspeed suggestions?
 

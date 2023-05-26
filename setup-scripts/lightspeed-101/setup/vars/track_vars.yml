@@ -63,7 +63,7 @@ generate_tasks:
     - harden_appservers.yml
   jt_names:
     - Harden app servers
-    # - 🚀 Challenge 2 - Generate Playbooks
+    # - ?? Challenge 2 - Generate Playbooks
   ssh_keys:
     - search_string: "PasswordAuthentication"
       line: "PasswordAuthentication no"
@@ -77,7 +77,7 @@ keywords:
   jt_names:
     - Deploy monitoring
     - Deploy ACME Corp app
-    # - 🚀 Challenge 3 - Generate Playbooks
+    # - ?? Challenge 3 - Generate Playbooks
   app:
     name: mattermost-preview
 
@@ -86,12 +86,12 @@ external_content:
     - configure_firewall.yml
   jt_names:
     - Configure firewall
-    # - 🚀 Challenge 4 - Generate Playbooks
+    # - ?? Challenge 4 - Generate Playbooks
 workflow:
   playbooks:
     - solve_workflow.yml
   jt_names:
-    - 🚀 Solve - Create workflow
+    - ?? Solve - Create workflow
 
 mattermost_app:
   env:
@@ -103,6 +103,8 @@ mattermost_app:
   recreate: true
   name: mattermost-preview
   image: docker.io/mattermost/mattermost-preview
+  # state: stopped
+  # state: present
   state: started
   ports:
     - 8065:8065
@@ -195,7 +197,7 @@ controller_templates:
         - "{{ lab.credential.ssh.name }}"
       project: "{{ lab.project.name }}"
   workflow:
-    - name: 🚀 Solve - Create workflow
+    - name: ?? Solve - Create workflow
       state: present
       job_type: run
       playbook: solve_workflow.yml
@@ -209,7 +211,7 @@ controller_templates:
       project: "{{ lab.project.name }}"
 
 
-  # - name: 🚀 Challenge 2 - Generate Playbooks
+  # - name: ?? Challenge 2 - Generate Playbooks
   #   state: present
   #   job_type: run
   #   playbook: generate_playbook.yml
@@ -220,7 +222,7 @@ controller_templates:
   #     - "{{ lab.credential.ssh.name }}"
   #   project: "{{ lab.project.name }}"
   #   job_tags: generate_tasks_fix_playbook
-  # # - name: 🚀 Challenge 3 - Generate Playbooks
+  # # - name: ?? Challenge 3 - Generate Playbooks
   #   state: present
   #   job_type: run
   #   playbook: generate_playbook.yml
@@ -231,7 +233,7 @@ controller_templates:
   #     - "{{ lab.credential.ssh.name }}"
   #   project: "{{ lab.project.name }}"
   #   job_tags: keywords_fix_playbook
-  # - name: 🚀 Challenge 4 - Generate Playbooks
+  # - name: ?? Challenge 4 - Generate Playbooks
   #   state: present
   #   job_type: run
   #   playbook: generate_playbook.yml
@@ -255,21 +257,18 @@ controller_workflow_nodes:
     workflow_job_template: "{{ lab.workflow_name }}"
     identifier: "Harden"
     unified_job_template: "Harden app servers"
-    # inventory: "{{ lab.inventory.name }}"
     success_nodes:
       - "Firewall"
   - all_parents_must_converge: false
     organization: "{{ lab.organization }}"
     workflow_job_template: "{{ lab.workflow_name }}"
-    identifier: "App"
-    unified_job_template: "Deploy ACME Corp app"
-    # inventory: "{{ lab.inventory.name }}"
+    identifier: "Monitoring"
+    unified_job_template: "Deploy monitoring"
   - all_parents_must_converge: false
     organization: "{{ lab.organization }}"
     workflow_job_template: "{{ lab.workflow_name }}"
-    identifier: "Monitoring"
-    unified_job_template: "Deploy monitoring"
-    # inventory: "{{ lab.inventory.name }}"
+    identifier: "App"
+    unified_job_template: "Deploy ACME Corp app"
   - all_parents_must_converge: false
     organization: "{{ lab.organization }}"
     workflow_job_template: "{{ lab.workflow_name }}"

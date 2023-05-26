@@ -18,17 +18,17 @@ notes:
     1.2rem;\n}\nimg {\n\t\tdisplay: block;\n  margin-left: au;to;\n  margin-right:
     auto;\n  height: 60%;\n}\n</style>"
 tabs:
+- title: Controller
+  type: service
+  hostname: lightspeed-101-controller
+  path: /
+  port: 443
 - title: RHEL
   type: service
   hostname: vnc-proxy
   path: /#/client/c/srv01?username=student&password=learn_ansible
   port: 8080
   new_window: true
-- title: Controller
-  type: service
-  hostname: lightspeed-101-controller
-  path: /
-  port: 443
 - title: App
   type: service
   hostname: lightspeed-101-controller
@@ -59,7 +59,6 @@ All the logins use the same credentials.
 
 👋 Introduction
 ===
-#### Estimated time to complete: *10 minutes*<p>
 
 # 🎯 Your mission: Help ACME Corp deploy the app and monitoring service.
 
@@ -98,15 +97,6 @@ We'll use Ansible Lightspeed to generate the following Playbooks:
 * Uncomment the task description line by manually removing the `#`, or press `Ctrl + /`.
 - At the end of the Ansible task description, press `ENTER` and once a suggestion is generated, press `TAB` to accept it.
 
-### I cannot type in Visual Studio Code for some reason. How do I solve that?
-
-- It is possible that the `RHEL` tab loses focus and nothing happens when you type in Visual Studio Code.
-- To fix this, switch to any other tab and back to the `RHEL` tab.
-
-<a href="#screen_focus">
-  <img alt="#screen_focus" src="../assets/screen_focus.png" />
-</a>
-
 ### How do I skip this challenge?
 
 Click the `Skip` button located at the bottom right-hand side of the screen to move to the next challenge.
@@ -120,32 +110,33 @@ Click the `Skip` button located at the bottom right-hand side of the screen to m
 ☑️ Task - Exploring `deploy_app.yml` Playbook
 ===
 
-* The **RHEL** tab is open by default.
-* In Visual Studio Code, click on the `deploy_app.yml` Playbook.
+ACME Corp defined the `mattermost_app` variable in the `vars:` section.
+
+* Navigate to Visual Studio Code in your RHEL instance in the `srv01`  tab.
+* Click on the `deploy_app.yml` Playbook.
 
 ![depy_app_playbook.png](../assets/depy_app_playbook.png)
 
-* Note that ACME Corp defined the `mattermost_app` variable in the `vars:` section.
+
 
 
 ☑️ Task - Generate `deploy_app.yml` Playbook tasks
 ===
 
-* Follow the instructions in the `deploy_app.yml` Playbook to generate tasks.
-
 ### ℹ️ *Run container with podman using mattermost_app var* task.
 
-* Note that Ansible Lightspeed used the `mattermost_app` variable in the suggestion. Ansible Lightspeed uses Playbook context to generate applicable Playbook tasks.
+* Ansible Lightspeed will use the `mattermost_app` variable in the suggestion. Ansible Lightspeed uses Playbook context to generate applicable Playbook tasks.
 
 ![mattermost_usage.png](../assets/mattermost_usage.png)
 
+* Follow the instructions in the `deploy_app.yml` Playbook to generate tasks.
 * Fix any issues highlighted by **Ansible Lint**.
 * Save the Playbook by clicking on `File` and then `Save`, or by pressing `CTRL+S`.
 
 ☑️ Task - Ansible Lightspeed training matches
 ===
 
-* One of Ansible Lightspeed's key differentiators is providing information on the potential training data used to generate task suggestions.
+One of Ansible Lightspeed's key differentiators is providing information on the potential training data used to generate task suggestions.
 
 >**😅 Known Closed Beta Issue: Visual Studio Code extension requires Window reload**
 >* The Ansible Visual Studio Code extension `Training Matches` view requires a once-off reload of the Visual Studio Code Window.
@@ -163,43 +154,40 @@ Click the `Skip` button located at the bottom right-hand side of the screen to m
 
 ![match_scroll_lightspeed.png](../assets/match_scroll_lightspeed.png)
 
-- Click on any potential training match entry.
+- After generating a suggestion,  click on any potential training match entry.
 
 ![app_training_match.png](../assets/app_training_match.png)
 
 - Note that the information provided includes details of the License, Ansible content type, and the source URL.
 
 
-☑️ Task - Explore deploy_monitoring.yml Playbook tasks
-===
-
-* In Visual Studio Code, click on the `deploy_monitoring.yml` Playbook.
-
-![module_defaults.png](../assets/module_defaults.png)
-
-* Note that ACME Corp defined the `module_defaults:` section.  (This section is commented out initially.)
-
 ☑️ Task - Generate deploy_monitoring.yml Playbook tasks
 ===
 
-Follow the instructions in the `deploy_monitoring.yml` Playbook to generate tasks:
-* Uncomment the line by removing the `#` symbol manually or pressing `CTRL+/`.
-* Move your cursor to the end of the task description lines and press `ENTER` to generate a suggestion.
+We'll configure `module_defaults` in the Playbook and see how it affects Ansible Lightspeed suggestions.
+
+![module_defaults.png](../assets/module_defaults.png)
+
 
 ### ℹ️ *Copy ./files/cockpit.conf to /etc/cockpit/* task.
 
-* When you generate a task suggestion for Task 2 when `module_defaults:` is commented out, you will see that Ansible Lightspeed will also suggest a `mode:` argument for the `ansible.builtin.copy` module.
+* When you generate a task suggestion for Task 2 with `module_defaults:` commented out, you'll note that Ansible Lightspeed includes a `mode:` argument for the `ansible.builtin.copy` module.
 
 ![module_defaults_commented.png](../assets/module_defaults_commented.png)
 
-* Now uncomment the `module_defaults:` section by removing the `#` symbol manually from each line or highlighting the `module_defaults:` section and pressing `CTRL+/`.
 * When you generate the same task suggestion after `module_defaults:` is uncommented, Ansible Lightspeed is aware of the permissions to use and will not provide those in the suggestion.
 
 ![module_def_uncommented.png](../assets/module_def_uncommented.png)
 
-* Complete all other tasks in the Playbook.
-* Remember to add `# noqa risky-file-permissions` to the end of the second task to fix the issues highlighted by **Ansible Lint**.
-* Save the Playbook by clicking on `File` and then `Save`, or by pressing `CTRL+S`.
+* In Visual Studio Code, click on the `deploy_monitoring.yml` Playbook.
+
+Follow the instructions in the `deploy_monitoring.yml` Playbook to generate tasks:
+- Uncomment the line by removing the `#` symbol manually or pressing `CTRL+/`.
+- Move your cursor to the end of the task description lines and press `ENTER` to generate a suggestion.
+
+Complete all other tasks in the Playbook.
+- Remember to add `# noqa risky-file-permissions` to the end of the second task to fix the issues highlighted by **Ansible Lint**.
+- Save the Playbook by clicking on `File` and then `Save`, or by pressing `CTRL+S`.
 
 ☑️ Task - Commit and push both Playbooks to the repository
 ===
@@ -226,7 +214,7 @@ Deploy app and monitoring service
 ☑️ Task - Run the Job Templates in automation controller
 ===
 
-* Open the **Controller** tab on the top left hand-side of the window.
+* Open the **Controller** tab on the top left hand-side of the lab browser window.
 * If required, log into automation controller using the credentials provided above.
 
 ### Run the *Deploy ACME Corp app* Job Template:
@@ -240,8 +228,9 @@ Deploy app and monitoring service
 
 ### Run the *Deploy monitoring* Job Template:
 
-* Click **Templates** under the **Resources** section in the Navigation Pane on the left hand-side again.
-* Click the <img src="https://github.com/IPvSean/pictures_for_github/blob/master/launch_job.png?raw=true" style="width:4%; display:inline-block; vertical-align: middle;" /> icon on the right hand-side of the `Deploy monitoring` Job Template column.
+- Click **Templates** under the **Resources** section in the Navigation Pane on the left hand-side again.
+- Click the <img src="https://github.com/IPvSean/pictures_for_github/blob/master/launch_job.png?raw=true" style="width:4%; display:inline-block; vertical-align: middle;" /> icon on the right hand-side of the `Deploy monitoring` Job Template column.
+
 
 ![deploy_monitoring_jt.png](../assets/deploy_monitoring_jt.png)
 
@@ -256,7 +245,10 @@ Deploy app and monitoring service
   <img alt="firewall_config_monitor_broken" src="../assets/firewall_config_monitor_broken.png" />
 </a>
 
-😱 Oh No!! Something went wrong! Let's try to fix it in the the next challenge.
+😱 Oh No!! Something went wrong!
+===
+* The application and monitoring service aren't working. **This is expected behavior in the lab**.
+* Let's try to fix it in the the next challenge.
 
 ✅ Next Challenge
 ===
