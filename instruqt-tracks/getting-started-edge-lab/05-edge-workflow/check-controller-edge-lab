@@ -7,11 +7,14 @@ from shlex import quote
 os.environ["ANSIBLE_STDOUT_CALLBACK"] = "community.general.yaml"
 
 # vars
-setup_scripts_path="/tmp/setup-scripts/getting-started-edge-lab"
+setup_scripts_path="/opt/setup-scripts/getting-started-edge-lab"
 
 # Load extra_vars.yml
 extra_vars_file = open( setup_scripts_path + "/track_vars.yml")
 parsed_extra_vars_file = yaml.load(extra_vars_file, yaml.loader.FullLoader)
+
+# Change working dir
+os.chdir('/tmp')
 for key,val in parsed_extra_vars_file.items(): 
     if key == "template_checks":
         for template in parsed_extra_vars_file[key]:
