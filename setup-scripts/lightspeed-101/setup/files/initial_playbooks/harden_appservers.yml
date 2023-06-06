@@ -41,7 +41,7 @@
     # - name: Disable password auth on RHEL hosts
 
         # TASK 6
-        # # 6a. Uncomment Task 7 description and generate an Ansible Playbook task suggestion.
+        # # 6a. Uncomment Task 6 description and generate an Ansible Playbook task suggestion.
         # # 6b. Note how Ansible Lightspeed learnt as you created the Playbook
         # #     and added "when: ansible_distribution == 'RedHat'" to the task.
         # # 6c. Save.
