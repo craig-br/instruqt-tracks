@@ -28,7 +28,7 @@
         # #     "- name: Print sestatus_result.stdout_lines var".
         # # 3e. Generate a new task suggestion.
 
-    # - name: Print sestatus_result.stdout_lines var
+    # - name: Print msg
 
         # TASK 4
         # # 4a. Uncomment Task 4 description and generate a task suggestion.
