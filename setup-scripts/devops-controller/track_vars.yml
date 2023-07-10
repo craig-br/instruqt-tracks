@@ -1,0 +1,29 @@
+---
+# config vars
+track_slug: devops-controller
+
+controller_hostname: "{{ track_slug }}"
+controller_validate_certs: false
+controller_username: admin
+controller_password: "ansible123!"
+
+student_user: student
+student_password: learn_ansible
+jenkins_user: jenkins
+jenkins_password: learn_ansible
+admin_username: admin
+admin_password: ansible123!
+git_repo: https://gitea:8443/{{ student_user }}/acme_corp.git
+repo_user: student
+
+controller_devops_ee: "ACME Corp EE"
+default_tag_name: "0.0.1"
+acme_venv: "/home/{{ student_user }}/.virtualenvs/acme_corp"
+
+# Controller objects
+lab_credential_name: "ACME Corp Machine Credential"
+lab_organization: "ACME Corp"
+lab_project_name: "ACME Corp Repo"
+lab_inventories:
+  - name: "ACME Corp DC"
+    description: "ACME Corp DC"

@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+
+import subprocess, os
+
+setup_scripts_path="/opt/setup-scripts/getting-started-mesh/"
+os.environ["ANSIBLE_CONFIG"] = setup_scripts_path+"ansible.cfg"
+
+# Solve mesh-instance-groups
+mesh_instance_groups_solve = subprocess.run(["ansible-playbook", setup_scripts_path+"getting-started-mesh-setup.yml",
+                                            "--tags", "mesh-instance-groups-solve", "-v"])

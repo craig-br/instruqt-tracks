@@ -1,0 +1,6 @@
+version: "3"
+virtualmachines:
+- name: devops-controller
+  image: red-hat-mbu/devops-controller-image
+  shell: /bin/su - rhel -s /bin/bash
+  machine_type: n2-standard-2
