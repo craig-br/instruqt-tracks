@@ -1,6 +1,6 @@
 ---
 slug: controller-approval
-id: bzw9txnxhegk
+id: lz808f3oy3zd
 type: challenge
 title: Approve the application deployment in controller
 teaser: Finally, we'll approve the controller workflow to build a new release, configure

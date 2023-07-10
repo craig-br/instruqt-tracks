@@ -1,6 +1,6 @@
 ---
 slug: update-app
-id: xugy2avyk20c
+id: dxyal65wbgf9
 type: challenge
 title: Update the Let's Quiz! application code
 teaser: We'll update the Let's Quiz! application home page to trigger the DevOps workflow

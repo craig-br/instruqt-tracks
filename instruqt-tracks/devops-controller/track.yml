@@ -1,6 +1,6 @@
-slug: devops-controller
-id: u5sh0k588dhx
-title: DevOps and CI/CD with automation controller
+slug: devops-controller-dev
+id: xycmarog2wbr
+title: DEV - DevOps and CI/CD with automation controller
 teaser: In this lab, we’ll integrate a simple CI/CD pipeline into automation controller
   to demonstrate how Ansible Automation Platform supports and elevates DevOps practices
   across the enterprise.
@@ -32,13 +32,15 @@ tags:
 - devops
 - jenkins
 - dev
+- dev
 owner: redhat
 developers:
 - cbrandt@redhat.com
+maintenance: true
 show_timer: true
 skipping_enabled: true
 lab_config:
   overlay: false
   width: 25
   position: right
-checksum: "13237449195189949887"
+checksum: "15485479123201616989"
