@@ -1,6 +1,6 @@
 ---
 slug: update-pipeline
-id: co4glhnylxrs
+id: ayydnxc4slob
 type: challenge
 title: Configure the ACME Corp pipeline
 teaser: We'll configure and integrate the ACME Corp pipeline using automation controller.

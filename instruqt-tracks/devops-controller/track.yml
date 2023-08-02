@@ -23,19 +23,20 @@ description: |-
   * Using a controller [approval](https://docs.ansible.com/automation-controller/4.2.0/html/userguide/workflow_templates.html#approval-nodes) to allow final checks and sign-off before deploying to production.
 icon: ./assets/img/automation_controller.png
 tags:
-- controller
 - prod
-- automation controller
+- controller
 - prodops
+- automation controller
 - jenkins
 owner: redhat
 developers:
 - cbrandt@redhat.com
 show_timer: true
 skipping_enabled: true
-timelimit: 8998
+idle_timeout: 1200
+timelimit: 3300
 lab_config:
   overlay: false
   width: 25
   position: right
-checksum: "3182126700439158466"
+checksum: "5048473118870256566"
