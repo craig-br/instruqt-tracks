@@ -1,6 +1,6 @@
-slug: devops-controller-dev
-id: xycmarog2wbr
-title: DEV - DevOps and CI/CD with automation controller
+slug: devops-controller
+id: u5sh0k588dhx
+title: DevOps and CI/CD with automation controller
 description: |-
   # DevOps and CI/CD with automation controller
   ***
@@ -24,9 +24,9 @@ description: |-
 icon: ./assets/img/automation_controller.png
 tags:
 - controller
-- dev
+- prod
 - automation controller
-- devops
+- prodops
 - jenkins
 owner: redhat
 developers:
