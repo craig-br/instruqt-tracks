@@ -19,10 +19,53 @@
     controller_login: &controller_login
       controller_username: "{{ controller_username }}"
       controller_password: "{{ controller_password }}"
-      controller_host: "{{ controller_hostname }}"
+      controller_host: "{{ controller_hostname }}.{{ lookup('env', '_SANDBOX_ID') }}.svc.cluster.local"
       validate_certs: "{{ controller_validate_certs }}"
 
   tasks:
+    # Instruqt DNS entry point 127.0.0.1 for controller which fails using EEs.
+    # Have to update objects with $_SANDBOX_ID in FQDN.
+    - name: Setup initial environment
+      tags:
+        - setup-env
+      block:
+        - name: Wait for controller availability
+          ansible.builtin.uri:
+            url: "https://{{ controller_login.controller_host }}/api/v2/ping/"
+            method: GET
+            user: "{{ controller_login.controller_username }}"
+            password: "{{ controller_login.controller_password }}"
+            validate_certs: false
+          register: __controller_check
+          until:
+            - __controller_check.json is defined
+            - __controller_check.json.instances[0].capacity > 0
+            - __controller_check.json.instance_groups[0].capacity > 0
+          retries: 20
+          delay: 1
+
+        - name: Update lab inventory with Instruqt FQDN
+          awx.awx.inventory:
+            name: "{{ item.name }}"
+            organization: "{{ item.organization }}"
+            description: "{{ item.description }}"
+            variables: "{{ item.variables | default(omit) }}"
+            <<: *controller_login
+          loop: "{{ controller_inventories }}"
+          when: controller_inventories is defined
+
+        # Temp
+        # - name: Ensure static hosts are enabled
+        #   awx.awx.host:
+        #     name: "{{ item.name }}"
+        #     inventory: "{{ item.inventory }}"
+        #     state: "{{ item.state | default('present') }}"
+        #     enabled: "{{ item.enabled | default(true) }}"
+        #     variables: "{{ item.variables | default(omit) }}"
+        #     <<: *controller_login
+        #   loop: "{{ controller_hosts }}"
+        #   when: controller_hosts is defined
+
     ## Challenges check and solve
     # update-pipeline
     - name: Check controller job ran successfully - {{ lab_jt_name }}
@@ -125,7 +168,7 @@
       tags:
         - update-app-check-workflow-jt
 
-    - name: Update-app-solve stop DevOps workflow jobs
+    - name: Update-app-solve stop DevOps workflow jobs # noqa jinja[invalid]
       ansible.builtin.uri:
         url: "https://{{ controller_hostname }}/api/v2/workflow_jobs/{{ item.id }}/cancel/"
         method: POST
@@ -153,7 +196,7 @@
     - name: Update-app - home.html edits
       ansible.builtin.lineinfile:
         state: present
-        path: "/home/{{ student_user }}/acme_corp/app/lets_quiz/templates/quiz/home.html"
+        path: "~{{ student_user }}/acme_corp/app/lets_quiz/templates/quiz/home.html"
         insertafter: '        <!-- FIX ME -->'
         search_string: '<p class="display-4 d-none d-sm-block">Test your skills and become a master.</p>'
         line: '        <p class="display-4 d-none d-sm-block">The latest and greatest version of the app deployed successfully.</p>'
@@ -189,7 +232,7 @@
     - name: Update-app-solve add date/time line
       ansible.builtin.lineinfile:
         state: present
-        path: "/home/{{ student_user }}/acme_corp/app/lets_quiz/manage.py"
+        path: "~{{ student_user }}/acme_corp/app/lets_quiz/manage.py"
         search_string: '# solve-script-run '
         line: '# solve-script-run {{ ansible_date_time.iso8601 }}'
       check_mode: "{{ home_page_check_mode | default(false) }}"
@@ -201,7 +244,7 @@
     - name: Update-app solve push code to repo
       ansible.builtin.command:
         cmd: "{{ item }}"
-        chdir: "/home/{{ student_user }}/acme_corp"
+        chdir: "~{{ student_user }}/acme_corp"
       become: true
       become_user: "{{ student_user }}"
       loop:
@@ -271,8 +314,8 @@
       register: __home_page_status
       until: __home_page_status.status == 200
       failed_when: __home_page_status.content is not search('The latest and greatest version of the app deployed successfully.')
-      delay: 3
-      retries: 5
+      delay: 1
+      retries: 15
       tags:
         - controller-approval-check-home-page
 
@@ -287,8 +330,8 @@
         validate_certs: false
       register: __workflow_approval_pending
       until: __workflow_approval_pending.json.count > 0
-      delay: 2
-      retries: 12
+      delay: 1
+      retries: 25
       tags:
         - controller-approval-solve
 
