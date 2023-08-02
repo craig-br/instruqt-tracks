@@ -1,6 +1,6 @@
 ---
 slug: devops-playground
-id: rgslqgwxxddv
+id: iyeudnfeg2eb
 type: challenge
 title: Playground
 teaser: Use the remaining time to try it out yourself! This challenge has no checks
