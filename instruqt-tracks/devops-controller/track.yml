@@ -31,7 +31,6 @@ tags:
 owner: redhat
 developers:
 - cbrandt@redhat.com
-maintenance: true
 show_timer: true
 skipping_enabled: true
 timelimit: 8998
@@ -39,4 +38,4 @@ lab_config:
   overlay: false
   width: 25
   position: right
-checksum: "1948645193148547314"
+checksum: "3182126700439158466"
