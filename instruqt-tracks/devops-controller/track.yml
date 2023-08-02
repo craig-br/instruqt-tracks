@@ -33,9 +33,10 @@ developers:
 - cbrandt@redhat.com
 show_timer: true
 skipping_enabled: true
-timelimit: 8998
+idle_timeout: 1200
+timelimit: 3300
 lab_config:
   overlay: false
   width: 25
   position: right
-checksum: "12003987669155035632"
+checksum: "5048473118870256566"
