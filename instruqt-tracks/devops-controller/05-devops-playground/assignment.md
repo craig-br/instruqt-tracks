@@ -1,6 +1,6 @@
 ---
 slug: devops-playground
-id: u7mqil4vqcpn
+id: rgslqgwxxddv
 type: challenge
 title: Playground
 teaser: Use the remaining time to try it out yourself! This challenge has no checks
@@ -52,14 +52,23 @@ tabs:
   hostname: devops-controller
   port: 8000
 difficulty: intermediate
-timelimit: 1440
+timelimit: 1200
 ---
 🔐 Login credentials
 ===
 All the logins use the same credentials.
 
->User: student<p>
->Password: learn_ansible
+User:
+
+```yaml
+student
+```
+
+Password:
+
+```yaml
+learn_ansible
+```
 
 👋 Introduction
 ===
@@ -116,11 +125,11 @@ If you have encountered an issue or have noticed something not quite right, plea
   h1 {
     font-size: 18px;
   }
-    h2 {
+  h2 {
     font-size: 16px;
     font-weight: 600
   }
-    h3 {
+  h3 {
     font-size: 14px;
     font-weight: 600
   }

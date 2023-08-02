@@ -27,3 +27,39 @@ lab_project_name: "ACME Corp Repo"
 lab_inventories:
   - name: "ACME Corp DC"
     description: "ACME Corp DC"
+
+lab:
+  inventory:
+    name: "ACME Corp DC"
+    description: "ACME Corp DC"
+  organization:
+    name: ACME Corp
+
+# Controller objects
+controller_inventories:
+  - name: "{{ lab.inventory.name }}"
+    organization: "{{ lab.organization.name }}"
+    description: "{{ lab.inventory.name }}"
+    variables:
+      ansible_host: "devops-controller.{{ lookup('env', '_SANDBOX_ID') }}.svc.cluster.local"
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_ssh_extra_args: '-o StrictHostKeyChecking=no -o ControlMaster=auto -o ControlPersist=60s'
+      ansible_ssh_pipelining: true
+
+# controller_hosts:
+#   - name: controller.acme.example.com
+#     inventory: "{{ lab.inventory.name }}"
+#     enabled: true
+#     variables: {}
+#   - name: repo.acme.example.com
+#     inventory: "{{ lab.inventory.name }}"
+#     enabled: true
+#     variables: {}
+#   - name: web1.acme.example.com
+#     inventory: "{{ lab.inventory.name }}"
+#     enabled: true
+#     variables: {}
+#   - name: jenkins.acme.example.com
+#     inventory: "{{ lab.inventory.name }}"
+#     enabled: true
+#     variables: {}
