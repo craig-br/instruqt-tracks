@@ -1,0 +1,494 @@
+---
+##
+# https://play.instruqt.com/redhat/tracks/lightspeed101/
+#
+# Tags:
+# <challenge-slug>-check - check challenge
+# <challenge-slug>-solve - solve challenge
+# <challenge-slug>-setup - setup challenge
+##
+
+- name: Check, solve and setup lightspeed-101
+  hosts: automationcontroller
+  gather_facts: false
+  become: true
+
+  vars_files:
+    - track_vars.yml
+    - vault_track_vars.yml
+
+  vars:
+    controller_login: &controller_login
+      controller_username: "{{ controller_username }}"
+      controller_password: "{{ controller_password }}"
+      controller_host: "{{ controller_hostname }}"
+      validate_certs: "{{ controller_validate_certs }}"
+    track_slug: lightspeed-101
+
+  tasks:
+
+    # Instruqt DNS entry point 127.0.0.1 for controller which fails using EEs. 
+    # Have to update objects with $_SANDBOX_ID in FQDN.
+    - name: Setup initial environment
+      tags:
+        - setup-env
+      block:
+        - name: Wait for controller availability
+          ansible.builtin.uri:
+            url: https://localhost/api/v2/ping/
+            method: GET
+            user: "{{ controller_login.controller_username }}"
+            password: "{{ controller_login.controller_password }}"
+            validate_certs: "{{ controller_login.validate_certs }}"
+          register: __controller_check
+          until: 
+            - __controller_check.json is defined 
+            - __controller_check.json.instances[0].capacity > 0
+            - __controller_check.json.instance_groups[0].capacity > 0
+          retries: 20
+          delay: 1
+
+        #  This is so ansible-navigator searches FQDN instead of resolving to localhost
+        # - name: Add Instruqt search domain to resolve.conf
+        #   ansible.builtin.lineinfile:
+        #     path: /etc/resolv.conf
+        #     state: present
+        #     line: "search {{ lookup('ansible.builtin.env', '_SANDBOX_ID') }}.svc.cluster.local."
+        #     mode: '644'
+
+        # - name: Remove default controller 127.0.0.1 entry - {{ track_slug }}-controller
+        #   ansible.builtin.lineinfile:
+        #     state: absent
+        #     regexp: '^127\.0\.0\.1\s*{{ track_slug }}-controller$'
+        #     path: /etc/hosts
+        #     mode: '644'
+
+        # - name: Update lab inventory with Instruqt FQDN
+        #   awx.awx.inventory:
+        #     name: "{{ item.name }}"
+        #     organization: "{{ item.organization }}"
+        #     description: "{{ item.description }}"
+        #     variables: "{{ item.variables }}"
+        #     <<: *controller_login
+        #   loop: "{{ controller_inventories }}"
+        #   when: controller_inventories is defined
+
+        # - name: Update controller credentials
+        #   awx.awx.credential:
+        #     name: "{{ item.name }}"
+        #     description: "{{ item.description }}"
+        #     organization: "{{ item.organization }}"
+        #     state: "{{ item.state }}"
+        #     inputs: "{{ item.inputs }}"
+        #     credential_type: "{{ item.credential_type }}"
+        #     <<: *controller_login
+        #   no_log: true
+        #   loop: "{{ controller_credentials }}"
+        #   when: controller_inventories is defined
+        #   retries: 10
+        #   delay: 1
+
+        # # Temp
+        # - name: Delete lightspeed demo repo - {{ gitea_repo_name }}
+        #   ansible.builtin.uri:
+        #     force_basic_auth: true
+        #     url_username: "{{ student_username }}"
+        #     url_password: "{{ student_password }}"
+        #     validate_certs: false
+        #     body_format: json
+        #     url: "{{ gitea_app_url }}/api/v1/repos/{{ student_username }}/{{ gitea_repo_name }}"
+        #     method: DELETE
+        #     body:
+        #       owner: "{{ student_username }}"
+        #       repo: "{{ gitea_repo_name }}"
+        #     status_code: [204]
+        #   become: true
+        #   become_user: "{{ student_username }}"
+        #   register: __delete_repo
+        #   changed_when: __delete_repo['status'] == 204
+        #   failed_when: false
+
+        # # Temp
+        # - name: Clone lightspeed demo repo - {{ gitea_repo_name }}
+        #   ansible.builtin.uri:
+        #     force_basic_auth: true
+        #     url_username: "{{ student_username }}"
+        #     url_password: "{{ student_password }}"
+        #     validate_certs: false
+        #     body_format: json
+        #     url: "{{ gitea_app_url }}/api/v1/repos/migrate"
+        #     method: POST
+        #     body:
+        #       clone_addr: "{{ gitea_clone_address }}"
+        #       repo_name: "{{ gitea_repo_name }}"
+        #       private: false
+        #     status_code: [201, 409]
+        #   become: true
+        #   become_user: "{{ student_username }}"
+        #   register: __migrate_repo
+        #   changed_when: __migrate_repo['status'] == 201
+
+        # #  Temp
+        # - name: Remove current repo dir
+        #   ansible.builtin.file:
+        #     state: absent
+        #     path: "~{{ student_username }}/acme_corp"
+        #   become_user: "{{ student_username }}"
+
+        # # temp
+        # - name: Clone repository to {{ student_username }} # noqa latest[git]
+        #   environment:
+        #     GIT_SSL_NO_VERIFY: true
+        #   ansible.builtin.git:
+        #     repo: "{{ gitea_app_url }}/{{ student_username }}/{{ gitea_repo_name }}"
+        #     dest: "~{{ student_username }}/acme_corp"
+        #   become_user: "{{ student_username }}"
+        # # temp
+        # - name: Temp - checkout devel
+        #   ansible.builtin.command:
+        #     cmd: "git checkout devel"
+        #     chdir: "~{{ student_username }}/{{ gitea_repo_name }}"
+        #   become_user: "{{ student_username }}"
+        # # temp
+        # - name: Copy VS Code workspace settings to repo
+        #   ansible.builtin.copy:
+        #     src: "/opt/setup-scripts/{{ track_slug }}/files/.vscode"
+        #     dest: "~{{ student_username }}/{{ gitea_repo_name }}/"
+        #     remote_src: true
+        #     owner: "{{ student_username }}"
+        #     group: "{{ student_username }}"
+        #     directory_mode: "755"
+        #     mode: "644"
+        # # temp
+        # - name: Fix directory permissions - {{ gitea_repo_name }}
+        #   ansible.builtin.file:
+        #     path: "~{{ student_username }}/{{ gitea_repo_name }}/.vscode"
+        #     state: directory
+        #     owner: "{{ student_username }}"
+        #     group: "{{ student_username }}"
+        #     mode: "755"
+
+    # - name: Setup initial playbook files for challenges
+    #   ansible.builtin.copy:
+    #     src: "{{ playbook_dir }}/files/initial_playbooks/{{ item }}"
+    #     dest: "~{{ student_username }}/{{ gitea_repo_name }}/{{ item }}"
+    #     owner: "{{ student_username }}"
+    #     group: "{{ student_username }}"
+    #     remote_src: true
+    #     mode: "644"
+    #   register: __initial_playbook
+    #   retries: 20
+    #   delay: 1
+    #   until: not __initial_playbook.failed
+    #   loop: "{{ lookup('ansible.builtin.vars', content_list)['playbooks'] }}"
+    #   tags:
+    #     - setup-monitoring-playbook
+    #     # - setup-keywords-playbook
+    #     - setup-external-content-playbook
+    #     - setup-generate-tasks-playbook
+    #     - setup-workflow-playbook
+  
+    - name: Solve Overwrite demo Playbooks with solution playbooks - {{ gitea_repo_name }}
+      ansible.builtin.copy:
+        src: "{{ item.source_playbook }}"
+        dest: "{{ item.dest_playbook }}"
+        owner: "{{ student_username }}"
+        group: "{{ student_username }}"
+        remote_src: "{{ item.remote_src | default(omit) }}"
+        mode: "644"
+      loop: "{{ lookup('ansible.builtin.vars', content_list)['playbooks'] }}"
+      tags:
+        - setup-workflow-playbooks
+        - solve-workflow-playbooks
+        - solve-database-playbooks
+        - solve-monitoring-playbooks
+        - setup-playground-playbooks
+
+    - name: Setup and Solve - Git add Playbooks to repo
+      ansible.builtin.command:
+        cmd: "git add {{ item.dest_playbook }}"
+        chdir: "~{{ student_username }}/{{ gitea_repo_name }}"
+      become_user: "{{ student_username }}"
+      register: __add_output
+      changed_when: __add_output.rc == 0
+      loop: "{{ lookup('ansible.builtin.vars', content_list)['playbooks']  }}"
+      tags:
+        - setup-playground-playbooks
+        - setup-workflow-playbooks
+        - solve-monitoring-playbooks
+        - solve-database-playbooks
+        - solve-workflow-playbooks
+
+    - name: Setup - Push challenge setup commit to repo
+      ansible.builtin.command:
+        cmd: "{{ item }}"
+        chdir: "~{{ student_username }}/{{ gitea_repo_name }}"
+      become_user: "{{ student_username }}"
+      register: __output
+      failed_when: false # TODO loop with matching changed_when and failed_when text.
+      loop:
+        - "git commit -m'Challenge setup commit.'"
+        # - "git push -u origin devel --force" # Temp
+        - "git push -u origin main --force"
+      tags:
+        - setup-playground-playbooks
+        - setup-workflow-playbooks
+        - solve-workflow-playbooks
+        - solve-database-playbooks
+        - solve-monitoring-playbooks
+
+    - name: Sync Project - {{ lab.project.name }}
+      awx.awx.project_update:
+        name: "{{ lab.project.name }}"
+        wait: true
+        timeout: 60
+        <<: *controller_login
+      tags:
+        - setup-playground-playbooks
+        - setup-workflow-playbooks
+        - solve-workflow-playbooks
+        - solve-monitoring-playbooks
+        - solve-database-playbooks
+
+    - name: Setup - create job templates - {{ content_list }}
+      awx.awx.job_template:
+        name: "{{ item.name }}"
+        state: "{{ item.state }}"
+        become_enabled: "{{ item.become_enabled | default(omit)}}"
+        project: "{{ item.project }}"
+        credentials: "{{ item.credentials }}"
+        organization: "{{ item.organization }}"
+        inventory: "{{ item.inventory }}"
+        playbook: "{{ item.playbook }}"
+        survey_spec: "{{ item.survey_spec | default(omit) }}"
+        ask_inventory_on_launch: "{{ item.ask_inventory_on_launch | default(false) }}"
+        ask_limit_on_launch: "{{ item.ask_limit_on_launch | default(omit) }}"
+        extra_vars: "{{ item.extra_vars | default(omit) }}"
+        limit: "{{ item.limit | default(omit) }}"
+        execution_environment: "{{ item.execution_environment }}"
+        job_tags: "{{ item.job_tags | default(omit) }}"
+        <<: *controller_login
+      register: __create_job_templates
+      until: not __create_job_templates.failed
+      retries: 20
+      delay: 1
+      loop: "{{ controller_templates[content_list] }}"
+      when: 
+        - controller_templates[content_list] is defined
+      tags:
+        - setup-monitoring-jt
+        - setup-database-jt
+        - setup-env
+        - setup-workflow-jt
+
+    - name: Solve configure-tools VS Code settings
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/files/settings_workspace_solve.json"
+        dest: "~{{ student_username }}/{{ gitea_repo_name }}/.vscode/settings.json"
+        owner: "{{ student_username }}"
+        group: "{{ student_username }}"
+        remote_src: true
+        mode: "0644"
+      register: __settings_file
+      tags:
+        - solve-configure-tools
+
+    - name: Check configure-tools present VS Code settings
+      tags:
+        - check-configure-tools
+      block:
+        - name: Check Lightspeed config present
+          ansible.builtin.lineinfile:
+            path: "~{{ student_username }}/{{ gitea_repo_name }}/.vscode/settings.json"
+            # path: "~{{ student_username }}/.config/Code/User/settings.json"
+            state: absent
+            backrefs: true
+            regex: "{{ item.regex }}"
+            owner: "{{ student_username }}"
+            group: "{{ student_username }}"
+            mode: "0644"
+          check_mode: "{{ check_mode | default(true) }}"
+          register: __vscode_lightspeed
+          loop: "{{ configure_tools['vscode_settings']['present'] }}"
+
+        - name: Assert __vscode_lightspeed lines found
+          ansible.builtin.assert:
+            that: 
+              - item.found > 0
+            fail_msg: The VS Code .vscode/settings.json missing Lightspeed entries.
+            success_msg: VS Code Lightspeed config entries present.
+          loop: "{{ __vscode_lightspeed.results }}"
+
+    - name: Solve run job templates
+      awx.awx.job_launch:
+        name: "{{ item.name }}"
+        wait: true
+        <<: *controller_login
+      loop: "{{ controller_templates[content_list] }}"
+      when: 
+        - controller_templates[content_list] is defined
+      tags:
+        - solve-database-jt
+        - solve-monitoring-jt
+
+    - name: Create pgadmin container
+      tags:
+        - setup-database-container
+      block:
+        - name: Get host ansible_facts
+          ansible.builtin.setup:
+
+        - name: Run podman container using pgadmin_container var
+          containers.podman.podman_container:
+            name: "{{ pgadmin_container.name }}"
+            image: "{{ pgadmin_container.image }}"
+            state: stopped
+            ports: "{{ pgadmin_container.ports }}"
+            generate_systemd: "{{ pgadmin_container.generate_systemd }}"
+            env: "{{ pgadmin_container.env }}"
+            network: "{{ pgadmin_container.network }}"
+
+        - name: Manage container service - {{ pgadmin_service_name }}
+          ansible.builtin.systemd:
+            name: "{{ pgadmin_service_name }}"
+            state: "{{ container_service | default('stopped') }}"
+            enabled: true
+            daemon_reload: true
+
+    - name: Check database - PGAdmin is running
+      tags:
+        - check-database-app
+      block:
+        - name: Get container info - "{{ pgadmin_container.name }}"
+          containers.podman.podman_container_info:
+            name:
+              - "{{ pgadmin_container.name }}"
+          register: __app_container_info
+
+        - name: Check database - assert container is running
+          ansible.builtin.assert:
+            that: 
+              - '"Error: inspecting object: no such container" not in __app_container_info.stderr'
+              - __app_container_info.containers[0]["State"]["Running"]
+            fail_msg: "Error inspecting container - {{ pgadmin_container.name }}."
+            success_msg: "Successfully inspected container - {{ pgadmin_container.name }}."
+
+    - name: Check monitoring - Cockpit is running
+      tags:
+        - check-monitoring-cockpit
+      block:
+        - name: Check and Solve monitoring - Cockpit app is running
+          ansible.builtin.systemd:
+            name: cockpit.socket
+            state: started
+          check_mode: "{{ check_mode | default(true) }}"
+          register: __cockpit_service
+
+        - name: Check monitoring - assert cockpit is running
+          ansible.builtin.assert:
+            that: 
+              - __cockpit_service["status"]["ActiveState"] == "active"
+            fail_msg: "Cockpit service stopped."
+            success_msg: "Cockpit service running."
+
+    - name: Check database - Postgresql is running
+      tags:
+        - check-database-postgresql
+      block:
+        - name: Check and Solve keywords - Monitor app is running
+          ansible.builtin.systemd:
+            name: postgresql
+            state: started
+          check_mode: "{{ check_mode | default(true) }}"
+          register: __postgresql_service
+
+        - name: Check database - assert postgresql is running
+          ansible.builtin.assert:
+            that: 
+              - __postgresql_service["status"]["ActiveState"] == "active"
+            fail_msg: "Postgresql service stopped."
+            success_msg: "Postgresql service running."
+
+    - name: Check workflow exists and schema
+      check_mode: "{{ check_mode | default(true) }}"
+      connection: local
+      block:
+        - name: Workflow check workflow created
+          awx.awx.workflow_job_template:
+            name: "{{ item.name }}"
+            inventory: "{{ item.inventory | default(omit) }}"
+            extra_vars: "{{ item.extra_vars | default(omit) }}"
+            ask_variables_on_launch: "{{ item.ask_variables_on_launch | default(false) }}"
+            organization: "{{ item.organization }}"
+            state: "{{ workflow_state | default('present')}}"
+            <<: *controller_login
+          register: __workflow_create
+          loop: "{{ controller_workflows }}"
+          when: (controller_workflows is defined)
+          tags:
+            - check-workflow-create-wjt
+            - setup-playground-wft
+
+        - name: Check workflow - assert workflow exists
+          ansible.builtin.assert:
+            that: 
+              - not __workflow_create.changed | bool
+            fail_msg:  "{{ lab.workflow_name | quote }} workflow missing."
+            success_msg: "{{ lab.workflow_name | quote }} workflow exists."
+          tags:
+            - check-workflow-create-wjt
+
+        - name: Check workflow job template nodes - {{ lab.workflow_name }}
+          awx.awx.workflow_job_template_node:
+            identifier: "{{ item.identifier }}"
+            organization: "{{ item.organization | default(omit) }}"
+            unified_job_template: "{{ item.unified_job_template }}"
+            workflow_job_template: "{{ item.workflow_job_template }}"
+            <<: *controller_login
+          register: __workflow_nodes_create
+          loop: "{{ controller_workflow_nodes }}"
+          when: (controller_workflow_nodes is defined)
+          tags:
+            - check-workflow-schema
+
+        - name: Check workflow job template nodes schema - {{ lab.workflow_name }}
+          awx.awx.workflow_job_template_node:
+            identifier: "{{ item.identifier }}"
+            organization: "{{ item.organization | default(omit) }}"
+            unified_job_template: "{{ item.unified_job_template }}"
+            workflow_job_template: "{{ item.workflow_job_template }}"
+            success_nodes: "{{ item.success_nodes | default(omit) }}"
+            always_nodes: "{{ item.always_nodes | default(omit) }}"
+            failure_nodes: "{{ item.failure_nodes | default(omit) }}"
+            <<: *controller_login
+          register: __workflow_nodes_schema
+          loop: "{{ controller_workflow_nodes }}"
+          when: (controller_workflow_nodes is defined)
+          tags:
+            - check-workflow-schema
+
+        - name: Check workflow - assert workflow config
+          ansible.builtin.assert:
+            that:  not __workflow_nodes_schema.changed | bool
+            fail_msg:  "{{ lab.workflow_name | quote }} workflow config incorrect."
+            success_msg: "{{ lab.workflow_name | quote }} workflow config correct."
+          tags:
+            - check-workflow-schema
+      
+    - name: Workflow solve run workflow
+      tags:
+        - solve-workflow-run-jt
+      block:
+        - name: Create workflow with solve job template
+          awx.awx.job_launch:
+            name: "{{ item }}"
+            wait: true
+            <<: *controller_login
+          loop: "{{ workflow.jt_names }}"
+          register: __workflow_run
+
+        - name: Workflow solve run workflow
+          awx.awx.workflow_launch:
+            name: "{{ lab.workflow_name }}"
+            wait: true
+            <<: *controller_login
