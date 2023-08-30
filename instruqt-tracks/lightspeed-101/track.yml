@@ -10,9 +10,10 @@ description: "# Intro to Ansible Lightspeed with IBM watsonx Code Assistant\n***
   Source Matching to show potential training data sources.\n- Running the Playbooks
   using ansible-navigator and automation controller.\n\n\t## Requirements\n\n\t- The
   user needs a GitHub or Red Hat Customer Portal ccount to activate Ansible Lightspeed
-  in VS Code.\n\t- Certain browsers, such as Firefox and Chrome, do not support a
+  in VS Code.\n\t- Certain browsers, such as Firefox and Safari, do not support a
   standard \"CTRL+C\" and \"CTRL+V\" copy and paste in VNC sessions. Instructions
-  are included to to use the VNC utlities to do so.\n\t## Source repository\n\thttps://github.com/craig-br/lightspeed-demos"
+  are included to to use the VNC utlities to do so.\n\t- The Chrome browser suppports
+  standard copy and paste operations in the VNC console.\n\t## Source repository\n\thttps://github.com/craig-br/lightspeed-demos"
 icon: https://raw.githubusercontent.com/ansible/instruqt/devel/assets/icons/Product_Icon-Red_Hat-Ansible-RGB.png
 tags:
 - ai
@@ -29,4 +30,4 @@ lab_config:
   overlay: false
   width: 33
   position: right
-checksum: "9885459307280940242"
+checksum: "18361691184303242933"
