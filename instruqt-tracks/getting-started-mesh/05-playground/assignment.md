@@ -1,6 +1,6 @@
 ---
 slug: playground
-id: uts1kv5yx6hy
+id: elwy1gfd3zav
 type: challenge
 title: Automation mesh playground
 teaser: Test your mesh skills in this challenge!

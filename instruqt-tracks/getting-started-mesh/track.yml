@@ -1,6 +1,6 @@
-slug: getting-started-mesh
-id: akkabmifu15z
-title: Getting started with automation mesh
+slug: getting-started-mesh-dev
+id: gn0cqps8foau
+title: DEV - Getting started with automation mesh
 teaser: In this track, you'll learn about automation mesh features, perform basic
   configuration tasks and use it to run a job template with ACME Corp.
 description: |-
@@ -26,14 +26,19 @@ description: |-
 icon: https://raw.githubusercontent.com/craig-br/instruqt-tracks/devel/assets/icons/automation_mesh.png
 level: beginner
 tags:
-- ansible
-- ansible automation platform
-- mesh
 - automation mesh
-- prod
+- ansible
+- dev
+- mesh
+- ansible automation platform
 owner: redhat
 developers:
 - cbrandt@redhat.com
+maintenance: true
 show_timer: true
 skipping_enabled: true
-checksum: "6794871098599148146"
+lab_config:
+  overlay: false
+  width: 25
+  position: right
+checksum: "14832042033804681144"
