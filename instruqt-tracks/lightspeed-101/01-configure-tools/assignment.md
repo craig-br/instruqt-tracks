@@ -1,6 +1,6 @@
 ---
 slug: configure-tools
-id: bgt8posb7km4
+id: 0kyxr5ju67eg
 type: challenge
 title: Configuring Ansible Lightspeed in Visual Studio Code.
 teaser: We'll enable Ansible Lightspeed in the Ansible Visual Studio Code extension
