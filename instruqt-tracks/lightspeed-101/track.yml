@@ -1,7 +1,6 @@
 slug: lightspeed-101
 id: boprlwpffdp9
-title: Intro to Ansible Lightspeed with IBM watsonx Code Assistant Technical
-  Preview
+title: Intro to Ansible Lightspeed with IBM watsonx Code Assistant Technical Preview
 description: "# Intro to Ansible Lightspeed with IBM watsonx Code Assistant Technical
   Preview\n***\n\n<p>\n\n## This lab covers:\n\n<p>\n\n- Configuring Ansible Lightspeed
   in Visual Studio Code.\n- The basics of generating Ansible Lightspeed suggestions.\n-
@@ -18,7 +17,6 @@ icon: https://raw.githubusercontent.com/ansible/instruqt/devel/assets/icons/Prod
 tags:
 - ai
 - ansible
-- prod
 - lightspeed
 owner: redhat
 developers:
@@ -32,4 +30,4 @@ lab_config:
   width: 33
   position: right
   loadingMessages: true
-checksum: "16705555798213278176"
+checksum: "6212070452558119528"

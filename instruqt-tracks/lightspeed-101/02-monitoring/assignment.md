@@ -1,6 +1,6 @@
 ---
 slug: monitoring
-id: v57ztzotxd8q
+id: fcheetl4caf7
 type: challenge
 title: Deploy and Configure Cockpit using Ansible Lightspeed
 teaser: We'll explore Ansible Lightspeed features and generate Ansible Playbook tasks
