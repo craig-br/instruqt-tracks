@@ -18,6 +18,7 @@ icon: https://raw.githubusercontent.com/ansible/instruqt/devel/assets/icons/Prod
 tags:
 - ai
 - ansible
+- prod
 - lightspeed
 owner: redhat
 developers:
@@ -30,4 +31,5 @@ lab_config:
   overlay: false
   width: 33
   position: right
-checksum: "18361691184303242933"
+  loadingMessages: true
+checksum: "6758754279419488130"

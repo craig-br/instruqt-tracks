@@ -1,0 +1,443 @@
+---
+# code: language=ansible
+# getting-started-mesh
+##
+# https://play.instruqt.com/redhat/tracks/getting-started-mesh/
+#
+# Tags:
+# setup-env - Setup controller env for lab
+# <challenge-slug>-check - check challenge
+# <challenge-slug>-solve - solve challenge
+# <challenge-slug>-setup - setup challenge
+##
+- name: Instruqt config getting-started-mesh
+  hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+  # For some reason, the authorized_key file disappears after instruqt setup sequence on rhel user
+    - name: Add instruqt_lab ssh key to authorized keys on nodes
+      ansible.posix.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ lookup('file', '/home/' + ansible_user + '/.ssh/instruqt_lab.pub') }}"
+        comment: "Instruqt lab key"
+      become_user: "{{ ansible_user }}"
+      retries: 5
+      delay: 1
+      tags:
+        - setup-overview
+
+- name: Instruqt challenge tasks getting-started-mesh
+  hosts: automationcontroller
+  gather_facts: false
+  become: true
+
+  vars_files:
+    - track_vars.yml
+
+  vars:
+    controller_login: &controller_login
+      controller_username: "{{ controller_username }}"
+      controller_password: "{{ controller_password }}"
+      controller_host: "{{ controller_hostname }}"
+      validate_certs: "{{ controller_validate_certs }}"
+
+  tasks:
+    - name: Solve mesh-instance-groups
+      awx.awx.instance_group:
+        state: present
+        name: "{{ item.lab_instance_group_name }}"
+        instances: "{{ item.lab_instance_group_hosts }}"
+        <<: *controller_login
+      loop: "{{ lab_instance_groups }}"
+      tags:
+        - mesh-instance-groups-solve
+
+    - name: Check mesh-instance-groups
+      ansible.builtin.command: "awx -k --conf.username {{ controller_username }}
+                                --conf.password {{ controller_password }}
+                                --conf.host https://{{ controller_hostname }}
+                                instance_group get '{{ lab_instance_group_name }}'"
+      register: _instance_groups_check
+      changed_when: _instance_groups_check.rc != 0
+      tags:
+        - mesh-instance-groups-check
+        - mesh-instance-groups-instances-check
+
+    - name: Assert instance is in the correct instance group
+      ansible.builtin.assert:
+        that: lab_instance_group_instance_name in _instance_groups_check.stdout
+      tags:
+        - mesh-instance-groups-instances-check
+
+    # Solve / check multi-site
+    - name: Solve multi-site instance groups and inventories
+      awx.awx.inventory:
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        organization: "{{ lab_organization }}"
+        state: present
+        instance_groups: "{{ item.inv_instance_groups }}"
+        <<: *controller_login
+      loop: "{{ lab_inventories }}"
+      tags:
+        - multi-site-solve
+        - multi-site-solve-inv-ig
+
+    - name: Solve multi-site run job templates Raleigh inventory
+      awx.awx.job_launch:
+        name: "{{ item.jt_name }}"
+        organization: "{{ lab_organization }}"
+        inventory: "{{ lab_us_inventory_name }}"
+        wait: true
+        <<: *controller_login
+      retries: 60
+      delay: 1
+      loop: "{{ lab_job_templates }}"
+      tags:
+        - multi-site-solve-jt
+        - multi-site-solve
+
+    - name: Solve multi-site run job templates JHB inventory
+      awx.awx.job_launch:
+        name: "{{ item.jt_name }}"
+        organization: "{{ lab_organization }}"
+        inventory: "{{ lab_jhb_inventory_name }}"
+        wait: true
+        <<: *controller_login
+      retries: 60
+      delay: 1
+      loop: "{{ lab_job_templates }}"
+      tags:
+        - multi-site-solve-jt
+        - multi-site-solve
+
+    # Had to do this via API because awx.awx.inventory bug always shows changed in check mode. Or I'm silly
+    - name: Check multi-site inventory instance group assignment
+      tags:
+        - multi-site-check-inv-ig
+        - multi-site-check
+      block:
+        - name: Multi-site check - set inventory  id fact - {{ lab_inv_name }} # noqa yaml[line-length]
+          ansible.builtin.set_fact:
+            __inventory_ids: "{{ __inventory_ids | default([]) + [{'name': item.name, 'id': item.id}] }}"
+          loop: "{{ query('awx.awx.controller_api', 'inventories',
+                    username=controller_username,
+                    password=controller_password,
+                    verify_ssl=controller_validate_certs) }}"
+
+        - name: Get inventory instance groups - {{ lab_inv_name }}
+          ansible.builtin.uri:
+            url: "https://{{ controller_hostname }}/api/v2/inventories/{{ item.id }}/instance_groups/"
+            mode: GET
+            force_basic_auth: true
+            url_username: "{{ controller_username }}"
+            url_password: "{{ controller_password }}"
+            return_content: true
+            validate_certs: "{{ controller_validate_certs }}"
+          loop: "{{ __inventory_ids }}"
+          when: item.name == lab_inv_name
+          register: __inv_instance_groups
+          tags:
+            - multi-site-check-inv-ig
+            - multi-site-check
+
+        - name: Assert instance group in inventory - "{{ lab_inv_igs }}"
+          ansible.builtin.assert:
+            that:
+              - __inv_instance_groups is search(lab_inv_igs)
+            fail_msg: "{{ lab_inv_igs }} not associated with inventory"
+
+
+    - name: List job template run list
+      awx.awx.job_list:
+        status: successful
+        query: {"name": "{{ lab_jt_name }}",
+                "inventory__name": "{{ lab_inv_name }}"}
+        <<: *controller_login
+      register: _multi_site_check_inv
+      failed_when: _multi_site_check_inv.count == 0
+      tags:
+        - multi-site-check-inv-jt
+        - multi-site-check
+
+    # Setup / solve / check high-availability
+    - name: High-availability set instance id fact - {{ lab_exec_node_hostname }}  # noqa yaml[line-length]
+      ansible.builtin.set_fact:
+        _exec1: "{{ _exec1 | default({}) | combine({'name': item.hostname, 'id': item.id}) }}"
+      loop: "{{ query('awx.awx.controller_api', 'instances',
+                username=controller_username,
+                password=controller_password,
+                verify_ssl=controller_validate_certs,
+                query_params={'hostname': lab_dbn_check_instance_name}) | list }}"
+      tags:
+        - high-availability-setup
+        - high-availability-check-instance
+        - high-availability-solve
+        - playground-setup
+
+    - name: High-availability solve mesh dublin hop templates
+      awx.awx.job_launch:
+        name: "{{ item.jt_name }}"
+        organization: "{{ lab_organization }}"
+        wait: true
+        <<: *controller_login
+      retries: 60
+      delay: 1
+      when: '"Setup Dublin hop node" in item.jt_name'
+      loop: "{{ lab_dbn_check_job_templates }}"
+      tags:
+        - high-availability-solve
+
+    - name: High-availability reload receptor service
+      ansible.builtin.command: >
+        /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock reload
+      register: _receptor_reload
+      changed_when: _receptor_reload.rc != 0
+      tags:
+        - high-availability-solve
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability solve receptor ping {{ lab_hop_node_hostname }}
+      ansible.builtin.command: >
+        /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock ping {{ lab_hop_node_hostname }}
+      register: _lab_hop_node_hostname_ping
+      until: _lab_hop_node_hostname_ping.rc == 0
+      changed_when: false
+      retries: 10
+      delay: 3
+      tags:
+        - high-availability-solve
+
+    - name: High-availability solve receptor ping {{ lab_exec_node_hostname }}
+      ansible.builtin.command: >
+        /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock ping {{ lab_exec_node_hostname }}
+      register: _lab_exec_node_hostname_ping
+      until: _lab_exec_node_hostname_ping.rc == 0
+      changed_when: false
+      retries: 10
+      delay: 3
+      tags:
+        - high-availability-solve
+
+    - name: High-availability solve perform health check
+      ansible.builtin.uri:
+        url: "https://localhost/api/v2/instances/{{ _exec1.id }}/health_check/"
+        method: POST
+        user: "{{ controller_username }}"
+        password: "{{ controller_password }}"
+        validate_certs: false
+        force_basic_auth: true
+      tags:
+        - high-availability-solve
+
+    - name: High-availability solve refresh node health until ready
+      ansible.builtin.uri:
+        url: "https://localhost/api/v2/instances/{{ _exec1.id }}/"
+        method: GET
+        user: "{{ controller_username }}"
+        password: "{{ controller_password }}"
+        validate_certs: false
+        force_basic_auth: true
+      register: __health_check
+      until: __health_check.json.node_state == "ready"
+      retries: 20
+      delay: 3
+      tags:
+        - high-availability-solve
+
+    - name: High-availability solve mesh route info jt
+      awx.awx.job_launch:
+        name: "{{ item.jt_name }}"
+        organization: "{{ lab_organization }}"
+        wait: true
+        <<: *controller_login
+      retries: 60
+      delay: 1
+      when: '"Mesh route info" in item.jt_name'
+      loop: "{{ lab_dbn_check_job_templates }}"
+      tags:
+        - high-availability-solve
+
+    - name: High-availability solve mesh Debug info
+      awx.awx.job_launch:
+        name: "{{ item.jt_name }}"
+        organization: "{{ lab_organization }}"
+        inventory: "{{ lab_jhb_inventory_name }}"
+        wait: true
+        <<: *controller_login
+      retries: 60
+      delay: 1
+      when: '"Debug info" in item.jt_name'
+      loop: "{{ lab_dbn_check_job_templates }}"
+      tags:
+        - high-availability-solve
+
+    - name: Stop receptor service on {{ lab_hop_node_hostname }}
+      ansible.builtin.service:
+        name: receptor
+        state: stopped
+      delegate_to: "{{ lab_hop_node_hostname }}"
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability remove stanza from receptor.conf - {{ lab_exec_node_hostname }}
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/receptor.conf.j2"
+        dest: "/etc/receptor/receptor.conf"
+        mode: '0644'
+        validate: "/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock --tls-client tls_client --config %s reload"
+        backup: true
+      register: _receptor_conf
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: Restart receptor service
+      ansible.builtin.service:
+        name: receptor
+        state: restarted
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability setup receptor ping until failed - {{ lab_hop_node_hostname }}
+      ansible.builtin.command: >
+        /usr/bin/receptorctl --socket /var/run/awx-receptor/receptor.sock ping {{ lab_hop_node_hostname }}
+      register: _lab_hop_node_hostname_ping
+      until: _lab_hop_node_hostname_ping.rc != 0
+      failed_when: _lab_hop_node_hostname_ping.rc == 0
+      changed_when: false
+      retries: 60
+      delay: 1
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability perform health check
+      ansible.builtin.uri:
+        url: "https://localhost/api/v2/instances/{{ _exec1.id }}/health_check/"
+        method: POST
+        user: "{{ controller_username }}"
+        password: "{{ controller_password }}"
+        validate_certs: false
+        force_basic_auth: true
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability setup refresh exec node health until unavailable
+      ansible.builtin.uri:
+        url: "https://localhost/api/v2/instances/{{ _exec1.id }}/"
+        method: GET
+        user: "{{ controller_username }}"
+        password: "{{ controller_password }}"
+        validate_certs: false
+        force_basic_auth: true
+      register: __health_check
+      until: __health_check.json.node_state == "unavailable"
+      retries: 60
+      delay: 1
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability clear job history
+      ansible.builtin.uri:
+        url: "https://localhost/api/v2/system_job_templates/1/launch/"
+        method: POST
+        body_format: json
+        body:
+          extra_vars:
+            days: 0
+        user: "{{ controller_username }}"
+        password: "{{ controller_password }}"
+        validate_certs: false
+        force_basic_auth: true
+      register: _job_history
+      failed_when: false
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability create dublin inventory
+      awx.awx.inventory:
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        organization: "{{ lab_organization }}"
+        state: present
+        <<: *controller_login
+      loop: "{{ lab_dbn_inventories }}"
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability create dublin hosts
+      awx.awx.host:
+        name: "{{ item.lab_host_name }}"
+        inventory: "{{ item.lab_host_inventory }}"
+        state: present
+        variables: "{{ item.lab_host_vars }}"
+        <<: *controller_login
+      loop: "{{ lab_dbn_hosts }}"
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability setup create job templates
+      awx.awx.job_template:
+        name: "{{ item.jt_name }}"
+        state: present
+        become_enabled: "{{ item.jt_become }}"
+        project: "{{ lab_project_name }}"
+        credential: "{{ lab_credential_name }}"
+        inventory: "{{ item.jt_inventory }}"
+        playbook: "{{ item.jt_playbook }}"
+        survey_enabled: "{{ item.survey_enabled }}"
+        survey_spec: "{{ item.survey_spec | default(omit) }}"
+        ask_inventory_on_launch: "{{ item.jt_prompt_inventory }}"
+        extra_vars: "{{ item.jt_extra_vars | default(omit) }}"
+        <<: *controller_login
+      loop: "{{ lab_dbn_job_templates }}"
+      tags:
+        - high-availability-setup
+        - playground-setup
+
+    - name: High-availability list job template run list
+      awx.awx.job_list:
+        status: successful
+        query: {"name": "{{ lab_jt_name }}",
+                "inventory__name": "{{ lab_inv_name }}"}
+        <<: *controller_login
+      register: _high_availability_check_jt
+      failed_when: _high_availability_check_jt.count == 0
+      tags:
+        - high-availability-check-jt
+
+    - name: High-availability check exec node status until ready
+      ansible.builtin.uri:
+        url: "https://localhost/api/v2/instances/{{ _exec1.id }}/"
+        method: GET
+        user: "{{ controller_username }}"
+        password: "{{ controller_password }}"
+        validate_certs: false
+        force_basic_auth: true
+      until: __health_check.json.node_state == "ready"
+      retries: 30
+      delay: 1
+      register: __health_check
+      tags:
+        - high-availability-check-instance
+
+    # Setup / solve / check playground
+    - name: Setup playground remove instance groups
+      awx.awx.instance_group:
+        state: absent
+        name: "{{ item.lab_instance_group_name }}"
+        <<: *controller_login
+      loop: "{{ lab_instance_groups }}"
+      tags:
+        - playground-setup

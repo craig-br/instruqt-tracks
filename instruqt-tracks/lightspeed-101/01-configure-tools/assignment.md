@@ -1,6 +1,6 @@
 ---
 slug: configure-tools
-id: bgt8posb7km4
+id: cwn3yqywe54r
 type: challenge
 title: Configuring Ansible Lightspeed in Visual Studio Code.
 teaser: We'll enable Ansible Lightspeed in the Ansible Visual Studio Code extension
@@ -9,7 +9,7 @@ notes:
 - type: text
   contents: "## \U0001F3AF **First challenge: Configuring Ansible Lightspeed in Visual
     Studio Code.**\n\n<div class=\"slideList\">\n\nWe'll enable Ansible Lightspeed
-    in the Ansible Visual Studio Code extension and activate it using GitHub credentials.\n\n\n![lab_extension_login.gif](../assets/lab_extension_login.gif)\n<div
+    in the Ansible Visual Studio Code extension and activate it using GitHub credentials.\n\n\n![lab_enable_extension_login.gif](../assets/lab_enable_extension_login.gif)\n<div
     class=\"slideList\">\n\n<style type=\"text/css\" rel=\"stylesheet\">\n.slideList{\n\tfont-size:
     1.2rem;\n\ttext-align: center;\n\t}\nh1{\n  text-align: center;\n\tfont-size:
     36px;\n}\nh2 {\n\ttext-align: center;\n\tfont-size: 1.67rem;\n}\nh3 {\n\tfont-weight:
@@ -134,7 +134,7 @@ Follow these steps to open the **VNC Clipboard utility**:
 ![connect_extension.png](../assets/connect_extension.png)
 ![allow_vscode_external_link.png](../assets/allow_vscode_external_link.png)
 - This will open a Firefox browser and ask you to login to your GitHub account, please follow through the screenshots below:
-![Login_github.png](../assets/Login_github.png)
+![login_click_tech_preview.png](../assets/login_click_tech_preview.png)
 ![github_login_page.png](../assets/github_login_page.png)
 ![tandc_agree.png](../assets/tandc_agree.png)
 ![authorize_lightspeed.png](../assets/authorize_lightspeed.png)
@@ -156,8 +156,8 @@ Follow these steps to open the **VNC Clipboard utility**:
 ## **Enable Ansible Lightspeed Visual Studio Code**
 ![lab_enable_extension_solution_enable.gif](../assets/lab_enable_extension_solution_enable.gif)
 
-## Activate Ansible Lightspeed using GiHub credentials
-![lab_enable_extension_solution_login.gif](../assets/lab_enable_extension_solution_login.gif)
+## Activate Ansible Lightspeed using GitHub credentials
+![lab_enable_extension_login.gif](../assets/lab_enable_extension_login.gif)
 
 ✅ Next Challenge
 ===
