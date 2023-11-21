@@ -1,6 +1,6 @@
-slug: lightspeed-101
-id: boprlwpffdp9
-title: Intro to Ansible Lightspeed with IBM watsonx Code Assistant
+slug: lightspeed-101-dev
+id: oxgfgbziljff
+title: DEV - Intro to Ansible Lightspeed with IBM watsonx Code Assistant
 teaser: Experience how Ansible Lightspeed accelerates your Ansible content development
   with its  generative AI superpowers.
 description: "# Intro to Ansible Lightspeed with IBM watsonx Code Assistant\n***\n\n<p>\n\n##
@@ -18,10 +18,12 @@ icon: https://raw.githubusercontent.com/ansible/instruqt/devel/assets/icons/Prod
 tags:
 - ai
 - ansible
+- dev
 - lightspeed
 owner: redhat
 developers:
 - cbrandt@redhat.com
+maintenance: true
 show_timer: true
 skipping_enabled: true
 idle_timeout: 1800
@@ -30,4 +32,5 @@ lab_config:
   overlay: false
   width: 33
   position: right
-checksum: "18361691184303242933"
+  loadingMessages: true
+checksum: "15647468952335980715"
