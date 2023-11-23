@@ -8,7 +8,7 @@ containers:
   memory: 512
 virtualmachines:
 - name: lightspeed-101-controller
-  image: red-hat-mbu/lightspeed-101-controller-image
+  image: instruqt-dev-356115/lightspeed-101-controller-image
   machine_type: e2-standard-4
 secrets:
 - name: STUDENT_USERNAME
