@@ -442,6 +442,29 @@
       tags:
         - setup-azure-resources
       block:
+        - name: Create files folder
+          ansible.builtin.file:
+            path: "~{{ student_username }}/{{ gitea_repo_name }}/playbooks/cloud/azure/files"
+            state: directory
+            owner: "{{ student_username }}"
+            group: "{{ student_username }}"
+            mode: '0755'
+          delegate_to: controller.acme.example.com
+
+        - name: Copy Instruqt lab SSH keys
+          ansible.builtin.copy:
+            src: "~/.ssh/{{ item.name }}"
+            dest: "~{{ student_username }}/{{ gitea_repo_name }}/playbooks/cloud/azure/files/azure_demo_ssh_key{{ item.name | splitext | last }}"
+            owner: "{{ student_username }}"
+            group: "{{ student_username }}"
+            mode: "{{ item.mode }}"
+          delegate_to: controller.acme.example.com
+          loop:
+            - name: instruqt_lab
+              mode: '0600'
+            - name: instruqt_lab.pub
+              mode: '0644'
+
         - name: Create resource group called rg-lightspeed
           azure.azcollection.azure_rm_resourcegroup:
             name: rg-lightspeed
