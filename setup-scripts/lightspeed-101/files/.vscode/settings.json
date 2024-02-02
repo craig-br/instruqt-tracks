@@ -6,7 +6,7 @@
     "ansible.executionEnvironment.image": "quay.io/acme_corp/lightspeed-101_ee",
     "editor.renderWhitespace": "boundary",
     "ansible.validation.enabled": true,
-    "ansible.python.interpreterPath": "/bin/python3.11",
+    "ansible.python.interpreterPath": "/usr/bin/python",
     "workbench.startupEditor": "readme",
     "git.autofetch": true,
     "workbench.editorAssociations": {
